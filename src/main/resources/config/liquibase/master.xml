@@ -5,6 +5,25 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141218_added_entity_DeliveryCoordinator.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141219_added_entity_Administrator.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141220_added_entity_Team.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141221_added_entity_Project.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141222_added_entity_ProjectType.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141223_added_entity_Collaborator.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141224_added_entity_Activity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141225_added_entity_Correspondence.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141226_added_entity_Imputation.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141227_added_entity_ImputationType.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141228_added_entity_CollaboratorMonthlyImputation.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141229_added_entity_CollaboratorDailyImputation.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20190321141220_added_entity_constraints_Team.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141221_added_entity_constraints_Project.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141223_added_entity_constraints_Collaborator.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141225_added_entity_constraints_Correspondence.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141226_added_entity_constraints_Imputation.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141228_added_entity_constraints_CollaboratorMonthlyImputation.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141229_added_entity_constraints_CollaboratorDailyImputation.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
 </databaseChangeLog>

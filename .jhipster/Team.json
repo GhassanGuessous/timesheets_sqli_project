@@ -1,0 +1,42 @@
+{
+    "name": "Team",
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "otherEntityName": "deliveryCoordinator",
+            "otherEntityRelationshipName": "team",
+            "relationshipName": "deliveryCoordinator",
+            "otherEntityField": "id",
+            "ownerSide": true
+        },
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "collaborator",
+            "otherEntityRelationshipName": "team",
+            "relationshipName": "collaborator"
+        },
+        {
+            "relationshipType": "many-to-many",
+            "otherEntityName": "project",
+            "otherEntityRelationshipName": "team",
+            "relationshipName": "project",
+            "otherEntityField": "id",
+            "ownerSide": false
+        }
+    ],
+    "changelogDate": "20190321141220",
+    "entityTableName": "team",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

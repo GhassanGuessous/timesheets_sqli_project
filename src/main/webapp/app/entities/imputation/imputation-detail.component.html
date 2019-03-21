@@ -1,0 +1,37 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="imputation">
+            <h2><span jhiTranslate="imputationSqliApp.imputation.detail.title">Imputation</span> {{imputation.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="imputationSqliApp.imputation.month">Month</span></dt>
+                <dd>
+                    <span>{{imputation.month}}</span>
+                </dd>
+                <dt><span jhiTranslate="imputationSqliApp.imputation.year">Year</span></dt>
+                <dd>
+                    <span>{{imputation.year}}</span>
+                </dd>
+                <dt><span jhiTranslate="imputationSqliApp.imputation.imputationType">Imputation Type</span></dt>
+                <dd>
+                    <div *ngIf="imputation.imputationType">
+                        <a [routerLink]="['/imputation-type', imputation.imputationType?.id, 'view']">{{imputation.imputationType?.id}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/imputation', imputation.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

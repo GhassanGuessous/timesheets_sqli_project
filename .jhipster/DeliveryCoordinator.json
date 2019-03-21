@@ -1,0 +1,14 @@
+{
+    "name": "DeliveryCoordinator",
+    "fields": [],
+    "relationships": [],
+    "changelogDate": "20190321141218",
+    "entityTableName": "delivery_coordinator",
+    "dto": "no",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

@@ -1,0 +1,41 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="correspondence">
+            <h2><span jhiTranslate="imputationSqliApp.correspondence.detail.title">Correspondence</span> {{correspondence.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="imputationSqliApp.correspondence.idAPP">Id APP</span></dt>
+                <dd>
+                    <span>{{correspondence.idAPP}}</span>
+                </dd>
+                <dt><span jhiTranslate="imputationSqliApp.correspondence.idPPMC">Id PPMC</span></dt>
+                <dd>
+                    <span>{{correspondence.idPPMC}}</span>
+                </dd>
+                <dt><span jhiTranslate="imputationSqliApp.correspondence.idTBP">Id TBP</span></dt>
+                <dd>
+                    <span>{{correspondence.idTBP}}</span>
+                </dd>
+                <dt><span jhiTranslate="imputationSqliApp.correspondence.collaborator">Collaborator</span></dt>
+                <dd>
+                    <div *ngIf="correspondence.collaborator">
+                        <a [routerLink]="['/collaborator', correspondence.collaborator?.id, 'view']">{{correspondence.collaborator?.id}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/correspondence', correspondence.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

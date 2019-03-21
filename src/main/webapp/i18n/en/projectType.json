@@ -1,0 +1,22 @@
+{
+    "imputationSqliApp": {
+        "projectType": {
+            "home": {
+                "title": "Project Types",
+                "createLabel": "Create a new Project Type",
+                "createOrEditLabel": "Create or edit a Project Type"
+            },
+            "created": "A new Project Type is created with identifier {{ param }}",
+            "updated": "A Project Type is updated with identifier {{ param }}",
+            "deleted": "A Project Type is deleted with identifier {{ param }}",
+            "delete": {
+                "question": "Are you sure you want to delete Project Type {{ id }}?"
+            },
+            "detail": {
+                "title": "Project Type"
+            },
+            "name": "Name",
+            "project": "Project"
+        }
+    }
+}

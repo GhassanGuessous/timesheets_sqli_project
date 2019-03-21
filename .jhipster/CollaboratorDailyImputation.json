@@ -1,0 +1,30 @@
+{
+    "name": "CollaboratorDailyImputation",
+    "fields": [
+        {
+            "fieldName": "day",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "charge",
+            "fieldType": "Integer"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipName": "collaboratorMonthlyImputation",
+            "otherEntityName": "collaboratorMonthlyImputation",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20190321141229",
+    "entityTableName": "collaborator_daily_imputation",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

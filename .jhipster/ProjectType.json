@@ -1,0 +1,26 @@
+{
+    "name": "ProjectType",
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "project",
+            "otherEntityRelationshipName": "projectType",
+            "relationshipName": "project"
+        }
+    ],
+    "changelogDate": "20190321141222",
+    "entityTableName": "project_type",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

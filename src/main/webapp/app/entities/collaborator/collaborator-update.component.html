@@ -1,0 +1,53 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="jhi-collaborator-heading" jhiTranslate="imputationSqliApp.collaborator.home.createOrEditLabel">Create or edit a Collaborator</h2>
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+                <div class="form-group" [hidden]="!collaborator.id">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="collaborator.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.collaborator.firstname" for="field_firstname">Firstname</label>
+                    <input type="text" class="form-control" name="firstname" id="field_firstname"
+                        [(ngModel)]="collaborator.firstname" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.collaborator.lastname" for="field_lastname">Lastname</label>
+                    <input type="text" class="form-control" name="lastname" id="field_lastname"
+                        [(ngModel)]="collaborator.lastname" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.collaborator.email" for="field_email">Email</label>
+                    <input type="text" class="form-control" name="email" id="field_email"
+                        [(ngModel)]="collaborator.email" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.collaborator.team" for="field_team">Team</label>
+                    <select class="form-control" id="field_team" name="team" [(ngModel)]="collaborator.team" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="teamOption.id === collaborator.team?.id ? collaborator.team : teamOption" *ngFor="let teamOption of teams; trackBy: trackTeamById">{{teamOption.id}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.collaborator.activity" for="field_activity">Activity</label>
+                    <select class="form-control" id="field_activity" name="activity" [(ngModel)]="collaborator.activity" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="activityOption.id === collaborator.activity?.id ? collaborator.activity : activityOption" *ngFor="let activityOption of activities; trackBy: trackActivityById">{{activityOption.id}}</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,70 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="imputationSqliApp.imputation.home.title">Imputations</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-imputation" [routerLink]="['/imputation/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="imputationSqliApp.imputation.home.createLabel">
+            Create new Imputation
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="imputations">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="month"><span jhiTranslate="imputationSqliApp.imputation.month">Month</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="year"><span jhiTranslate="imputationSqliApp.imputation.year">Year</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="imputationType.id"><span jhiTranslate="imputationSqliApp.imputation.imputationType">Imputation Type</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let imputation of imputations ;trackBy: trackId">
+                <td><a [routerLink]="['/imputation', imputation.id, 'view' ]">{{imputation.id}}</a></td>
+                <td>{{imputation.month}}</td>
+                <td>{{imputation.year}}</td>
+                <td>
+                    <div *ngIf="imputation.imputationType">
+                        <a [routerLink]="['../imputation-type', imputation.imputationType?.id, 'view' ]" >{{imputation.imputationType?.id}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/imputation', imputation.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/imputation', imputation.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', 'imputation', { outlets: { popup: imputation.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="imputations && imputations.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="totalItems" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

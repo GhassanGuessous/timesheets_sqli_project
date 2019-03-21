@@ -1,0 +1,26 @@
+{
+    "name": "ImputationType",
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "imputation",
+            "otherEntityRelationshipName": "imputationType",
+            "relationshipName": "imputation"
+        }
+    ],
+    "changelogDate": "20190321141227",
+    "entityTableName": "imputation_type",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

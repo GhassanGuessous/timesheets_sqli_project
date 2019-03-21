@@ -1,0 +1,20 @@
+{
+    "imputationSqliApp": {
+        "deliveryCoordinator": {
+            "home": {
+                "title": "DeliveryCoordinators",
+                "createLabel": "Créer un nouveau Delivery Coordinator",
+                "createOrEditLabel": "Créer ou éditer un Delivery Coordinator"
+            },
+            "created": "Un nouveau Delivery Coordinator a été créé avec l'identifiant {{ param }}",
+            "updated": "Le Delivery Coordinator avec l'identifiant {{ param }} a été mis à jour",
+            "deleted": "Le Delivery Coordinator avec l'identifiant {{ param }} a été supprimé",
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Delivery Coordinator {{ id }} ?"
+            },
+            "detail": {
+                "title": "Delivery Coordinator"
+            }
+        }
+    }
+}

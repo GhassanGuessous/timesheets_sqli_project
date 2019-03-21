@@ -1,0 +1,43 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="jhi-collaborator-monthly-imputation-heading" jhiTranslate="imputationSqliApp.collaboratorMonthlyImputation.home.createOrEditLabel">Create or edit a Collaborator Monthly Imputation</h2>
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+                <div class="form-group" [hidden]="!collaboratorMonthlyImputation.id">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="collaboratorMonthlyImputation.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.collaboratorMonthlyImputation.total" for="field_total">Total</label>
+                    <input type="number" class="form-control" name="total" id="field_total"
+                        [(ngModel)]="collaboratorMonthlyImputation.total" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.collaboratorMonthlyImputation.collaborator" for="field_collaborator">Collaborator</label>
+                    <select class="form-control" id="field_collaborator" name="collaborator" [(ngModel)]="collaboratorMonthlyImputation.collaborator" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="collaboratorOption.id === collaboratorMonthlyImputation.collaborator?.id ? collaboratorMonthlyImputation.collaborator : collaboratorOption" *ngFor="let collaboratorOption of collaborators; trackBy: trackCollaboratorById">{{collaboratorOption.id}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.collaboratorMonthlyImputation.imputation" for="field_imputation">Imputation</label>
+                    <select class="form-control" id="field_imputation" name="imputation" [(ngModel)]="collaboratorMonthlyImputation.imputation" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="imputationOption.id === collaboratorMonthlyImputation.imputation?.id ? collaboratorMonthlyImputation.imputation : imputationOption" *ngFor="let imputationOption of imputations; trackBy: trackImputationById">{{imputationOption.id}}</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

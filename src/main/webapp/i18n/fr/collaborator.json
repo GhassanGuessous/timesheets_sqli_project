@@ -1,0 +1,26 @@
+{
+    "imputationSqliApp": {
+        "collaborator": {
+            "home": {
+                "title": "Collaborators",
+                "createLabel": "Créer un nouveau Collaborator",
+                "createOrEditLabel": "Créer ou éditer un Collaborator"
+            },
+            "created": "Un nouveau Collaborator a été créé avec l'identifiant {{ param }}",
+            "updated": "Le Collaborator avec l'identifiant {{ param }} a été mis à jour",
+            "deleted": "Le Collaborator avec l'identifiant {{ param }} a été supprimé",
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Collaborator {{ id }} ?"
+            },
+            "detail": {
+                "title": "Collaborator"
+            },
+            "firstname": "Firstname",
+            "lastname": "Lastname",
+            "email": "Email",
+            "team": "Team",
+            "monthlyImputation": "Monthly Imputation",
+            "activity": "Activity"
+        }
+    }
+}

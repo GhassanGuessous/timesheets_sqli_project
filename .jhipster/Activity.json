@@ -1,0 +1,26 @@
+{
+    "name": "Activity",
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "collaborator",
+            "otherEntityRelationshipName": "activity",
+            "relationshipName": "collaborator"
+        }
+    ],
+    "changelogDate": "20190321141224",
+    "entityTableName": "activity",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}
