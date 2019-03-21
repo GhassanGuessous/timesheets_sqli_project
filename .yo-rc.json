@@ -1,0 +1,38 @@
+{
+    "generator-jhipster": {
+        "promptValues": {
+            "packageName": "com.sqli.imputation",
+            "nativeLanguage": "en"
+        },
+        "jhipsterVersion": "5.8.2",
+        "applicationType": "monolith",
+        "baseName": "ImputationSqli",
+        "packageName": "com.sqli.imputation",
+        "packageFolder": "com/sqli/imputation",
+        "serverPort": "8080",
+        "authenticationType": "jwt",
+        "cacheProvider": "ehcache",
+        "enableHibernateCache": false,
+        "websocket": false,
+        "databaseType": "sql",
+        "devDatabaseType": "mysql",
+        "prodDatabaseType": "mysql",
+        "searchEngine": false,
+        "messageBroker": false,
+        "serviceDiscoveryType": false,
+        "buildTool": "maven",
+        "enableSwaggerCodegen": false,
+        "jwtSecretKey": "ZWEwZWVkOWU2MzU3YzA0YmVhMDM5OTljMWQ5NTg3ZjRhOTQyYjI3NDBhZjE4ZWRiYzlmNzQ5NzhhZDE5NzBiMzg1MmU0ZjllNDlhZDI1YzExMzhiODhlNTc0ODE5Zjc1NTExMzllMmMwMTQ4NTQyOGZjOTcyNjA1ODY1NTNhYTk=",
+        "clientFramework": "angularX",
+        "useSass": false,
+        "clientPackageManager": "npm",
+        "testFrameworks": [],
+        "jhiPrefix": "jhi",
+        "entitySuffix": "",
+        "dtoSuffix": "DTO",
+        "otherModules": [],
+        "enableTranslation": true,
+        "nativeLanguage": "en",
+        "languages": ["en", "fr"]
+    }
+}
