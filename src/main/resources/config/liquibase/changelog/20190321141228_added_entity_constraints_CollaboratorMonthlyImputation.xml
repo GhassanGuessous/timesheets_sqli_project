@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <!--
+        Added the constraints for entity CollaboratorMonthlyImputation.
+    -->
+    <changeSet id="20190321141228-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="collaborator_id"
+                                 baseTableName="monthly_imputation"
+                                 constraintName="fk_monthly_imputation_collaborator_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="collaborator"/>
+
+        <addForeignKeyConstraint baseColumnNames="imputation_id"
+                                 baseTableName="monthly_imputation"
+                                 constraintName="fk_monthly_imputation_imputation_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="imputation"/>
+
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,36 @@
+{
+    "name": "Imputation",
+    "fields": [
+        {
+            "fieldName": "month",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "year",
+            "fieldType": "Integer"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "collaboratorMonthlyImputation",
+            "otherEntityRelationshipName": "imputation",
+            "relationshipName": "monthlyImputation"
+        },
+        {
+            "relationshipName": "imputationType",
+            "otherEntityName": "imputationType",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20190321141226",
+    "entityTableName": "imputation",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

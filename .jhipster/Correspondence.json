@@ -1,0 +1,36 @@
+{
+    "name": "Correspondence",
+    "fields": [
+        {
+            "fieldName": "idAPP",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "idPPMC",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "idTBP",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "otherEntityName": "collaborator",
+            "otherEntityRelationshipName": "correspondence",
+            "relationshipName": "collaborator",
+            "otherEntityField": "id",
+            "ownerSide": true
+        }
+    ],
+    "changelogDate": "20190321141225",
+    "entityTableName": "correspondence",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

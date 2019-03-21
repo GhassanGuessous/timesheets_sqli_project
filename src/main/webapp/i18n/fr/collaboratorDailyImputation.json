@@ -1,0 +1,23 @@
+{
+    "imputationSqliApp": {
+        "collaboratorDailyImputation": {
+            "home": {
+                "title": "CollaboratorDailyImputations",
+                "createLabel": "Créer un nouveau Collaborator Daily Imputation",
+                "createOrEditLabel": "Créer ou éditer un Collaborator Daily Imputation"
+            },
+            "created": "Un nouveau Collaborator Daily Imputation a été créé avec l'identifiant {{ param }}",
+            "updated": "Le Collaborator Daily Imputation avec l'identifiant {{ param }} a été mis à jour",
+            "deleted": "Le Collaborator Daily Imputation avec l'identifiant {{ param }} a été supprimé",
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Collaborator Daily Imputation {{ id }} ?"
+            },
+            "detail": {
+                "title": "Collaborator Daily Imputation"
+            },
+            "day": "Day",
+            "charge": "Charge",
+            "collaboratorMonthlyImputation": "Collaborator Monthly Imputation"
+        }
+    }
+}

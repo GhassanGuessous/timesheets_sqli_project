@@ -1,0 +1,38 @@
+{
+    "name": "CollaboratorMonthlyImputation",
+    "fields": [
+        {
+            "fieldName": "total",
+            "fieldType": "Integer"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipName": "collaborator",
+            "otherEntityName": "collaborator",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipName": "imputation",
+            "otherEntityName": "imputation",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "collaboratorDailyImputation",
+            "otherEntityRelationshipName": "collaboratorMonthlyImputation",
+            "relationshipName": "dailyImputation"
+        }
+    ],
+    "changelogDate": "20190321141228",
+    "entityTableName": "collaborator_monthly_imputation",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

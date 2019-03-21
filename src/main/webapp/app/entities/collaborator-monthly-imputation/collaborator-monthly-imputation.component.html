@@ -1,0 +1,74 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="imputationSqliApp.collaboratorMonthlyImputation.home.title">Collaborator Monthly Imputations</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-collaborator-monthly-imputation" [routerLink]="['/collaborator-monthly-imputation/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="imputationSqliApp.collaboratorMonthlyImputation.home.createLabel">
+            Create new Collaborator Monthly Imputation
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="collaboratorMonthlyImputations">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="total"><span jhiTranslate="imputationSqliApp.collaboratorMonthlyImputation.total">Total</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="collaborator.id"><span jhiTranslate="imputationSqliApp.collaboratorMonthlyImputation.collaborator">Collaborator</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="imputation.id"><span jhiTranslate="imputationSqliApp.collaboratorMonthlyImputation.imputation">Imputation</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let collaboratorMonthlyImputation of collaboratorMonthlyImputations ;trackBy: trackId">
+                <td><a [routerLink]="['/collaborator-monthly-imputation', collaboratorMonthlyImputation.id, 'view' ]">{{collaboratorMonthlyImputation.id}}</a></td>
+                <td>{{collaboratorMonthlyImputation.total}}</td>
+                <td>
+                    <div *ngIf="collaboratorMonthlyImputation.collaborator">
+                        <a [routerLink]="['../collaborator', collaboratorMonthlyImputation.collaborator?.id, 'view' ]" >{{collaboratorMonthlyImputation.collaborator?.id}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="collaboratorMonthlyImputation.imputation">
+                        <a [routerLink]="['../imputation', collaboratorMonthlyImputation.imputation?.id, 'view' ]" >{{collaboratorMonthlyImputation.imputation?.id}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/collaborator-monthly-imputation', collaboratorMonthlyImputation.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/collaborator-monthly-imputation', collaboratorMonthlyImputation.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', 'collaborator-monthly-imputation', { outlets: { popup: collaboratorMonthlyImputation.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="collaboratorMonthlyImputations && collaboratorMonthlyImputations.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="totalItems" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

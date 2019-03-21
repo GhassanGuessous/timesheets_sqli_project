@@ -7,6 +7,18 @@
             "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
             "entities": {
                 "main": "Entities",
+                "deliveryCoordinator": "Delivery Coordinator",
+                "administrator": "Administrator",
+                "team": "Team",
+                "project": "Project",
+                "projectType": "Project Type",
+                "collaborator": "Collaborator",
+                "activity": "Activity",
+                "correspondence": "Correspondence",
+                "imputation": "Imputation",
+                "imputationType": "Imputation Type",
+                "collaboratorMonthlyImputation": "Collaborator Monthly Imputation",
+                "collaboratorDailyImputation": "Collaborator Daily Imputation",
                 "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
             },
             "account": {

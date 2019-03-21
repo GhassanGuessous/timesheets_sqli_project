@@ -1,0 +1,24 @@
+{
+    "imputationSqliApp": {
+        "collaboratorMonthlyImputation": {
+            "home": {
+                "title": "CollaboratorMonthlyImputations",
+                "createLabel": "Créer un nouveau Collaborator Monthly Imputation",
+                "createOrEditLabel": "Créer ou éditer un Collaborator Monthly Imputation"
+            },
+            "created": "Un nouveau Collaborator Monthly Imputation a été créé avec l'identifiant {{ param }}",
+            "updated": "Le Collaborator Monthly Imputation avec l'identifiant {{ param }} a été mis à jour",
+            "deleted": "Le Collaborator Monthly Imputation avec l'identifiant {{ param }} a été supprimé",
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Collaborator Monthly Imputation {{ id }} ?"
+            },
+            "detail": {
+                "title": "Collaborator Monthly Imputation"
+            },
+            "total": "Total",
+            "collaborator": "Collaborator",
+            "imputation": "Imputation",
+            "dailyImputation": "Daily Imputation"
+        }
+    }
+}

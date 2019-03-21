@@ -1,0 +1,24 @@
+{
+    "imputationSqliApp": {
+        "correspondence": {
+            "home": {
+                "title": "Correspondences",
+                "createLabel": "Créer un nouveau Correspondence",
+                "createOrEditLabel": "Créer ou éditer un Correspondence"
+            },
+            "created": "Un nouveau Correspondence a été créé avec l'identifiant {{ param }}",
+            "updated": "Le Correspondence avec l'identifiant {{ param }} a été mis à jour",
+            "deleted": "Le Correspondence avec l'identifiant {{ param }} a été supprimé",
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Correspondence {{ id }} ?"
+            },
+            "detail": {
+                "title": "Correspondence"
+            },
+            "idAPP": "Id APP",
+            "idPPMC": "Id PPMC",
+            "idTBP": "Id TBP",
+            "collaborator": "Collaborator"
+        }
+    }
+}
