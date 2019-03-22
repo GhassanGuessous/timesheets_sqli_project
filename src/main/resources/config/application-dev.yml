@@ -62,10 +62,19 @@ spring:
     liquibase:
         contexts: dev
     mail:
-        host: localhost
-        port: 25
-        username:
-        password:
+        default-encoding: UTF-8
+        host: smtp.gmail.com
+        port: 587
+        username: ghassanguessous1@gmail.com
+        password: 
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+        protocol: smtp
+        test-connection: false
     messages:
         cache-duration: PT1S # 1 second, see the ISO 8601 standard
     thymeleaf:
