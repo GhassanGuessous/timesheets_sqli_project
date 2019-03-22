@@ -8,11 +8,13 @@ import com.sqli.imputation.repository.UserRepository;
 import com.sqli.imputation.security.AuthoritiesConstants;
 import com.sqli.imputation.security.SecurityUtils;
 import com.sqli.imputation.service.dto.UserDTO;
+import com.sqli.imputation.service.impl.UserFactory;
 import com.sqli.imputation.service.util.RandomUtil;
 import com.sqli.imputation.web.rest.errors.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,11 +45,15 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
+    @Autowired
+    private UserFactory userFactory;
+
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -134,7 +140,7 @@ public class UserService {
     }
 
     public User createUser(UserDTO userDTO) {
-        User user = new User();
+        User user = userFactory.instantiateUser(userDTO.getAuthorities());
         user.setLogin(userDTO.getLogin().toLowerCase());
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
