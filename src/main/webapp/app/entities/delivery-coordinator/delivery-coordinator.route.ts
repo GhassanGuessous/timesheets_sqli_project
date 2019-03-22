@@ -33,7 +33,7 @@ export const deliveryCoordinatorRoute: Routes = [
         path: '',
         component: DeliveryCoordinatorComponent,
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.deliveryCoordinator.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -45,7 +45,7 @@ export const deliveryCoordinatorRoute: Routes = [
             deliveryCoordinator: DeliveryCoordinatorResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.deliveryCoordinator.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -57,7 +57,7 @@ export const deliveryCoordinatorRoute: Routes = [
             deliveryCoordinator: DeliveryCoordinatorResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.deliveryCoordinator.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -69,7 +69,7 @@ export const deliveryCoordinatorRoute: Routes = [
             deliveryCoordinator: DeliveryCoordinatorResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.deliveryCoordinator.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -84,7 +84,7 @@ export const deliveryCoordinatorPopupRoute: Routes = [
             deliveryCoordinator: DeliveryCoordinatorResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.deliveryCoordinator.home.title'
         },
         canActivate: [UserRouteAccessService],

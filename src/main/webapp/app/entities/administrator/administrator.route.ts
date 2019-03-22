@@ -33,7 +33,7 @@ export const administratorRoute: Routes = [
         path: '',
         component: AdministratorComponent,
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.administrator.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -45,7 +45,7 @@ export const administratorRoute: Routes = [
             administrator: AdministratorResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.administrator.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -57,7 +57,7 @@ export const administratorRoute: Routes = [
             administrator: AdministratorResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.administrator.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -69,7 +69,7 @@ export const administratorRoute: Routes = [
             administrator: AdministratorResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.administrator.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -84,7 +84,7 @@ export const administratorPopupRoute: Routes = [
             administrator: AdministratorResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.administrator.home.title'
         },
         canActivate: [UserRouteAccessService],

@@ -37,7 +37,7 @@ export const projectRoute: Routes = [
             pagingParams: JhiResolvePagingParams
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             defaultSort: 'id,asc',
             pageTitle: 'imputationSqliApp.project.home.title'
         },
@@ -50,7 +50,7 @@ export const projectRoute: Routes = [
             project: ProjectResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.project.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -62,7 +62,7 @@ export const projectRoute: Routes = [
             project: ProjectResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.project.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const projectRoute: Routes = [
             project: ProjectResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.project.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const projectPopupRoute: Routes = [
             project: ProjectResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.project.home.title'
         },
         canActivate: [UserRouteAccessService],

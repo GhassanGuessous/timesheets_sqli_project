@@ -37,7 +37,7 @@ export const collaboratorRoute: Routes = [
             pagingParams: JhiResolvePagingParams
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             defaultSort: 'id,asc',
             pageTitle: 'imputationSqliApp.collaborator.home.title'
         },
@@ -50,7 +50,7 @@ export const collaboratorRoute: Routes = [
             collaborator: CollaboratorResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.collaborator.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -62,7 +62,7 @@ export const collaboratorRoute: Routes = [
             collaborator: CollaboratorResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.collaborator.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const collaboratorRoute: Routes = [
             collaborator: CollaboratorResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.collaborator.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const collaboratorPopupRoute: Routes = [
             collaborator: CollaboratorResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.collaborator.home.title'
         },
         canActivate: [UserRouteAccessService],

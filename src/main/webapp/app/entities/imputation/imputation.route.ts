@@ -37,7 +37,7 @@ export const imputationRoute: Routes = [
             pagingParams: JhiResolvePagingParams
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             defaultSort: 'id,asc',
             pageTitle: 'imputationSqliApp.imputation.home.title'
         },
@@ -50,7 +50,7 @@ export const imputationRoute: Routes = [
             imputation: ImputationResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.imputation.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -62,7 +62,7 @@ export const imputationRoute: Routes = [
             imputation: ImputationResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.imputation.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const imputationRoute: Routes = [
             imputation: ImputationResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.imputation.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const imputationPopupRoute: Routes = [
             imputation: ImputationResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.imputation.home.title'
         },
         canActivate: [UserRouteAccessService],

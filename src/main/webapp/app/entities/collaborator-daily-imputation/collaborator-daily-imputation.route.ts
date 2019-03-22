@@ -37,7 +37,7 @@ export const collaboratorDailyImputationRoute: Routes = [
             pagingParams: JhiResolvePagingParams
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             defaultSort: 'id,asc',
             pageTitle: 'imputationSqliApp.collaboratorDailyImputation.home.title'
         },
@@ -50,7 +50,7 @@ export const collaboratorDailyImputationRoute: Routes = [
             collaboratorDailyImputation: CollaboratorDailyImputationResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.collaboratorDailyImputation.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -62,7 +62,7 @@ export const collaboratorDailyImputationRoute: Routes = [
             collaboratorDailyImputation: CollaboratorDailyImputationResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.collaboratorDailyImputation.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const collaboratorDailyImputationRoute: Routes = [
             collaboratorDailyImputation: CollaboratorDailyImputationResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.collaboratorDailyImputation.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const collaboratorDailyImputationPopupRoute: Routes = [
             collaboratorDailyImputation: CollaboratorDailyImputationResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.collaboratorDailyImputation.home.title'
         },
         canActivate: [UserRouteAccessService],

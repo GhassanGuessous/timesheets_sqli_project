@@ -37,7 +37,7 @@ export const collaboratorMonthlyImputationRoute: Routes = [
             pagingParams: JhiResolvePagingParams
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             defaultSort: 'id,asc',
             pageTitle: 'imputationSqliApp.collaboratorMonthlyImputation.home.title'
         },
@@ -50,7 +50,7 @@ export const collaboratorMonthlyImputationRoute: Routes = [
             collaboratorMonthlyImputation: CollaboratorMonthlyImputationResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.collaboratorMonthlyImputation.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -62,7 +62,7 @@ export const collaboratorMonthlyImputationRoute: Routes = [
             collaboratorMonthlyImputation: CollaboratorMonthlyImputationResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.collaboratorMonthlyImputation.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const collaboratorMonthlyImputationRoute: Routes = [
             collaboratorMonthlyImputation: CollaboratorMonthlyImputationResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.collaboratorMonthlyImputation.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const collaboratorMonthlyImputationPopupRoute: Routes = [
             collaboratorMonthlyImputation: CollaboratorMonthlyImputationResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'imputationSqliApp.collaboratorMonthlyImputation.home.title'
         },
         canActivate: [UserRouteAccessService],
