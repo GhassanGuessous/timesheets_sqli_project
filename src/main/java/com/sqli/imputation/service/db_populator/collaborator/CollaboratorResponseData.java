@@ -2,19 +2,20 @@ package com.sqli.imputation.service.db_populator.collaborator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sqli.imputation.service.dto.ActivityDTO;
+import com.sqli.imputation.service.dto.CollaboratorDTO;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CollaboratorResponseData {
 
-    private List<ActivityDTO> collaborateurs;
+    private List<CollaboratorDTO> collaborateurs;
 
-    public List<ActivityDTO> getCollaborateurs() {
+    public List<CollaboratorDTO> getCollaborateurs() {
         return collaborateurs;
     }
 
-    public void setCollaborateurs(List<ActivityDTO> collaborateurs) {
+    public void setCollaborateurs(List<CollaboratorDTO> collaborateurs) {
         this.collaborateurs = collaborateurs;
     }
 
