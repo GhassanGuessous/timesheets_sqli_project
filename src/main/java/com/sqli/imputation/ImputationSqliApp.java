@@ -1,18 +1,27 @@
 package com.sqli.imputation;
 
+import com.google.gson.Gson;
 import com.sqli.imputation.config.ApplicationProperties;
 import com.sqli.imputation.config.DefaultProfileUtil;
 
+import com.sqli.imputation.service.db_populator.activity.ActivityRestResponse;
 import io.github.jhipster.config.JHipsterConstants;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
@@ -95,4 +104,26 @@ public class ImputationSqliApp {
             contextPath,
             env.getActiveProfiles());
     }
+
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder.build();
+    }
+
+    @Bean
+    public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
+        return args -> {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            headers.add("Authorization", "Basic Kraouine/*TBP*/Ironm@n2019");
+
+            HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
+
+            ResponseEntity<ActivityRestResponse> activityRestResponse = restTemplate.exchange("http://tbp-maroc.sqli.com/restService/public/activites.json", HttpMethod.GET, entity, ActivityRestResponse.class);
+            Gson g = new Gson();
+            System.out.println( g.toJson(activityRestResponse.getBody().getData()));
+
+        };
+    }
+
 }
