@@ -12,6 +12,9 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
 
     public static final String SQLI_COM = "@sqli.com";
     public static final String SQLI_DEFAULT_EMAIL = "sqli";
+    public static final String SPACE = " ";
+    public static final boolean EMAIL_DUPLICATED = true;
+    public static final boolean EMAIL_NOT_DUPLICATED = false;
 
     @Autowired
     private CollaboratorService collaboratorService;
@@ -19,7 +22,12 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
     @Override
     public Collaborator populateDatabase(CollaboratorDTO collaboratorDTO) {
         Collaborator collaborator = clone(collaboratorDTO);
-        collaborator = collaboratorService.save(collaborator);
+        try {
+            collaborator = collaboratorService.save(collaborator);
+        } catch (Exception e) {
+            collaborator.setEmail(generateEmail(collaboratorDTO.getPrenom(), collaboratorDTO.getNom(), EMAIL_DUPLICATED));
+            collaborator = collaboratorService.save(collaborator);
+        }
         return collaborator;
     }
 
@@ -27,22 +35,30 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
         Collaborator collaborator = new Collaborator();
         collaborator.setFirstname(collaboratorDTO.getPrenom());
         collaborator.setLastname(collaboratorDTO.getNom());
-        collaborator.setEmail(generateEmail(collaboratorDTO.getPrenom(), collaboratorDTO.getNom()));
+        collaborator.setEmail(generateEmail(collaboratorDTO.getPrenom(), collaboratorDTO.getNom(), EMAIL_NOT_DUPLICATED));
         return collaborator;
     }
 
-    private String generateEmail(String fisrtname, String lastname){
+    private String generateEmail(String firstname, String lastname, boolean isEmailDuplicated) {
         StringBuilder email = new StringBuilder();
-        email.append(getFirstLetter(fisrtname.toLowerCase()));
-        email.append(lastname.toLowerCase().trim());
+        if (isEmailDuplicated) email.append(getFirstTwoLetters(firstname.toLowerCase()));
+        else email.append(getFirstLetter(firstname.toLowerCase()));
+        email.append(lastname.toLowerCase().replaceAll(SPACE, ""));
         email.append(SQLI_COM);
         return email.toString();
     }
 
-    private String getFirstLetter(String fisrtname) {
-        if(fisrtname.isEmpty())
+    private String getFirstLetter(String firstname) {
+        if (firstname.isEmpty())
             return SQLI_DEFAULT_EMAIL;
-        return String.valueOf(fisrtname.charAt(0));
+        return String.valueOf(firstname.charAt(0));
+    }
+
+    private String getFirstTwoLetters(String firstname) {
+        if (firstname.isEmpty())
+            return SQLI_DEFAULT_EMAIL;
+        return firstname.substring(0, 2);
+
     }
 
 

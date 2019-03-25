@@ -118,10 +118,7 @@ public class ImputationSqliApp {
     @Bean
     public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
         return args -> {
-
             defaultDbPopulator.populate(restTemplate);
-//            Gson g = new Gson();
-//            System.out.println( g.toJson(collaboratorRestResponse.getBody().getData()));
         };
     }
 
