@@ -2,6 +2,7 @@ package com.sqli.imputation.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 
@@ -26,6 +27,9 @@ public class Team implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "agresso")
+    private String agresso;
+
     @OneToOne
     @JoinColumn(unique = true)
     private DeliveryCoordinator deliveryCoordinator;
@@ -35,6 +39,10 @@ public class Team implements Serializable {
     @ManyToMany(mappedBy = "teams")
     @JsonIgnore
     private Set<Project> projects = new HashSet<>();
+
+    @ManyToOne
+    @JsonIgnoreProperties("teams")
+    private ProjectType projectType;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -98,6 +106,22 @@ public class Team implements Serializable {
 
     public Set<Project> getProjects() {
         return projects;
+    }
+
+    public String getAgresso() {
+        return agresso;
+    }
+
+    public void setAgresso(String agresso) {
+        this.agresso = agresso;
+    }
+
+    public ProjectType getProjectType() {
+        return projectType;
+    }
+
+    public void setProjectType(ProjectType projectType) {
+        this.projectType = projectType;
     }
 
     public Team projects(Set<Project> projects) {

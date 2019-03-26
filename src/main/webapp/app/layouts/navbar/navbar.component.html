@@ -64,7 +64,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" routerLink="activity" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">
+                        <a *jhiHasAnyAuthority="'ROLE_ADMIN'" class="dropdown-item" routerLink="activity" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">
                             <fa-icon icon="asterisk" fixedWidth="true"></fa-icon>
                             <span jhiTranslate="global.menu.entities.activity">Activity</span>
                         </a>

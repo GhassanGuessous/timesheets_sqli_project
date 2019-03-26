@@ -22,6 +22,7 @@ public class DefaultTeamPopulatorService implements TeamPopulatorService {
     private Team clone(TeamDTO teamDTO) {
         Team team = new Team();
         team.setName(teamDTO.getLibelle());
+        team.setAgresso(teamDTO.getAgresso());
         return team;
     }
 }
