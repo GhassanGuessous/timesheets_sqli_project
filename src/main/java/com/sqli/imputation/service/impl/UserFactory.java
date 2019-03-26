@@ -11,23 +11,13 @@ import java.util.Set;
 @Service
 public class UserFactory {
 
-    public static final int ONE_AUTHORITY = 1;
-
     public User instantiateUser(Set<String> authorities) {
         if(authorities == null){
             return new User();
-        }else if(hasOneElement(authorities)){
-            String authority = authorities.stream().findFirst().get();
-            if(authority.equals(AuthoritiesConstants.DELCO))
-                return new DeliveryCoordinator();
-            else
-                return new Administrator();
-        }else {
+        }else if(authorities.contains(AuthoritiesConstants.DELCO)){
             return new DeliveryCoordinator();
+        }else {
+            return new Administrator();
         }
-    }
-
-    private boolean hasOneElement(Set<String> authorities){
-        return (authorities.size() == ONE_AUTHORITY) ? true : false;
     }
 }
