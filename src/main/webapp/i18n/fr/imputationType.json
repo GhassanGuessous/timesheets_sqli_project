@@ -2,9 +2,9 @@
     "imputationSqliApp": {
         "imputationType": {
             "home": {
-                "title": "ImputationTypes",
-                "createLabel": "Créer un nouveau Imputation Type",
-                "createOrEditLabel": "Créer ou éditer un Imputation Type"
+                "title": "Types d'imputation",
+                "createLabel": "Créer un nouveau Type d'Imputation",
+                "createOrEditLabel": "Créer ou éditer un Type d'Imputation"
             },
             "created": "Un nouveau Imputation Type a été créé avec l'identifiant {{ param }}",
             "updated": "Le Imputation Type avec l'identifiant {{ param }} a été mis à jour",
@@ -13,9 +13,9 @@
                 "question": "Etes-vous certain de vouloir supprimer le Imputation Type {{ id }} ?"
             },
             "detail": {
-                "title": "Imputation Type"
+                "title": "Type d'imputation"
             },
-            "name": "Name",
+            "name": "Nom",
             "imputation": "Imputation"
         }
     }

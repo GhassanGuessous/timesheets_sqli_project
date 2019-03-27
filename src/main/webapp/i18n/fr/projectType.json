@@ -2,21 +2,21 @@
     "imputationSqliApp": {
         "projectType": {
             "home": {
-                "title": "ProjectTypes",
-                "createLabel": "Créer un nouveau Project Type",
-                "createOrEditLabel": "Créer ou éditer un Project Type"
+                "title": "Types des projets",
+                "createLabel": "Créer un nouveau type du projet",
+                "createOrEditLabel": "Créer ou éditer un type du projet"
             },
             "created": "Un nouveau Project Type a été créé avec l'identifiant {{ param }}",
             "updated": "Le Project Type avec l'identifiant {{ param }} a été mis à jour",
             "deleted": "Le Project Type avec l'identifiant {{ param }} a été supprimé",
             "delete": {
-                "question": "Etes-vous certain de vouloir supprimer le Project Type {{ id }} ?"
+                "question": "Etes-vous certain de vouloir supprimer le Type du projet {{ id }} ?"
             },
             "detail": {
-                "title": "Project Type"
+                "title": "Type du projet"
             },
-            "name": "Name",
-            "project": "Project"
+            "name": "Nom",
+            "project": "Projet"
         }
     }
 }

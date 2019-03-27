@@ -1,12 +1,12 @@
 <div>
     <h2 id="page-heading">
         <span jhiTranslate="imputationSqliApp.imputation.home.title">Imputations</span>
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-imputation" [routerLink]="['/imputation/new']">
-            <fa-icon [icon]="'plus'"></fa-icon>
-            <span  jhiTranslate="imputationSqliApp.imputation.home.createLabel">
-            Create new Imputation
-            </span>
-        </button>
+        <!--<button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-imputation" [routerLink]="['/imputation/new']">-->
+            <!--<fa-icon [icon]="'plus'"></fa-icon>-->
+            <!--<span  jhiTranslate="imputationSqliApp.imputation.home.createLabel">-->
+            <!--Create new Imputation-->
+            <!--</span>-->
+        <!--</button>-->
     </h2>
     <jhi-alert></jhi-alert>
     <br/>
@@ -28,7 +28,7 @@
                 <td>{{imputation.year}}</td>
                 <td>
                     <div *ngIf="imputation.imputationType">
-                        <a [routerLink]="['../imputation-type', imputation.imputationType?.id, 'view' ]" >{{imputation.imputationType?.id}}</a>
+                        <a [routerLink]="['../imputation-type', imputation.imputationType?.id, 'view' ]" >{{imputation.imputationType?.name}}</a>
                     </div>
                 </td>
                 <td class="text-right">

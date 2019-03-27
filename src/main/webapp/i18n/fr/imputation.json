@@ -15,10 +15,10 @@
             "detail": {
                 "title": "Imputation"
             },
-            "month": "Month",
-            "year": "Year",
-            "monthlyImputation": "Monthly Imputation",
-            "imputationType": "Imputation Type"
+            "month": "Mois",
+            "year": "Année",
+            "monthlyImputation": "Imputation monsuelle",
+            "imputationType": "Type d'imputation"
         }
     }
 }

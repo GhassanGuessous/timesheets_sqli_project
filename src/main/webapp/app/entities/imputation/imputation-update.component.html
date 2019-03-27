@@ -24,7 +24,7 @@
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.imputationType" for="field_imputationType">Imputation Type</label>
                     <select class="form-control" id="field_imputationType" name="imputationType" [(ngModel)]="imputation.imputationType" >
                         <option [ngValue]="null"></option>
-                        <option [ngValue]="imputationTypeOption.id === imputation.imputationType?.id ? imputation.imputationType : imputationTypeOption" *ngFor="let imputationTypeOption of imputationtypes; trackBy: trackImputationTypeById">{{imputationTypeOption.id}}</option>
+                        <option [ngValue]="imputationTypeOption.id === imputation.imputationType?.id ? imputation.imputationType : imputationTypeOption" *ngFor="let imputationTypeOption of imputationtypes; trackBy: trackImputationTypeById">{{imputationTypeOption.name}}</option>
                     </select>
                 </div>
             </div>

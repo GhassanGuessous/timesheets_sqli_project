@@ -1,9 +1,10 @@
 <div>
     <h2 id="page-heading">
         <span jhiTranslate="imputationSqliApp.team.home.title">Teams</span>
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-team" [routerLink]="['/team/new']">
+        <button *jhiHasAnyAuthority="'ROLE_ADMIN'" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-team"
+                [routerLink]="['/team/new']">
             <fa-icon [icon]="'plus'"></fa-icon>
-            <span  jhiTranslate="imputationSqliApp.team.home.createLabel">
+            <span jhiTranslate="imputationSqliApp.team.home.createLabel">
             Create new Team
             </span>
         </button>
@@ -14,12 +15,22 @@
         <table class="table table-striped">
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="name"><span jhiTranslate="imputationSqliApp.team.name">Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="name"><span jhiTranslate="imputationSqliApp.team.agresso">Agresso</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="name"><span jhiTranslate="imputationSqliApp.team.projectType">Project Type</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="deliveryCoordinator.id"><span jhiTranslate="imputationSqliApp.team.deliveryCoordinator">Delivery Coordinator</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th></th>
+                <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
+                    <fa-icon [icon]="'sort'"></fa-icon>
+                </th>
+                <th jhiSortBy="name"><span jhiTranslate="imputationSqliApp.team.name">Name</span>
+                    <fa-icon [icon]="'sort'"></fa-icon>
+                </th>
+                <th jhiSortBy="name"><span jhiTranslate="imputationSqliApp.team.agresso">Agresso</span>
+                    <fa-icon [icon]="'sort'"></fa-icon>
+                </th>
+                <th jhiSortBy="name"><span jhiTranslate="imputationSqliApp.team.projectType">Project Type</span>
+                    <fa-icon [icon]="'sort'"></fa-icon>
+                </th>
+                <th jhiSortBy="deliveryCoordinator.id"><span jhiTranslate="imputationSqliApp.team.deliveryCoordinator">Delivery Coordinator</span>
+                    <fa-icon [icon]="'sort'"></fa-icon>
+                </th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -27,10 +38,15 @@
                 <td><a [routerLink]="['/team', team.id, 'view' ]">{{team.id}}</a></td>
                 <td>{{team.name}}</td>
                 <td>{{team.agresso}}</td>
-                <td>{{team.projectType.name}}</td>
+                <td>
+                    <div *ngIf="team.projectType">
+                        <a [routerLink]="['../project-type', team.projectType?.id, 'view' ]">{{team.projectType?.name}}</a>
+                    </div>
+                </td>
                 <td>
                     <div *ngIf="team.deliveryCoordinator">
-                        <a [routerLink]="['../delivery-coordinator', team.deliveryCoordinator?.id, 'view' ]" >{{team.deliveryCoordinator?.id}}</a>
+                        <!--<a [routerLink]="['/admin/user-management', team.deliveryCoordinator?.login, 'view' ]">{{team.deliveryCoordinator?.firstName}} {{team.deliveryCoordinator?.lastName}}</a>-->
+                        <a routerLink="/admin/user-management/{{team.deliveryCoordinator?.login}}/view">{{team.deliveryCoordinator?.firstName}} {{team.deliveryCoordinator?.lastName}}</a>
                     </div>
                 </td>
                 <td class="text-right">
@@ -63,10 +79,12 @@
     </div>
     <div *ngIf="teams && teams.length">
         <div class="row justify-content-center">
-            <jhi-item-count [page]="page" [total]="totalItems" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+            <jhi-item-count [page]="page" [total]="totalItems" [maxSize]="5"
+                            [itemsPerPage]="itemsPerPage"></jhi-item-count>
         </div>
         <div class="row justify-content-center">
-            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5"
+                            [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
         </div>
     </div>
 </div>

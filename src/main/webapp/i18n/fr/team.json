@@ -2,25 +2,25 @@
     "imputationSqliApp": {
         "team": {
             "home": {
-                "title": "Teams",
-                "createLabel": "Créer un nouveau Team",
-                "createOrEditLabel": "Créer ou éditer un Team"
+                "title": "Équipes",
+                "createLabel": "Créer une nouvelle équipe",
+                "createOrEditLabel": "Créer ou éditer une équipe"
             },
-            "created": "Un nouveau Team a été créé avec l'identifiant {{ param }}",
-            "updated": "Le Team avec l'identifiant {{ param }} a été mis à jour",
-            "deleted": "Le Team avec l'identifiant {{ param }} a été supprimé",
+            "created": "Une nouvelle équipe a été créé avec l'identifiant {{ param }}",
+            "updated": "L'équipe avec l'identifiant {{ param }} a été mis à jour",
+            "deleted": "L'équipe avec l'identifiant {{ param }} a été supprimé",
             "delete": {
-                "question": "Etes-vous certain de vouloir supprimer le Team {{ id }} ?"
+                "question": "Etes-vous certain de vouloir supprimer l'équipe {{ id }} ?"
             },
             "detail": {
-                "title": "Team"
+                "title": "Équipe"
             },
-            "name": "Name",
+            "name": "Nom",
             "agresso": "Agresso",
             "projectType": "Type du projet",
             "deliveryCoordinator": "Delivery Coordinator",
-            "collaborator": "Collaborator",
-            "project": "Project"
+            "collaborator": "Collaborateurr",
+            "project": "Projet"
         }
     }
 }
