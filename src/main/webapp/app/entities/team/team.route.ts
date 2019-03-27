@@ -37,7 +37,7 @@ export const teamRoute: Routes = [
             pagingParams: JhiResolvePagingParams
         },
         data: {
-            authorities: ['ROLE_ADMIN'],
+            authorities: ['ROLE_ADMIN', 'ROLE_DELCO'],
             defaultSort: 'id,asc',
             pageTitle: 'imputationSqliApp.team.home.title'
         },
@@ -50,7 +50,7 @@ export const teamRoute: Routes = [
             team: TeamResolve
         },
         data: {
-            authorities: ['ROLE_ADMIN'],
+            authorities: ['ROLE_ADMIN', 'ROLE_DELCO'],
             pageTitle: 'imputationSqliApp.team.home.title'
         },
         canActivate: [UserRouteAccessService]

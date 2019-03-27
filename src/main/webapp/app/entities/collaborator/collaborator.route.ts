@@ -37,7 +37,7 @@ export const collaboratorRoute: Routes = [
             pagingParams: JhiResolvePagingParams
         },
         data: {
-            authorities: ['ROLE_ADMIN'],
+            authorities: ['ROLE_ADMIN', 'ROLE_DELCO'],
             defaultSort: 'id,asc',
             pageTitle: 'imputationSqliApp.collaborator.home.title'
         },
@@ -50,7 +50,7 @@ export const collaboratorRoute: Routes = [
             collaborator: CollaboratorResolve
         },
         data: {
-            authorities: ['ROLE_ADMIN'],
+            authorities: ['ROLE_ADMIN', 'ROLE_DELCO'],
             pageTitle: 'imputationSqliApp.collaborator.home.title'
         },
         canActivate: [UserRouteAccessService]

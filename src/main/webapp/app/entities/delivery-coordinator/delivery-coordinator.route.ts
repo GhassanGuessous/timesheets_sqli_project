@@ -33,7 +33,7 @@ export const deliveryCoordinatorRoute: Routes = [
         path: '',
         component: DeliveryCoordinatorComponent,
         data: {
-            authorities: ['ROLE_ADMIN'],
+            authorities: ['ROLE_ADMIN', 'ROLE_DELCO'],
             pageTitle: 'imputationSqliApp.deliveryCoordinator.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -45,7 +45,7 @@ export const deliveryCoordinatorRoute: Routes = [
             deliveryCoordinator: DeliveryCoordinatorResolve
         },
         data: {
-            authorities: ['ROLE_ADMIN'],
+            authorities: ['ROLE_ADMIN', 'ROLE_DELCO'],
             pageTitle: 'imputationSqliApp.deliveryCoordinator.home.title'
         },
         canActivate: [UserRouteAccessService]

@@ -16,6 +16,8 @@
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
             <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="name"><span jhiTranslate="imputationSqliApp.team.name">Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="name"><span jhiTranslate="imputationSqliApp.team.agresso">Agresso</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="name"><span jhiTranslate="imputationSqliApp.team.projectType">Project Type</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="deliveryCoordinator.id"><span jhiTranslate="imputationSqliApp.team.deliveryCoordinator">Delivery Coordinator</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
@@ -24,6 +26,8 @@
             <tr *ngFor="let team of teams ;trackBy: trackId">
                 <td><a [routerLink]="['/team', team.id, 'view' ]">{{team.id}}</a></td>
                 <td>{{team.name}}</td>
+                <td>{{team.agresso}}</td>
+                <td>{{team.projectType.name}}</td>
                 <td>
                     <div *ngIf="team.deliveryCoordinator">
                         <a [routerLink]="['../delivery-coordinator', team.deliveryCoordinator?.id, 'view' ]" >{{team.deliveryCoordinator?.id}}</a>
