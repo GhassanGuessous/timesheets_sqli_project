@@ -7,6 +7,7 @@ import com.sqli.imputation.service.db_populator.Team.TeamRestResponse;
 import com.sqli.imputation.service.db_populator.activity.ActivityRestResponse;
 import com.sqli.imputation.service.db_populator.collaborator.CollaboratorRestResponse;
 import com.sqli.imputation.service.db_populator.projectType.ProjectTypeRestResponse;
+import com.sqli.imputation.service.dto.ProjectTypeDTO;
 import com.sqli.imputation.web.rest.errors.TBPBadAuthentificationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -14,6 +15,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 public class DefaultDbPopulator implements DbPopulator {
@@ -46,10 +49,10 @@ public class DefaultDbPopulator implements DbPopulator {
 
     @Override
     public void populate(RestTemplate restTemplate) {
-        if(isDbEmpty()){
+       // if(isDbEmpty()){
             hitTbpWebService(restTemplate);
             persist();
-        }
+      //  }
     }
 
     /**
@@ -63,19 +66,19 @@ public class DefaultDbPopulator implements DbPopulator {
 
     private void hitTbpWebService(RestTemplate restTemplate) {
         try {
-            getActivities(restTemplate);
-            getCollaborators(restTemplate);
-            getProjectTypes(restTemplate);
-            getTeams(restTemplate);
+            setActivities(restTemplate);
+            setCollaborators(restTemplate);
+            setProjectTypes(restTemplate);
+            setTeams(restTemplate);
         }catch (Exception e){
             throw new TBPBadAuthentificationException("Bad TBP Credentials");
         }
     }
 
     private void persist() {
-        persistActivities();
-        persistCollaborators();
-        persistProjectTypes();
+     //   persistActivities();
+       // persistCollaborators();
+      //  persistProjectTypes();
         persistTeams();
     }
 
@@ -88,22 +91,22 @@ public class DefaultDbPopulator implements DbPopulator {
         return entity;
     }
 
-    private void getTeams(RestTemplate restTemplate) {
+    private void setTeams(RestTemplate restTemplate) {
         teamRestResponseResponse = restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + PROJETS_URL + Constants.JSON_RESULT_FORMAT,
             HttpMethod.GET, getTbpHttpHeaders(), TeamRestResponse.class);
     }
 
-    private void getProjectTypes(RestTemplate restTemplate) {
+    private void setProjectTypes(RestTemplate restTemplate) {
         projectTypeRestResponse = restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + PROJETS_TYPES_URL + Constants.JSON_RESULT_FORMAT,
             HttpMethod.GET, getTbpHttpHeaders(), ProjectTypeRestResponse.class);
     }
 
-    private void getCollaborators(RestTemplate restTemplate) {
+    private void setCollaborators(RestTemplate restTemplate) {
         collaboratorRestResponse = restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + COLLABORATEURS_URL + Constants.JSON_RESULT_FORMAT,
             HttpMethod.GET, getTbpHttpHeaders(), CollaboratorRestResponse.class);
     }
 
-    private void getActivities(RestTemplate restTemplate) {
+    private void setActivities(RestTemplate restTemplate) {
         activityRestResponse = restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + ACTIVITES_URL + Constants.JSON_RESULT_FORMAT,
             HttpMethod.GET, getTbpHttpHeaders(), ActivityRestResponse.class);
     }
@@ -130,5 +133,8 @@ public class DefaultDbPopulator implements DbPopulator {
         activityRestResponse.getBody().getData().getActivites().forEach(activityDTO -> {
             activityPopulatorService.populateDatabase(activityDTO);
         });
+    }
+    public List<ProjectTypeDTO> getProjectTypes(){
+        return projectTypeRestResponse.getBody().getData().getTypes();
     }
 }
