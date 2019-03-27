@@ -20,7 +20,7 @@
                 <dt><span jhiTranslate="imputationSqliApp.correspondence.collaborator">Collaborator</span></dt>
                 <dd>
                     <div *ngIf="correspondence.collaborator">
-                        <a [routerLink]="['/collaborator', correspondence.collaborator?.id, 'view']">{{correspondence.collaborator?.id}}</a>
+                        <a [routerLink]="['/collaborator', correspondence.collaborator?.id, 'view']">{{correspondence.collaborator?.firstname + ' ' + correspondence.collaborator?.lastname }}</a>
                     </div>
                 </dd>
             </dl>
@@ -31,7 +31,7 @@
                 <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
             </button>
 
-            <button type="button"
+            <button *jhiHasAnyAuthority="'ROLE_ADMIN'" type="button"
                     [routerLink]="['/correspondence', correspondence.id, 'edit']"
                     class="btn btn-primary">
                 <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>

@@ -1,7 +1,8 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
-            <h2 id="jhi-collaborator-heading" jhiTranslate="imputationSqliApp.collaborator.home.createOrEditLabel">Create or edit a Collaborator</h2>
+            <h2 *ngIf="collaborator.id" id="jhi-collaborator-heading" jhiTranslate="imputationSqliApp.collaborator.home.createOrEditLabel">Create or edit a Collaborator</h2>
+            <h2 *ngIf="!collaborator.id" id="jhi-collaborator-heading" jhiTranslate="imputationSqliApp.collaborator.home.createLabel">Create or edit a Collaborator</h2>
             <div>
                 <jhi-alert-error></jhi-alert-error>
                 <div class="form-group" [hidden]="!collaborator.id">
@@ -29,14 +30,14 @@
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.collaborator.team" for="field_team">Team</label>
                     <select class="form-control" id="field_team" name="team" [(ngModel)]="collaborator.team" >
                         <option [ngValue]="null"></option>
-                        <option [ngValue]="teamOption.id === collaborator.team?.id ? collaborator.team : teamOption" *ngFor="let teamOption of teams; trackBy: trackTeamById">{{teamOption.id}}</option>
+                        <option [ngValue]="teamOption.id === collaborator.team?.id ? collaborator.team : teamOption" *ngFor="let teamOption of teams; trackBy: trackTeamById">{{teamOption.name}}</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.collaborator.activity" for="field_activity">Activity</label>
                     <select class="form-control" id="field_activity" name="activity" [(ngModel)]="collaborator.activity" >
                         <option [ngValue]="null"></option>
-                        <option [ngValue]="activityOption.id === collaborator.activity?.id ? collaborator.activity : activityOption" *ngFor="let activityOption of activities; trackBy: trackActivityById">{{activityOption.id}}</option>
+                        <option [ngValue]="activityOption.id === collaborator.activity?.id ? collaborator.activity : activityOption" *ngFor="let activityOption of activities; trackBy: trackActivityById">{{activityOption.name}}</option>
                     </select>
                 </div>
             </div>

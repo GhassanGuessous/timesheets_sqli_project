@@ -20,13 +20,13 @@
                 <dt><span jhiTranslate="imputationSqliApp.collaborator.team">Team</span></dt>
                 <dd>
                     <div *ngIf="collaborator.team">
-                        <a [routerLink]="['/team', collaborator.team?.id, 'view']">{{collaborator.team?.id}}</a>
+                        <a [routerLink]="['/team', collaborator.team?.id, 'view']">{{collaborator.team?.name}}</a>
                     </div>
                 </dd>
                 <dt><span jhiTranslate="imputationSqliApp.collaborator.activity">Activity</span></dt>
                 <dd>
                     <div *ngIf="collaborator.activity">
-                        <a [routerLink]="['/activity', collaborator.activity?.id, 'view']">{{collaborator.activity?.id}}</a>
+                        <a [routerLink]="['/activity', collaborator.activity?.id, 'view']">{{collaborator.activity?.name}}</a>
                     </div>
                 </dd>
             </dl>

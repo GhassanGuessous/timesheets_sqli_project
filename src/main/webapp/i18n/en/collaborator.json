@@ -4,7 +4,7 @@
             "home": {
                 "title": "Collaborators",
                 "createLabel": "Create a new Collaborator",
-                "createOrEditLabel": "Create or edit a Collaborator"
+                "createOrEditLabel": "Edit a Collaborator"
             },
             "created": "A new Collaborator is created with identifier {{ param }}",
             "updated": "A Collaborator is updated with identifier {{ param }}",

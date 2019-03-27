@@ -4,13 +4,13 @@
             "home": {
                 "title": "Correspondences",
                 "createLabel": "Create a new Correspondence",
-                "createOrEditLabel": "Create or edit a Correspondence"
+                "createOrEditLabel": "Edit a Correspondence"
             },
             "created": "A new Correspondence is created with identifier {{ param }}",
             "updated": "A Correspondence is updated with identifier {{ param }}",
             "deleted": "A Correspondence is deleted with identifier {{ param }}",
             "delete": {
-                "question": "Are you sure you want to delete Correspondence {{ id }}?"
+                "question": "Are you sure you want to delete Correspondence of {{ id }}?"
             },
             "detail": {
                 "title": "Correspondence"

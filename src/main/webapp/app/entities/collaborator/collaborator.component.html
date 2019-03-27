@@ -1,7 +1,7 @@
 <div>
     <h2 id="page-heading">
         <span jhiTranslate="imputationSqliApp.collaborator.home.title">Collaborators</span>
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-collaborator" [routerLink]="['/collaborator/new']">
+        <button *jhiHasAnyAuthority="'ROLE_ADMIN'" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-collaborator" [routerLink]="['/collaborator/new']">
             <fa-icon [icon]="'plus'"></fa-icon>
             <span  jhiTranslate="imputationSqliApp.collaborator.home.createLabel">
             Create new Collaborator
@@ -31,12 +31,12 @@
                 <td>{{collaborator.email}}</td>
                 <td>
                     <div *ngIf="collaborator.team">
-                        <a [routerLink]="['../team', collaborator.team?.id, 'view' ]" >{{collaborator.team?.id}}</a>
+                        <a [routerLink]="['../team', collaborator.team?.id, 'view' ]" >{{collaborator.team?.name}}</a>
                     </div>
                 </td>
                 <td>
                     <div *ngIf="collaborator.activity">
-                        <a [routerLink]="['../activity', collaborator.activity?.id, 'view' ]" >{{collaborator.activity?.id}}</a>
+                        <a [routerLink]="['../activity', collaborator.activity?.id, 'view' ]" >{{collaborator.activity?.name}}</a>
                     </div>
                 </td>
                 <td class="text-right">
@@ -47,13 +47,13 @@
                             <fa-icon [icon]="'eye'"></fa-icon>
                             <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
                         </button>
-                        <button type="submit"
+                        <button *jhiHasAnyAuthority="'ROLE_ADMIN'" type="submit"
                                 [routerLink]="['/collaborator', collaborator.id, 'edit']"
                                 class="btn btn-primary btn-sm">
                             <fa-icon [icon]="'pencil-alt'"></fa-icon>
                             <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
                         </button>
-                        <button type="submit"
+                        <button *jhiHasAnyAuthority="'ROLE_ADMIN'" type="submit"
                                 [routerLink]="['/', 'collaborator', { outlets: { popup: collaborator.id + '/delete'} }]"
                                 replaceUrl="true"
                                 queryParamsHandling="merge"
