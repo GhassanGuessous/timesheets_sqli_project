@@ -12,4 +12,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CorrespondenceRepository extends JpaRepository<Correspondence, Long> {
 
+    Correspondence findByIdTBP(String id);
 }
