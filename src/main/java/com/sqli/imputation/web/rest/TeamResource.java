@@ -92,6 +92,18 @@ public class TeamResource {
     }
 
     /**
+     * GET  /teams : get all the teams.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of teams in body
+     */
+    @GetMapping("/all-teams")
+    public ResponseEntity<List<Team>> getAllTeams() {
+        log.debug("REST request to get a page of Teams");
+        List<Team> teams = teamService.findAll();
+        return ResponseEntity.ok().body(teams);
+    }
+
+    /**
      * GET  /teams/:id : get the "id" team.
      *
      * @param id the id of the team to retrieve

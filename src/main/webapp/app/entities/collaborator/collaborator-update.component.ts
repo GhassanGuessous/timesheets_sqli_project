@@ -37,7 +37,7 @@ export class CollaboratorUpdateComponent implements OnInit {
             this.collaborator = collaborator;
         });
         this.teamService
-            .query()
+            .findAllTeamsWithoutPagination()
             .pipe(
                 filter((mayBeOk: HttpResponse<ITeam[]>) => mayBeOk.ok),
                 map((response: HttpResponse<ITeam[]>) => response.body)
