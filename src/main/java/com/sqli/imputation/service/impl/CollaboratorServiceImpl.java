@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +55,19 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         return collaboratorRepository.findAll(pageable);
     }
 
+    /**
+     * Get the collaborators with a key.
+     *
+     * @param key the key to base searching on
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Collaborator> findByKey(String key, Pageable pageable) {
+        log.debug("Request to get all Collaborators with the key: "+ key);
+        return collaboratorRepository.findByKey(key, pageable);
+    }
 
     /**
      * Get one collaborator by id.

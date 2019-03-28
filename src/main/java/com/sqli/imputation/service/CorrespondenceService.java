@@ -43,4 +43,13 @@ public interface CorrespondenceService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+    /**
+     * Get all the correspondences with key.
+     *
+     * @param key the key to base searching on
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<Correspondence> findByKey(String key, Pageable pageable);
 }

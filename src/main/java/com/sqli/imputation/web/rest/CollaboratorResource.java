@@ -92,6 +92,21 @@ public class CollaboratorResource {
     }
 
     /**
+     * GET  /collaborators/search/key : get the collaborators with a key.
+     *
+     * @param key the key to base searching on
+     * @param pageable the pagination information
+     * @return the ResponseEntity with status 200 (OK) and the list of collaborators in body
+     */
+    @GetMapping("/collaborators/search/{key}")
+    public ResponseEntity<List<Collaborator>> getCollaboratorsByKey(@PathVariable String key, Pageable pageable) {
+        log.debug("REST request to get a page of Collaborators with key");
+        Page<Collaborator> page = collaboratorService.findByKey(key, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/collaborators");
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
      * GET  /collaborators/:id : get the "id" collaborator.
      *
      * @param id the id of the collaborator to retrieve

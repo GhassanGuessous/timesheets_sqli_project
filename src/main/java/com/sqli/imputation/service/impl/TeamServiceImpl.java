@@ -77,4 +77,17 @@ public class TeamServiceImpl implements TeamService {
         log.debug("Request to delete Team : {}", id);
         teamRepository.deleteById(id);
     }
+
+    /**
+     * Get all the teams with key.
+     *
+     * @param key the key to base searching on
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Override
+    public Page<Team> findByKey(String key, Pageable pageable) {
+        log.debug("Request to get all Teams with key: "+ key);
+        return teamRepository.findByKey(key, pageable);
+    }
 }

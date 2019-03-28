@@ -43,4 +43,13 @@ public interface CollaboratorService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+    /**
+     * Get the collaborators with a key.
+     *
+     * @param key the key to base searching on
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<Collaborator> findByKey(String key, Pageable pageable);
 }

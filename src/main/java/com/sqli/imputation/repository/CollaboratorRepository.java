@@ -1,7 +1,10 @@
 package com.sqli.imputation.repository;
 
 import com.sqli.imputation.domain.Collaborator;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
@@ -11,5 +14,8 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unused")
 @Repository
 public interface CollaboratorRepository extends JpaRepository<Collaborator, Long> {
-
+    @Query(value = "SELECT c FROM Collaborator c left  join c.team team left join c.activity activity" +
+        " where c.firstname like %:key% or c.lastname like %:key% or c.email like %:key% " +
+        "or team.name like %:key% or activity.name like %:key%")
+    Page<Collaborator> findByKey(@Param("key") String key, Pageable pageable);
 }

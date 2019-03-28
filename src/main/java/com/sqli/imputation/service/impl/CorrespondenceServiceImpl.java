@@ -77,4 +77,17 @@ public class CorrespondenceServiceImpl implements CorrespondenceService {
         log.debug("Request to delete Correspondence : {}", id);
         correspondenceRepository.deleteById(id);
     }
+
+    /**
+     * Get all the correspondences with key.
+     *
+     * @param key      the key to base searching on
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Override
+    public Page<Correspondence> findByKey(String key, Pageable pageable) {
+        log.debug("Request to get all Correspondences with key: " + key);
+        return correspondenceRepository.findBykey(key, pageable);
+    }
 }

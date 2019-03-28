@@ -92,6 +92,21 @@ public class CorrespondenceResource {
     }
 
     /**
+     * GET  /correspondences/search : get all the correspondences with key.
+     *
+     * @param key the key to base searching on
+     * @param pageable the pagination information
+     * @return the ResponseEntity with status 200 (OK) and the list of correspondences in body
+     */
+    @GetMapping("/correspondences/search/{key}")
+    public ResponseEntity<List<Correspondence>> getAllCorrespondences(@PathVariable String key, Pageable pageable) {
+        log.debug("REST request to get a page of Correspondences with key");
+        Page<Correspondence> page = correspondenceService.findByKey(key, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/correspondences");
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
      * GET  /correspondences/:id : get the "id" correspondence.
      *
      * @param id the id of the correspondence to retrieve

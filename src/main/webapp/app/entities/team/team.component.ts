@@ -128,4 +128,21 @@ export class TeamComponent implements OnInit, OnDestroy {
     protected onError(errorMessage: string) {
         this.jhiAlertService.error(errorMessage, null, null);
     }
+
+    findBySearchedKey(key) {
+        if (key !== '') {
+            this.teamService
+                .searchedQuery(key, {
+                    page: this.page - 1,
+                    size: this.itemsPerPage,
+                    sort: this.sort()
+                })
+                .subscribe(
+                    (res: HttpResponse<ITeam[]>) => this.paginateTeams(res.body, res.headers),
+                    (res: HttpErrorResponse) => this.onError(res.message)
+                );
+        } else {
+            this.loadAll();
+        }
+    }
 }

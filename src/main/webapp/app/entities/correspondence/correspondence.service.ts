@@ -35,4 +35,9 @@ export class CorrespondenceService {
     delete(id: number): Observable<HttpResponse<any>> {
         return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
     }
+
+    searchedQuery(key: string, req?: any): Observable<EntityArrayResponseType> {
+        const options = createRequestOption(req);
+        return this.http.get<ICorrespondence[]>(`${this.resourceUrl}/search/${key}`, { params: options, observe: 'response' });
+    }
 }

@@ -92,6 +92,20 @@ public class TeamResource {
     }
 
     /**
+     * GET  /teams/search/key : get the teams with a key.
+     *
+     * @param key the key to base searching on
+     * @return the ResponseEntity with status 200 (OK) and the list of teams in body
+     */
+    @GetMapping("/teams/search/{key}")
+    public ResponseEntity<List<Team>> getAllTeamsByKey(@PathVariable String key, Pageable pageable) {
+        log.debug("REST request to get a page of Teams with key");
+        Page<Team> page = teamService.findByKey(key, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/teams");
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
      * GET  /teams/:id : get the "id" team.
      *
      * @param id the id of the team to retrieve

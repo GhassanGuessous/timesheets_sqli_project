@@ -43,4 +43,13 @@ public interface TeamService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+    /**
+     * Get all the teams with key.
+     *
+     * @param key the key to base searching on.
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<Team> findByKey(String key, Pageable pageable);
 }

@@ -1,78 +1,97 @@
 <div>
     <h2 id="page-heading">
         <span jhiTranslate="imputationSqliApp.collaborator.home.title">Collaborators</span>
-        <button *jhiHasAnyAuthority="'ROLE_ADMIN'" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-collaborator" [routerLink]="['/collaborator/new']">
+        <input #searchedKey type="text" (keyup)="findBySearchedKey(searchedKey.value)" placeholder="Search">
+        <button *jhiHasAnyAuthority="'ROLE_ADMIN'" id="jh-create-entity"
+            class="btn btn-primary float-right jh-create-entity create-collaborator"
+            [routerLink]="['/collaborator/new']">
             <fa-icon [icon]="'plus'"></fa-icon>
-            <span  jhiTranslate="imputationSqliApp.collaborator.home.createLabel">
-            Create new Collaborator
+            <span jhiTranslate="imputationSqliApp.collaborator.home.createLabel">
+                Create new Collaborator
             </span>
         </button>
     </h2>
     <jhi-alert></jhi-alert>
-    <br/>
+    <br />
     <div class="table-responsive" *ngIf="collaborators">
         <table class="table table-striped">
             <thead>
-            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="firstname"><span jhiTranslate="imputationSqliApp.collaborator.firstname">Firstname</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="lastname"><span jhiTranslate="imputationSqliApp.collaborator.lastname">Lastname</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="email"><span jhiTranslate="imputationSqliApp.collaborator.email">Email</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="team.id"><span jhiTranslate="imputationSqliApp.collaborator.team">Team</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="activity.id"><span jhiTranslate="imputationSqliApp.collaborator.activity">Activity</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th></th>
-            </tr>
+                <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+                    <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
+                        <fa-icon [icon]="'sort'"></fa-icon>
+                    </th>
+                    <th jhiSortBy="firstname"><span
+                            jhiTranslate="imputationSqliApp.collaborator.firstname">Firstname</span>
+                        <fa-icon [icon]="'sort'"></fa-icon>
+                    </th>
+                    <th jhiSortBy="lastname"><span
+                            jhiTranslate="imputationSqliApp.collaborator.lastname">Lastname</span>
+                        <fa-icon [icon]="'sort'"></fa-icon>
+                    </th>
+                    <th jhiSortBy="email"><span jhiTranslate="imputationSqliApp.collaborator.email">Email</span>
+                        <fa-icon [icon]="'sort'"></fa-icon>
+                    </th>
+                    <th jhiSortBy="team.id"><span jhiTranslate="imputationSqliApp.collaborator.team">Team</span>
+                        <fa-icon [icon]="'sort'"></fa-icon>
+                    </th>
+                    <th jhiSortBy="activity.id"><span
+                            jhiTranslate="imputationSqliApp.collaborator.activity">Activity</span>
+                        <fa-icon [icon]="'sort'"></fa-icon>
+                    </th>
+                    <th></th>
+                </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let collaborator of collaborators ;trackBy: trackId">
-                <td><a [routerLink]="['/collaborator', collaborator.id, 'view' ]">{{collaborator.id}}</a></td>
-                <td>{{collaborator.firstname}}</td>
-                <td>{{collaborator.lastname}}</td>
-                <td>{{collaborator.email}}</td>
-                <td>
-                    <div *ngIf="collaborator.team">
-                        <a [routerLink]="['../team', collaborator.team?.id, 'view' ]" >{{collaborator.team?.name}}</a>
-                    </div>
-                </td>
-                <td>
-                    <div *ngIf="collaborator.activity">
-                        <a [routerLink]="['../activity', collaborator.activity?.id, 'view' ]" >{{collaborator.activity?.name}}</a>
-                    </div>
-                </td>
-                <td class="text-right">
-                    <div class="btn-group flex-btn-group-container">
-                        <button type="submit"
-                                [routerLink]="['/collaborator', collaborator.id, 'view' ]"
+                <tr *ngFor="let collaborator of collaborators ;trackBy: trackId">
+                    <td><a [routerLink]="['/collaborator', collaborator.id, 'view' ]">{{collaborator.id}}</a></td>
+                    <td>{{collaborator.firstname}}</td>
+                    <td>{{collaborator.lastname}}</td>
+                    <td>{{collaborator.email}}</td>
+                    <td>
+                        <div *ngIf="collaborator.team">
+                            <a
+                                [routerLink]="['../team', collaborator.team?.id, 'view' ]">{{collaborator.team?.name}}</a>
+                        </div>
+                    </td>
+                    <td>
+                        <div *ngIf="collaborator.activity">
+                            <a
+                                [routerLink]="['../activity', collaborator.activity?.id, 'view' ]">{{collaborator.activity?.name}}</a>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-group flex-btn-group-container">
+                            <button type="submit" [routerLink]="['/collaborator', collaborator.id, 'view' ]"
                                 class="btn btn-info btn-sm">
-                            <fa-icon [icon]="'eye'"></fa-icon>
-                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                        </button>
-                        <button *jhiHasAnyAuthority="'ROLE_ADMIN'" type="submit"
+                                <fa-icon [icon]="'eye'"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                            </button>
+                            <button *jhiHasAnyAuthority="'ROLE_ADMIN'" type="submit"
                                 [routerLink]="['/collaborator', collaborator.id, 'edit']"
                                 class="btn btn-primary btn-sm">
-                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                        </button>
-                        <button *jhiHasAnyAuthority="'ROLE_ADMIN'" type="submit"
+                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                            </button>
+                            <button *jhiHasAnyAuthority="'ROLE_ADMIN'" type="submit"
                                 [routerLink]="['/', 'collaborator', { outlets: { popup: collaborator.id + '/delete'} }]"
-                                replaceUrl="true"
-                                queryParamsHandling="merge"
-                                class="btn btn-danger btn-sm">
-                            <fa-icon [icon]="'times'"></fa-icon>
-                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                        </button>
-                    </div>
-                </td>
-            </tr>
+                                replaceUrl="true" queryParamsHandling="merge" class="btn btn-danger btn-sm">
+                                <fa-icon [icon]="'times'"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
     <div *ngIf="collaborators && collaborators.length">
         <div class="row justify-content-center">
-            <jhi-item-count [page]="page" [total]="totalItems" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+            <jhi-item-count [page]="page" [total]="totalItems" [maxSize]="5" [itemsPerPage]="itemsPerPage">
+            </jhi-item-count>
         </div>
         <div class="row justify-content-center">
-            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5"
+                [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
         </div>
     </div>
 </div>
