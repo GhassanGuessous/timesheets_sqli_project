@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 
-import { ITeam } from 'app/shared/model/team.model';
+import { ITeam, Team } from 'app/shared/model/team.model';
 import { AccountService } from 'app/core';
 
 import { ITEMS_PER_PAGE } from 'app/shared';
@@ -18,6 +18,7 @@ import { TeamService } from './team.service';
 export class TeamComponent implements OnInit, OnDestroy {
     currentAccount: any;
     teams: ITeam[];
+    myTeam: any;
     error: any;
     success: any;
     eventSubscriber: Subscription;
@@ -59,6 +60,11 @@ export class TeamComponent implements OnInit, OnDestroy {
                 (res: HttpResponse<ITeam[]>) => this.paginateTeams(res.body, res.headers),
                 (res: HttpErrorResponse) => this.onError(res.message)
             );
+        this.teamService.findAllTeamsWithoutPagination().subscribe(data => {
+            this.myTeam = data.body.filter(
+                team => team.deliveryCoordinator != null && team.deliveryCoordinator.id === this.currentAccount.id
+            )[0];
+        });
     }
 
     loadPage(page: number) {

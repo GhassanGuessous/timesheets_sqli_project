@@ -9,6 +9,8 @@ import { ITeam } from 'app/shared/model/team.model';
 })
 export class TeamDetailComponent implements OnInit {
     team: ITeam;
+    predicate: any;
+    reverse: any;
 
     constructor(protected activatedRoute: ActivatedRoute) {}
 

@@ -19,7 +19,10 @@
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.team.deliveryCoordinator" for="field_deliveryCoordinator">Delivery Coordinator</label>
                     <select class="form-control" id="field_deliveryCoordinator" name="deliveryCoordinator" [(ngModel)]="team.deliveryCoordinator">
                         <option [ngValue]="null"></option>
-                        <option [ngValue]="deliveryCoordinatorOption.id === team.deliveryCoordinator?.id ? team.deliveryCoordinator : deliveryCoordinatorOption" *ngFor="let deliveryCoordinatorOption of deliverycoordinators; trackBy: trackDeliveryCoordinatorById">{{deliveryCoordinatorOption.id}}</option>
+                        <option [ngValue]="deliveryCoordinatorOption.id === team.deliveryCoordinator?.id ? team.deliveryCoordinator : deliveryCoordinatorOption"
+                                *ngFor="let deliveryCoordinatorOption of deliverycoordinators; trackBy: trackDeliveryCoordinatorById">
+                            {{deliveryCoordinatorOption.firstName}} {{deliveryCoordinatorOption.lastName}}
+                        </option>
                     </select>
                 </div>
             </div>

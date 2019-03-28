@@ -12,6 +12,7 @@ type EntityArrayResponseType = HttpResponse<ITeam[]>;
 @Injectable({ providedIn: 'root' })
 export class TeamService {
     public resourceUrl = SERVER_API_URL + 'api/teams';
+    public resourceTeamsWithoutPageUrl = SERVER_API_URL + 'api/all-teams';
 
     constructor(protected http: HttpClient) {}
 
@@ -30,6 +31,11 @@ export class TeamService {
     query(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
         return this.http.get<ITeam[]>(this.resourceUrl, { params: options, observe: 'response' });
+    }
+
+    findAllTeamsWithoutPagination(req?: any): Observable<EntityArrayResponseType> {
+        const options = createRequestOption(req);
+        return this.http.get<ITeam[]>(this.resourceTeamsWithoutPageUrl, { params: options, observe: 'response' });
     }
 
     delete(id: number): Observable<HttpResponse<any>> {

@@ -3,6 +3,7 @@
         "team": {
             "home": {
                 "title": "Équipes",
+                "myTeam": "Mon équipe",
                 "createLabel": "Créer une nouvelle équipe",
                 "createOrEditLabel": "Créer ou éditer une équipe"
             },
