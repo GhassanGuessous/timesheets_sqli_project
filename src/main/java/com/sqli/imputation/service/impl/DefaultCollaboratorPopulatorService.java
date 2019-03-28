@@ -1,11 +1,18 @@
 package com.sqli.imputation.service.impl;
 
+import com.sqli.imputation.domain.Activity;
 import com.sqli.imputation.domain.Collaborator;
+import com.sqli.imputation.domain.Correspondence;
+import com.sqli.imputation.repository.ActivityRepository;
 import com.sqli.imputation.service.CollaboratorPopulatorService;
 import com.sqli.imputation.service.CollaboratorService;
+import com.sqli.imputation.service.CorrespondenceService;
+import com.sqli.imputation.service.dto.ActivityDTO;
 import com.sqli.imputation.service.dto.CollaboratorDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class DefaultCollaboratorPopulatorService implements CollaboratorPopulatorService {
@@ -18,12 +25,19 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
 
     @Autowired
     private CollaboratorService collaboratorService;
+    @Autowired
+    private CorrespondenceService correspondenceService;
+    @Autowired
+    private DefaultDbPopulator defaultDbPopulator;
+    @Autowired
+    private ActivityRepository activityRepository;
 
     @Override
     public Collaborator populateDatabase(CollaboratorDTO collaboratorDTO) {
         Collaborator collaborator = clone(collaboratorDTO);
         try {
             collaborator = collaboratorService.save(collaborator);
+            saveCorrespondenceTBP(collaborator, collaboratorDTO.getId());
         } catch (Exception e) {
             collaborator.setEmail(generateEmail(collaboratorDTO.getPrenom(), collaboratorDTO.getNom(), EMAIL_DUPLICATED));
             collaborator = collaboratorService.save(collaborator);
@@ -36,7 +50,26 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
         collaborator.setFirstname(collaboratorDTO.getPrenom());
         collaborator.setLastname(collaboratorDTO.getNom());
         collaborator.setEmail(generateEmail(collaboratorDTO.getPrenom(), collaboratorDTO.getNom(), EMAIL_NOT_DUPLICATED));
+        collaborator.setActivity(findActivity(collaboratorDTO.getActivite()));
         return collaborator;
+    }
+
+    private void saveCorrespondenceTBP(Collaborator collaborator, String id_tbp) {
+        Correspondence correspondence = new Correspondence();
+        correspondence.setCollaborator(collaborator);
+        correspondence.setIdTBP(id_tbp);
+        correspondenceService.save(correspondence);
+    }
+
+    private Activity findActivity(String id) {
+        Long idDTO = Long.valueOf(Integer.parseInt(id));
+        Optional<ActivityDTO> activityDTOOptional = findActivityByIdFromWs(idDTO);
+        String name = activityDTOOptional.isPresent() ? activityDTOOptional.get().getLibelle() : "";
+        return activityRepository.findByNameLike(name);
+    }
+
+    private Optional<ActivityDTO> findActivityByIdFromWs(Long id) {
+        return defaultDbPopulator.getActivities().stream().filter(typeDTO -> typeDTO.getId() == id).findFirst();
     }
 
     private String generateEmail(String firstname, String lastname, boolean isEmailDuplicated) {

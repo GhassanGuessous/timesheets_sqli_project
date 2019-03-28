@@ -1,7 +1,8 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
-            <h2 id="jhi-correspondence-heading" jhiTranslate="imputationSqliApp.correspondence.home.createOrEditLabel">Create or edit a Correspondence</h2>
+            <h2 *ngIf="correspondence.id" id="jhi-correspondence-heading" jhiTranslate="imputationSqliApp.correspondence.home.createOrEditLabel">Edit a Correspondence</h2>
+            <h2 *ngIf="!correspondence.id" id="jhi-correspondence-heading" jhiTranslate="imputationSqliApp.correspondence.home.createLabel">Create a Correspondence</h2>
             <div>
                 <jhi-alert-error></jhi-alert-error>
                 <div class="form-group" [hidden]="!correspondence.id">
@@ -29,7 +30,7 @@
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.correspondence.collaborator" for="field_collaborator">Collaborator</label>
                     <select class="form-control" id="field_collaborator" name="collaborator" [(ngModel)]="correspondence.collaborator">
                         <option [ngValue]="null"></option>
-                        <option [ngValue]="collaboratorOption.id === correspondence.collaborator?.id ? correspondence.collaborator : collaboratorOption" *ngFor="let collaboratorOption of collaborators; trackBy: trackCollaboratorById">{{collaboratorOption.id}}</option>
+                        <option [ngValue]="collaboratorOption.id === correspondence.collaborator?.id ? correspondence.collaborator : collaboratorOption" *ngFor="let collaboratorOption of collaborators; trackBy: trackCollaboratorById">{{collaboratorOption.firstname + ' ' + collaboratorOption.lastname}}</option>
                     </select>
                 </div>
             </div>
@@ -37,7 +38,7 @@
                 <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
                     <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
                 </button>
-                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                <button *jhiHasAnyAuthority="'ROLE_ADMIN'" type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
                     <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
                 </button>
             </div>

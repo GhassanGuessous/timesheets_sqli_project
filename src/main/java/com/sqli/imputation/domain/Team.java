@@ -19,7 +19,7 @@ import java.util.Objects;
 public class Team implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,6 +29,9 @@ public class Team implements Serializable {
 
     @Column(name = "agresso")
     private String agresso;
+
+    @Column(name = "id_tbp")
+    private String idTbp;
 
     @OneToOne
     @JoinColumn(unique = true)
@@ -116,6 +119,14 @@ public class Team implements Serializable {
         this.agresso = agresso;
     }
 
+    public String getIdTbp() {
+        return idTbp;
+    }
+
+    public void setIdTbp(String idTbp) {
+        this.idTbp = idTbp;
+    }
+
     public ProjectType getProjectType() {
         return projectType;
     }
@@ -169,8 +180,14 @@ public class Team implements Serializable {
     @Override
     public String toString() {
         return "Team{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            "}";
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", agresso='" + agresso + '\'' +
+            ", idTbp='" + idTbp + '\'' +
+            ", deliveryCoordinator=" + deliveryCoordinator +
+            ", collaborators=" + collaborators +
+            ", projects=" + projects +
+            ", projectType=" + projectType +
+            '}';
     }
 }

@@ -30,6 +30,7 @@ public class DefaultTeamPopulatorService implements TeamPopulatorService {
         Team team = new Team();
         team.setName(teamDTO.getLibelle());
         team.setAgresso(teamDTO.getAgresso());
+        team.setIdTbp(teamDTO.getId());
         team.setProjectType(findProjectType(teamDTO.getType()));
         return team;
     }

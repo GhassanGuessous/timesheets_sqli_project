@@ -2,21 +2,21 @@
     "imputationSqliApp": {
         "activity": {
             "home": {
-                "title": "Activities",
-                "createLabel": "Créer un nouveau Activity",
-                "createOrEditLabel": "Créer ou éditer un Activity"
+                "title": "Activites",
+                "createLabel": "Créer une nouvelle Activité",
+                "createOrEditLabel": "Modifier une Activité"
             },
-            "created": "Un nouveau Activity a été créé avec l'identifiant {{ param }}",
-            "updated": "Le Activity avec l'identifiant {{ param }} a été mis à jour",
-            "deleted": "Le Activity avec l'identifiant {{ param }} a été supprimé",
+            "created": "Une nouvelle Activité a été créé avec l'identifiant {{ param }}",
+            "updated": "L'activité avec l'identifiant {{ param }} a été mis à jour",
+            "deleted": "L'activité  avec l'identifiant {{ param }} a été supprimée",
             "delete": {
-                "question": "Etes-vous certain de vouloir supprimer le Activity {{ id }} ?"
+                "question": "Etes-vous certain de vouloir supprimer l'activité  {{ id }} ?"
             },
             "detail": {
-                "title": "Activity"
+                "title": "Activité"
             },
-            "name": "Name",
-            "collaborator": "Collaborator"
+            "name": "Nom",
+            "collaborator": "Collaborateur"
         }
     }
 }
