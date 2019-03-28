@@ -1,7 +1,62 @@
+<div *jhiHasAnyAuthority="'ROLE_DELCO'">
+    <h2>
+        <span jhiTranslate="imputationSqliApp.team.home.myTeam">My Team</span>
+    </h2>
+    <div class="table-responsive" *ngIf="myTeam">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th><span jhiTranslate="global.field.id">ID</span>
+                </th>
+                <th><span jhiTranslate="imputationSqliApp.team.name">Name</span>
+                </th>
+                <th><span jhiTranslate="imputationSqliApp.team.agresso">Agresso</span>
+                </th>
+                <th><span jhiTranslate="imputationSqliApp.team.projectType">Project Type</span>
+                </th>
+                <!--<th jhiSortBy="deliveryCoordinator.id"><span jhiTranslate="imputationSqliApp.team.deliveryCoordinator">Delivery Coordinator</span>-->
+                <!--<fa-icon [icon]="'sort'"></fa-icon>-->
+                <!--</th>-->
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><a [routerLink]="['/team', myTeam.id, 'view' ]">{{myTeam.id}}</a></td>
+                <td>{{myTeam.name}}</td>
+                <td>{{myTeam.agresso}}</td>
+                <td>
+                    <div *ngIf="myTeam.projectType">
+                        <a [routerLink]="['../project-type', myTeam.projectType?.id, 'view' ]">{{myTeam.projectType?.name}}</a>
+                    </div>
+                </td>
+                <!--<td>-->
+                <!--<div *ngIf="myTeam.deliveryCoordinator">-->
+                <!--&lt;!&ndash;<a [routerLink]="['/admin/user-management', myTeam.deliveryCoordinator?.login, 'view' ]">{{myTeam.deliveryCoordinator?.firstName}} {{myTeam.deliveryCoordinator?.lastName}}</a>&ndash;&gt;-->
+                <!--<a routerLink="/admin/user-management/{{myTeam.deliveryCoordinator?.login}}/view">{{myTeam.deliveryCoordinator?.firstName}} {{myTeam.deliveryCoordinator?.lastName}}</a>-->
+                <!--</div>-->
+                <!--</td>-->
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/team', myTeam.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div>
     <h2 id="page-heading">
         <span jhiTranslate="imputationSqliApp.team.home.title">Teams</span>
-        <button *jhiHasAnyAuthority="'ROLE_ADMIN'" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-team"
+        <button *jhiHasAnyAuthority="'ROLE_ADMIN'" id="jh-create-entity"
+                class="btn btn-primary float-right jh-create-entity create-team"
                 [routerLink]="['/team/new']">
             <fa-icon [icon]="'plus'"></fa-icon>
             <span jhiTranslate="imputationSqliApp.team.home.createLabel">
