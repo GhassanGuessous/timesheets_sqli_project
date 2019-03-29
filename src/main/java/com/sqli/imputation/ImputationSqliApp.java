@@ -1,12 +1,9 @@
 package com.sqli.imputation;
 
-import com.google.gson.Gson;
 import com.sqli.imputation.config.ApplicationProperties;
 import com.sqli.imputation.config.DefaultProfileUtil;
 
-import com.sqli.imputation.service.db_populator.activity.ActivityRestResponse;
-import com.sqli.imputation.service.db_populator.collaborator.CollaboratorRestResponse;
-import com.sqli.imputation.service.impl.DefaultDbPopulator;
+import com.sqli.imputation.service.impl.DefaultDbPopulatorService;
 import io.github.jhipster.config.JHipsterConstants;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +18,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -35,7 +31,7 @@ import java.util.Collection;
 public class ImputationSqliApp {
 
     @Autowired
-    DefaultDbPopulator defaultDbPopulator;
+    DefaultDbPopulatorService defaultDbPopulator;
 
     private static final Logger log = LoggerFactory.getLogger(ImputationSqliApp.class);
 

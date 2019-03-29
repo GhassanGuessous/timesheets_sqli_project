@@ -16,7 +16,7 @@ public class DefaultTeamPopulatorService implements TeamPopulatorService {
     @Autowired
     private TeamService teamService;
     @Autowired
-    private DefaultDbPopulator defaultDbPopulator;
+    private DefaultDbPopulatorService defaultDbPopulator;
     @Autowired
     private ProjectTypeRepository projectTypeRepository;
 
