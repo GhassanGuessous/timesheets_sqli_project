@@ -12,6 +12,7 @@ type EntityArrayResponseType = HttpResponse<ICollaborator[]>;
 @Injectable({ providedIn: 'root' })
 export class CollaboratorService {
     public resourceUrl = SERVER_API_URL + 'api/collaborators';
+    public resourceCollaboratorsWithoutPageUrl = SERVER_API_URL + 'api/all-collaborators';
 
     constructor(protected http: HttpClient) {}
 
@@ -30,6 +31,11 @@ export class CollaboratorService {
     query(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
         return this.http.get<ICollaborator[]>(this.resourceUrl, { params: options, observe: 'response' });
+    }
+
+    findAllCollaboratorsWithoutPagination(req?: any): Observable<EntityArrayResponseType> {
+        const options = createRequestOption(req);
+        return this.http.get<ICollaborator[]>(this.resourceCollaboratorsWithoutPageUrl, { params: options, observe: 'response' });
     }
 
     delete(id: number): Observable<HttpResponse<any>> {

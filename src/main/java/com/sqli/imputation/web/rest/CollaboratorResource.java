@@ -92,6 +92,18 @@ public class CollaboratorResource {
     }
 
     /**
+     * GET  /collaborators : get all the collaborators without pagination.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of collaborators in body
+     */
+    @GetMapping("/all-collaborators")
+    public ResponseEntity<List<Collaborator>> getAllWithNoCorrespondence() {
+        log.debug("REST request to get a page of Collaborators");
+        List<Collaborator> collaborators = collaboratorService.getAllWithNoCorrespondence();
+        return ResponseEntity.ok().body(collaborators);
+    }
+
+    /**
      * GET  /collaborators/search/key : get the collaborators with a key.
      *
      * @param key the key to base searching on

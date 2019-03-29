@@ -112,7 +112,7 @@ public class TeamResource {
      */
     @GetMapping("/all-teams")
     public ResponseEntity<List<Team>> getAllTeams() {
-        log.debug("REST request to get a page of Teams");
+            log.debug("REST request to get a list of Teams");
         List<Team> teams = teamService.findAll();
         return ResponseEntity.ok().body(teams);
     }

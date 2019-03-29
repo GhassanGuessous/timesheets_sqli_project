@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -67,6 +68,17 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     public Page<Collaborator> findByKey(String key, Pageable pageable) {
         log.debug("Request to get all Collaborators with the key: "+ key);
         return collaboratorRepository.findByKey(key, pageable);
+    }
+
+    /**
+     * Get all the collaborators with no correspondence.
+     *
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Collaborator> getAllWithNoCorrespondence() {
+        return collaboratorRepository.findAllWithNoCorrespondence();
     }
 
     /**

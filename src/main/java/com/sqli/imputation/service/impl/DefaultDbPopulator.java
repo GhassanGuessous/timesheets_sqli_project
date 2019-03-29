@@ -38,7 +38,7 @@ public class DefaultDbPopulator implements DbPopulator {
     public static final String BAD_TBP_CREDENTIALS = "Bad TBP Credentials";
     public static final String SLASH = "/";
     public static final String CHARGE_URL = "charge";
-    public static final String CHARGE_WITH_DATE_URL = "?date_debut=2019-02-01&date_fin=2019-02-28";
+    public static final String CHARGE_WITH_DATE_URL = "?date_debut=2018-10-01&date_fin=2019-01-01";
 
     @Autowired
     private ActivityPopulatorService activityPopulatorService;
@@ -70,11 +70,11 @@ public class DefaultDbPopulator implements DbPopulator {
 
     @Override
     public void populate(RestTemplate restTemplate) {
-//        if (isDbEmpty()) {
+        if (isDbEmpty()) {
             hitTbpWebService(restTemplate);
-//            persist();
+            persist();
             composeTeams(restTemplate);
-//        }
+        }
     }
 
     /**
