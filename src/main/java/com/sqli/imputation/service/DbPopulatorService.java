@@ -2,7 +2,7 @@ package com.sqli.imputation.service;
 
 import org.springframework.web.client.RestTemplate;
 
-public interface DbPopulator {
+public interface DbPopulatorService {
 
     void populate(RestTemplate restTemplate);
 }

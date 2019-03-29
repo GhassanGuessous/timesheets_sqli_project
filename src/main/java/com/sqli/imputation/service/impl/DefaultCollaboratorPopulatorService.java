@@ -28,7 +28,7 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
     @Autowired
     private CorrespondenceService correspondenceService;
     @Autowired
-    private DefaultDbPopulator defaultDbPopulator;
+    private DefaultDbPopulatorService defaultDbPopulator;
     @Autowired
     private ActivityRepository activityRepository;
 

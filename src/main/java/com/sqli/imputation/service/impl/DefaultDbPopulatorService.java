@@ -9,11 +9,11 @@ import com.sqli.imputation.repository.CollaboratorRepository;
 import com.sqli.imputation.repository.CorrespondenceRepository;
 import com.sqli.imputation.repository.TeamRepository;
 import com.sqli.imputation.service.*;
-import com.sqli.imputation.service.db_populator.Team.ChargeTeamRestResponse;
-import com.sqli.imputation.service.db_populator.Team.TeamRestResponse;
-import com.sqli.imputation.service.db_populator.activity.ActivityRestResponse;
-import com.sqli.imputation.service.db_populator.collaborator.CollaboratorRestResponse;
-import com.sqli.imputation.service.db_populator.projectType.ProjectTypeRestResponse;
+import com.sqli.imputation.service.dto.db_populator.Team.ChargeTeamRestResponse;
+import com.sqli.imputation.service.dto.db_populator.Team.TeamRestResponse;
+import com.sqli.imputation.service.dto.db_populator.activity.ActivityRestResponse;
+import com.sqli.imputation.service.dto.db_populator.collaborator.CollaboratorRestResponse;
+import com.sqli.imputation.service.dto.db_populator.projectType.ProjectTypeRestResponse;
 import com.sqli.imputation.service.dto.ActivityDTO;
 import com.sqli.imputation.service.dto.ChargeCollaboratorDTO;
 import com.sqli.imputation.service.dto.ChargeTeamDTO;
@@ -29,16 +29,17 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Service
-public class DefaultDbPopulator implements DbPopulator {
+public class DefaultDbPopulatorService implements DbPopulatorService {
 
     private static final String PROJETS_URL = "projets";
     private static final String PROJETS_TYPES_URL = "projets/types";
     private static final String COLLABORATEURS_URL = "collaborateurs";
     private static final String ACTIVITES_URL = "activites";
-    public static final String BAD_TBP_CREDENTIALS = "Bad TBP Credentials";
-    public static final String SLASH = "/";
-    public static final String CHARGE_URL = "charge";
-    public static final String CHARGE_WITH_DATE_URL = "?date_debut=2018-10-01&date_fin=2019-01-01";
+    private static final String BAD_TBP_CREDENTIALS = "Bad TBP Credentials";
+    private static final String SLASH = "/";
+    private static final String CHARGE_URL = "charge";
+    private static final String CHARGE_WITH_DATE_URL = "?date_debut=2019-02-01&date_fin=2019-02-28";
+    private static final String EXCEL_FILE_PATH = "C:\\Users\\gguessous\\Desktop\\Imputation_projet\\STG-Comparateur_imputations_APP_Vs_PPMC.xls";
 
     @Autowired
     private ActivityPopulatorService activityPopulatorService;
@@ -48,6 +49,8 @@ public class DefaultDbPopulator implements DbPopulator {
     private ProjectTypePopulatorService projectTypePopulatorService;
     @Autowired
     private TeamPopulatorService teamPopulatorService;
+    @Autowired
+    private DefaultCorrespondenceMatcherService matcherService;
     @Autowired
     private ActivityRepository activityRepository;
     @Autowired
@@ -70,11 +73,12 @@ public class DefaultDbPopulator implements DbPopulator {
 
     @Override
     public void populate(RestTemplate restTemplate) {
-        if (isDbEmpty()) {
-            hitTbpWebService(restTemplate);
-            persist();
-            composeTeams(restTemplate);
-        }
+//        if (isDbEmpty()) {
+//            hitTbpWebService(restTemplate);
+//            persist();
+//            composeTeams(restTemplate);
+            matcherService.match(correspondenceRepository.findAll(), EXCEL_FILE_PATH);
+//        }
     }
 
     /**
