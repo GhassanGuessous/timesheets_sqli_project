@@ -103,6 +103,9 @@ public class TeamResource {
         Page<Team> page = teamService.findByKey(key, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/teams");
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
      * GET  /teams : get all the teams.
      *
      * @return the ResponseEntity with status 200 (OK) and the list of teams in body

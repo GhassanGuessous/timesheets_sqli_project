@@ -38,7 +38,7 @@ public class DefaultDbPopulator implements DbPopulator {
     public static final String BAD_TBP_CREDENTIALS = "Bad TBP Credentials";
     public static final String SLASH = "/";
     public static final String CHARGE_URL = "charge";
-    public static final String CHARGE_WITH_DATE_URL = "?date_debut=2017-01-01&date_fin=2019-03-27";
+    public static final String CHARGE_WITH_DATE_URL = "?date_debut=2019-02-01&date_fin=2019-02-28";
 
     @Autowired
     private ActivityPopulatorService activityPopulatorService;
@@ -70,11 +70,11 @@ public class DefaultDbPopulator implements DbPopulator {
 
     @Override
     public void populate(RestTemplate restTemplate) {
-        if (isDbEmpty()) {
+//        if (isDbEmpty()) {
             hitTbpWebService(restTemplate);
-            persist();
+//            persist();
             composeTeams(restTemplate);
-        }
+//        }
     }
 
     /**
@@ -107,9 +107,9 @@ public class DefaultDbPopulator implements DbPopulator {
     }
 
     private void persist() {
-        persistActivities();
-        persistProjectTypes();
-        persistTeams();
+//        persistActivities();
+//        persistProjectTypes();
+//        persistTeams();
         persistCollaborators();
     }
 
@@ -133,8 +133,6 @@ public class DefaultDbPopulator implements DbPopulator {
             if (correspondence != null) {
                 Collaborator collaborator = correspondence.getCollaborator();
                 assignCollabToTeam(team, collaborator);
-            } else {
-                System.err.println(chargeCollaboratorDTO.toString());
             }
         });
     }

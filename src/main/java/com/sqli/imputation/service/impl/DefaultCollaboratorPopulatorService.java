@@ -37,11 +37,11 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
         Collaborator collaborator = clone(collaboratorDTO);
         try {
             collaborator = collaboratorService.save(collaborator);
-            saveCorrespondenceTBP(collaborator, collaboratorDTO.getId());
         } catch (Exception e) {
             collaborator.setEmail(generateEmail(collaboratorDTO.getPrenom(), collaboratorDTO.getNom(), EMAIL_DUPLICATED));
             collaborator = collaboratorService.save(collaborator);
         }
+        saveCorrespondenceTBP(collaborator, collaboratorDTO.getId());
         return collaborator;
     }
 
@@ -74,16 +74,16 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
 
     private String generateEmail(String firstname, String lastname, boolean isEmailDuplicated) {
         StringBuilder email = new StringBuilder();
-        if (isEmailDuplicated) email.append(getFirstTwoLetters(firstname.toLowerCase()));
-        else email.append(getFirstLetter(firstname.toLowerCase()));
+        if (isEmailDuplicated)
+            email.append(getFirstTwoLetters(firstname.toLowerCase()));
+        else
+            email.append(getEmailPrefix(firstname.toLowerCase()));
         email.append(lastname.toLowerCase().replaceAll(SPACE, ""));
         email.append(SQLI_COM);
         return email.toString();
     }
 
     private String getFirstLetter(String firstname) {
-        if (firstname.isEmpty())
-            return SQLI_DEFAULT_EMAIL;
         return String.valueOf(firstname.charAt(0));
     }
 
@@ -91,8 +91,30 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
         if (firstname.isEmpty())
             return SQLI_DEFAULT_EMAIL;
         return firstname.substring(0, 2);
-
     }
 
+    private String getEmailPrefix(String firstname) {
+        if (firstname.isEmpty())
+            return SQLI_DEFAULT_EMAIL;
+        else {
+            if (isComposed(firstname)) {
+                String[] tokens = firstname.split(SPACE);
+                return getFirstLetterOfEach(tokens);
+            }
+            return getFirstLetter(firstname);
+        }
+    }
+
+    private String getFirstLetterOfEach(String[] tokens) {
+        StringBuilder emailPrefix = new StringBuilder();
+        for (String token : tokens) {
+            emailPrefix.append(getFirstLetter(token));
+        }
+        return emailPrefix.toString();
+    }
+
+    private boolean isComposed(String firstname) {
+        return firstname.contains(SPACE);
+    }
 
 }
