@@ -5,6 +5,7 @@ import com.sqli.imputation.domain.Collaborator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -52,4 +53,11 @@ public interface CollaboratorService {
      * @return the list of entities
      */
     Page<Collaborator> findByKey(String key, Pageable pageable);
+
+    /**
+     * Get all the collaborators with no correspondence.
+     *
+     * @return the list of entities
+     */
+    List<Collaborator> getAllWithNoCorrespondence();
 }

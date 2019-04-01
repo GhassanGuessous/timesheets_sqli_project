@@ -77,7 +77,7 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
 //            hitTbpWebService(restTemplate);
 //            persist();
 //            composeTeams(restTemplate);
-            matcherService.match(correspondenceRepository.findAll(), EXCEL_FILE_PATH);
+//            matcherService.match(correspondenceRepository.findAll(), EXCEL_FILE_PATH);
 //        }
     }
 

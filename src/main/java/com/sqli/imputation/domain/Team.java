@@ -37,9 +37,9 @@ public class Team implements Serializable {
     @JoinColumn(unique = true)
     private DeliveryCoordinator deliveryCoordinator;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "team")
     private Set<Collaborator> collaborators = new HashSet<>();
-    @ManyToMany(mappedBy = "teams")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "teams")
     @JsonIgnore
     private Set<Project> projects = new HashSet<>();
 

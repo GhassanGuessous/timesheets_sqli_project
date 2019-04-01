@@ -12,25 +12,62 @@
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.correspondence.idAPP" for="field_idAPP">Id APP</label>
-                    <input type="text" class="form-control" name="idAPP" id="field_idAPP"
-                        [(ngModel)]="correspondence.idAPP" />
+                    <input type="text" class="form-control" name="idAPP" id="field_idAPP" #idAPP="ngModel"
+                        [(ngModel)]="correspondence.idAPP" required minlength="3" />
+                    <div *ngIf="idAPP.dirty && idAPP.invalid">
+                        <small class="form-text text-danger"
+                               *ngIf="idAPP.errors.required" jhiTranslate="entity.validation.required">
+                            This field is required.
+                        </small>
+
+                        <small class="form-text text-danger"
+                               *ngIf="idAPP.errors.minlength" jhiTranslate="entity.validation.minlength"
+                               [translateValues]="{min: 3}">
+                            This field cannot be longer than 3 characters.
+                        </small>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.correspondence.idPPMC" for="field_idPPMC">Id PPMC</label>
-                    <input type="text" class="form-control" name="idPPMC" id="field_idPPMC"
-                        [(ngModel)]="correspondence.idPPMC" />
+                    <input type="text" class="form-control" name="idPPMC" id="field_idPPMC" #idPPMC="ngModel"
+                        [(ngModel)]="correspondence.idPPMC" required minlength="3" />
+                    <div *ngIf="idPPMC.dirty && idPPMC.invalid">
+                        <small class="form-text text-danger"
+                               *ngIf="idPPMC.errors.required" jhiTranslate="entity.validation.required">
+                            This field is required.
+                        </small>
+
+                        <small class="form-text text-danger"
+                               *ngIf="idPPMC.errors.minlength" jhiTranslate="entity.validation.minlength"
+                               [translateValues]="{min: 3}">
+                            This field cannot be longer than 3 characters.
+                        </small>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.correspondence.idTBP" for="field_idTBP">Id TBP</label>
-                    <input type="text" class="form-control" name="idTBP" id="field_idTBP"
-                        [(ngModel)]="correspondence.idTBP" />
+                    <input type="text" class="form-control" name="idTBP" id="field_idTBP" #idTBP="ngModel"
+                        [(ngModel)]="correspondence.idTBP" required minlength="3"/>
+                    <div *ngIf="idTBP.dirty && idTBP.invalid">
+                        <small class="form-text text-danger"
+                               *ngIf="idTBP.errors.required" jhiTranslate="entity.validation.required">
+                            This field is required.
+                        </small>
+
+                        <small class="form-text text-danger"
+                               *ngIf="idTBP.errors.minlength" jhiTranslate="entity.validation.minlength"
+                               [translateValues]="{min: 3}">
+                            This field cannot be longer than 3 characters.
+                        </small>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.correspondence.collaborator" for="field_collaborator">Collaborator</label>
                     <select class="form-control" id="field_collaborator" name="collaborator" [(ngModel)]="correspondence.collaborator">
                         <option [ngValue]="null"></option>
-                        <option [ngValue]="collaboratorOption.id === correspondence.collaborator?.id ? correspondence.collaborator : collaboratorOption" *ngFor="let collaboratorOption of collaborators; trackBy: trackCollaboratorById">{{collaboratorOption.firstname + ' ' + collaboratorOption.lastname}}</option>
+                        <option [ngValue]="collaboratorOption.id === correspondence.collaborator?.id ? correspondence.collaborator : collaboratorOption"
+                                *ngFor="let collaboratorOption of collaborators; trackBy: trackCollaboratorById">{{collaboratorOption.firstname + ' ' + collaboratorOption.lastname}}</option>
                     </select>
                 </div>
             </div>
