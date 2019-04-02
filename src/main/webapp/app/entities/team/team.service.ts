@@ -13,6 +13,7 @@ type EntityArrayResponseType = HttpResponse<ITeam[]>;
 export class TeamService {
     public resourceUrl = SERVER_API_URL + 'api/teams';
     public resourceTeamsWithoutPageUrl = SERVER_API_URL + 'api/all-teams';
+    public resourceTeamsByDelco = SERVER_API_URL + 'api/teams/delco';
 
     constructor(protected http: HttpClient) {}
 
@@ -26,6 +27,10 @@ export class TeamService {
 
     find(id: number): Observable<EntityResponseType> {
         return this.http.get<ITeam>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+    }
+
+    findByDelco(id: bigint): Observable<EntityResponseType> {
+        return this.http.get<ITeam>(`${this.resourceTeamsByDelco}/${id}`, { observe: 'response' });
     }
 
     query(req?: any): Observable<EntityArrayResponseType> {

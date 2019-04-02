@@ -46,6 +46,14 @@ public interface TeamService {
     Optional<Team> findOne(Long id);
 
     /**
+     * Get the "id" delco.
+     *
+     * @param id the id of the delivery coordinator
+     * @return the entity
+     */
+    Optional<Team> findOneByDelco(Long id);
+
+    /**
      * Delete the "id" team.
      *
      * @param id the id of the entity

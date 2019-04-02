@@ -9,7 +9,7 @@
         <div [ngSwitch]="isAuthenticated()">
             <div class="alert alert-success" *ngSwitchCase="true">
                 <span id="home-logged-message" *ngIf="account" jhiTranslate="home.logged.message"
-                    [translateValues]="{username: account.login}"> You are logged in as user "{{account.login}}". </span>
+                    [translateValues]="{username: account.login}"> You are logged in as "{{account.login}}". </span>
             </div>
 
             <div class="alert alert-warning" *ngSwitchCase="false">
@@ -22,5 +22,49 @@
             </div> -->
         </div>
 
+    </div>
+</div>
+<div class="row justify-content-center" *jhiHasAnyAuthority="'ROLE_DELCO'">
+    <div class="col-md-12">
+        <h1 class="display-4" jhiTranslate="imputationSqliApp.team.home.myTeam">My Team</h1>
+
+        <div class="table-responsive" *ngIf="myTeam">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th><span jhiTranslate="global.field.id">ID</span>
+                    </th>
+                    <th><span jhiTranslate="imputationSqliApp.team.name">Name</span>
+                    </th>
+                    <th><span jhiTranslate="imputationSqliApp.team.agresso">Agresso</span>
+                    </th>
+                    <th><span jhiTranslate="imputationSqliApp.team.projectType">Project Type</span>
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><a [routerLink]="['/team', myTeam.id, 'view' ]">{{myTeam.id}}</a></td>
+                    <td>{{myTeam.name}}</td>
+                    <td>{{myTeam.agresso}}</td>
+                    <td>
+                        <div *ngIf="myTeam.projectType">
+                            <a [routerLink]="['../project-type', myTeam.projectType?.id, 'view' ]">{{myTeam.projectType?.name}}</a>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-group flex-btn-group-container">
+                            <button type="submit" [routerLink]="['/team', myTeam.id, 'view' ]"
+                                    class="btn btn-info btn-sm">
+                                <fa-icon [icon]="'eye'"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

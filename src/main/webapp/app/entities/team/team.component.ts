@@ -60,10 +60,11 @@ export class TeamComponent implements OnInit, OnDestroy {
                 (res: HttpResponse<ITeam[]>) => this.paginateTeams(res.body, res.headers),
                 (res: HttpErrorResponse) => this.onError(res.message)
             );
-        this.teamService.findAllTeamsWithoutPagination().subscribe(data => {
-            this.myTeam = data.body.filter(
-                team => team.deliveryCoordinator != null && team.deliveryCoordinator.id === this.currentAccount.id
-            )[0];
+    }
+
+    loadDelcoTeam() {
+        this.teamService.findByDelco(this.currentAccount.id).subscribe(data => {
+            this.myTeam = data.body;
         });
     }
 
@@ -101,6 +102,7 @@ export class TeamComponent implements OnInit, OnDestroy {
         this.loadAll();
         this.accountService.identity().then(account => {
             this.currentAccount = account;
+            this.loadDelcoTeam();
         });
         this.registerChangeInTeams();
     }

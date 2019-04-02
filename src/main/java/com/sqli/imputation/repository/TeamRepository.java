@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 
 /**
  * Spring Data  repository for the Team entity.
@@ -19,4 +21,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
         "where t.name like %:key% or t.agresso like %:key% " +
         "or delco.firstName like %:key% or delco.lastName like %:key% or  type.name like %:key%")
     Page<Team> findByKey(@Param("key") String key, Pageable pageable);
+
+    Optional<Team> findByDeliveryCoordinatorId(Long id);
 }

@@ -131,6 +131,19 @@ public class TeamResource {
     }
 
     /**
+     * GET  /teams/:id : get the "id" team.
+     *
+     * @param id the id of the team to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the team, or with status 404 (Not Found)
+     */
+    @GetMapping("/teams/delco/{id}")
+    public ResponseEntity<Team> getTeamByDelco(@PathVariable Long id) {
+        log.debug("REST request to get Team with id delco: {}", id);
+        Optional<Team> team = teamService.findOneByDelco(id);
+        return ResponseUtil.wrapOrNotFound(team);
+    }
+
+    /**
      * DELETE  /teams/:id : delete the "id" team.
      *
      * @param id the id of the team to delete
