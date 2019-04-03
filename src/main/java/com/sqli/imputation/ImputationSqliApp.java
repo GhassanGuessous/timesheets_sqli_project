@@ -106,15 +106,11 @@ public class ImputationSqliApp {
             env.getActiveProfiles());
     }
 
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
 
     @Bean
-    public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
+    public CommandLineRunner run() throws Exception {
         return args -> {
-            defaultDbPopulator.populate(restTemplate);
+            defaultDbPopulator.populate();
         };
     }
 

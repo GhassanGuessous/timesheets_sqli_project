@@ -6,4 +6,6 @@ import com.sqli.imputation.service.dto.CollaboratorDTO;
 public interface CollaboratorPopulatorService {
 
     Collaborator populateDatabase(CollaboratorDTO collaboratorDTO);
+
+    String getAPPIdFromEmail(String email);
 }

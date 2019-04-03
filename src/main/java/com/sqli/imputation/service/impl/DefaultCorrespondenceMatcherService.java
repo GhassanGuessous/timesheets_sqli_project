@@ -3,6 +3,7 @@ package com.sqli.imputation.service.impl;
 import com.sqli.imputation.domain.Collaborator;
 import com.sqli.imputation.domain.Correspondence;
 import com.sqli.imputation.repository.CorrespondenceRepository;
+import com.sqli.imputation.service.CollaboratorPopulatorService;
 import com.sqli.imputation.service.CorrespondenceMatcherService;
 import com.sqli.imputation.service.dto.CorrespondenceDTO;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -24,11 +25,11 @@ public class DefaultCorrespondenceMatcherService implements CorrespondenceMatche
     private static final int SEVENTH_SHEET = 6;
     private static final int ELEVENTH_COLUMN = 11;
     private static final int TWELFTH_COLUMN = 12;
-    private static final String AT_SYMBOL = "@";
-    private static final int FIRST_POSITION = 0;
 
     @Autowired
     private CorrespondenceRepository correspondenceRepository;
+    @Autowired
+    private CollaboratorPopulatorService collaboratorPopulatorService;
 
     @Override
     public List<CorrespondenceDTO> getCorrespondencesFromExcelFile(String fileName) {
@@ -84,12 +85,6 @@ public class DefaultCorrespondenceMatcherService implements CorrespondenceMatche
     }
 
     private boolean isAppIdsAreEqual(Collaborator collaborator, CorrespondenceDTO dto) {
-        return dto.getId_app().equals(getAPPIdFromEmail(collaborator.getEmail()));
+        return dto.getId_app().equals(collaboratorPopulatorService.getAPPIdFromEmail(collaborator.getEmail()));
     }
-
-    private String getAPPIdFromEmail(String email) {
-        return email.split(AT_SYMBOL)[FIRST_POSITION];
-    }
-
-
 }
