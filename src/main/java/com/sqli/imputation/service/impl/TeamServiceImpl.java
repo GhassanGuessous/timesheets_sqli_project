@@ -74,6 +74,13 @@ public class TeamServiceImpl implements TeamService {
         return teamRepository.findById(id);
     }
 
+    @Override
+    public Optional<Team> findOneByDelco(Long id) {
+
+        log.debug("Request to get Team by its delivery coordiinator : {}", id);
+        return teamRepository.findByDeliveryCoordinatorId(id);
+    }
+
     /**
      * Delete the team by id.
      *

@@ -26,4 +26,8 @@
     <include file="config/liquibase/changelog/20190321141228_added_entity_constraints_CollaboratorMonthlyImputation.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190321141229_added_entity_constraints_CollaboratorDailyImputation.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
+    <include file="config/liquibase/changelog/20190321141220_add_column_type_to_User.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141220_add_id_TBP_to_entity_team.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141220_add_project_type_to_entity_Team.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190321141220_add_project_type_to_entity_Team_constraint.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

@@ -1,5 +1,6 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { TimesheetTbpComponent } from './timesheet-tbp/timesheet-tbp.component';
 
 @NgModule({
     imports: [
@@ -53,8 +54,16 @@ import { RouterModule } from '@angular/router';
                 path: 'collaborator-daily-imputation',
                 loadChildren:
                     './collaborator-daily-imputation/collaborator-daily-imputation.module#ImputationSqliCollaboratorDailyImputationModule'
-            }
+            },
             /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
+            {
+                path: 'timesheet-app',
+                loadChildren: './timesheet-app/timesheet-app.module#ImputationSqliTimesheetAppModule'
+            },
+            {
+                path: 'timesheet-tbp',
+                loadChildren: './timesheet-tbp/timesheet-tbp.module#ImputationSqliTimesheetTbpModule'
+            }
         ])
     ],
     declarations: [],

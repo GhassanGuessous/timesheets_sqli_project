@@ -12,7 +12,7 @@
                                  baseTableName="collaborator_daily_imputation"
                                  constraintName="collaborator_daily_imputation_collaborator_monthly_imputation_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="collaborator_monthly_imputation"/>
+                                 referencedTableName="monthly_imputation"/>
 
     </changeSet>
 </databaseChangeLog>

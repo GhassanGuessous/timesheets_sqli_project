@@ -3,6 +3,7 @@ import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
 import { LoginModalService, AccountService, Account } from 'app/core';
+import { TeamService } from 'app/entities/team';
 
 @Component({
     selector: 'jhi-home',
@@ -11,10 +12,12 @@ import { LoginModalService, AccountService, Account } from 'app/core';
 })
 export class HomeComponent implements OnInit {
     account: Account;
+    myTeam: any;
     modalRef: NgbModalRef;
 
     constructor(
         private accountService: AccountService,
+        protected teamService: TeamService,
         private loginModalService: LoginModalService,
         private eventManager: JhiEventManager
     ) {}
@@ -22,8 +25,15 @@ export class HomeComponent implements OnInit {
     ngOnInit() {
         this.accountService.identity().then((account: Account) => {
             this.account = account;
+            this.loadDelcoTeam();
         });
         this.registerAuthenticationSuccess();
+    }
+
+    loadDelcoTeam() {
+        this.teamService.findByDelco(this.account.id).subscribe(data => {
+            this.myTeam = data.body;
+        });
     }
 
     registerAuthenticationSuccess() {

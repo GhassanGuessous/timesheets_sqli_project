@@ -1,6 +1,5 @@
 package com.sqli.imputation.service.impl;
 
-import com.sqli.imputation.config.Constants;
 import com.sqli.imputation.domain.Collaborator;
 import com.sqli.imputation.domain.Correspondence;
 import com.sqli.imputation.domain.Team;
@@ -20,11 +19,8 @@ import com.sqli.imputation.service.dto.ChargeTeamDTO;
 import com.sqli.imputation.service.dto.ProjectTypeDTO;
 import com.sqli.imputation.web.rest.errors.TBPBadAuthentificationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -61,13 +57,6 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
     private ResponseEntity<TeamRestResponse> teamRestResponse;
     private ResponseEntity<ChargeTeamRestResponse> chargeTeamRestResponse;
 
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
-
-    @Autowired
-    private RestTemplate restTemplate;
 
     @Override
     public void populate() {

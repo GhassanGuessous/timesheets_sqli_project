@@ -7,9 +7,8 @@
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <changeSet author="imputation-sqli" id="addColumn-id_tbp-to-Team">
-        <addColumn schemaName="imputation_sqli_db"
-                   tableName="team">
-            <column name="id_tbp" type="bigint">
+        <addColumn tableName="team">
+            <column name="id_tbp" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
         </addColumn>
