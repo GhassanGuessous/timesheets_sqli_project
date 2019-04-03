@@ -7,6 +7,7 @@ import com.sqli.imputation.repository.ActivityRepository;
 import com.sqli.imputation.service.CollaboratorPopulatorService;
 import com.sqli.imputation.service.CollaboratorService;
 import com.sqli.imputation.service.CorrespondenceService;
+import com.sqli.imputation.service.EmailGenerator;
 import com.sqli.imputation.service.dto.ActivityDTO;
 import com.sqli.imputation.service.dto.CollaboratorDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,10 @@ import java.util.Optional;
 @Service
 public class DefaultCollaboratorPopulatorService implements CollaboratorPopulatorService {
 
-    public static final String SQLI_COM = "@sqli.com";
-    public static final String SQLI_DEFAULT_EMAIL = "sqli";
-    public static final String SPACE = " ";
     public static final boolean EMAIL_DUPLICATED = true;
     public static final boolean EMAIL_NOT_DUPLICATED = false;
+    private static final String AT_SYMBOL = "@";
+    private static final int FIRST_POSITION = 0;
 
     @Autowired
     private CollaboratorService collaboratorService;
@@ -29,6 +29,8 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
     private CorrespondenceService correspondenceService;
     @Autowired
     private DefaultDbPopulatorService defaultDbPopulator;
+    @Autowired
+    private EmailGenerator emailGenerator;
     @Autowired
     private ActivityRepository activityRepository;
 
@@ -38,7 +40,7 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
         try {
             collaborator = collaboratorService.save(collaborator);
         } catch (Exception e) {
-            collaborator.setEmail(generateEmail(collaboratorDTO.getPrenom(), collaboratorDTO.getNom(), EMAIL_DUPLICATED));
+            collaborator.setEmail(emailGenerator.generate(collaboratorDTO.getPrenom(), collaboratorDTO.getNom(), EMAIL_DUPLICATED));
             collaborator = collaboratorService.save(collaborator);
         }
         saveCorrespondenceTBP(collaborator, collaboratorDTO.getId());
@@ -49,7 +51,7 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
         Collaborator collaborator = new Collaborator();
         collaborator.setFirstname(collaboratorDTO.getPrenom());
         collaborator.setLastname(collaboratorDTO.getNom());
-        collaborator.setEmail(generateEmail(collaboratorDTO.getPrenom(), collaboratorDTO.getNom(), EMAIL_NOT_DUPLICATED));
+        collaborator.setEmail(emailGenerator.generate(collaboratorDTO.getPrenom(), collaboratorDTO.getNom(), EMAIL_NOT_DUPLICATED));
         collaborator.setActivity(findActivity(collaboratorDTO.getActivite()));
         return collaborator;
     }
@@ -58,6 +60,7 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
         Correspondence correspondence = new Correspondence();
         correspondence.setCollaborator(collaborator);
         correspondence.setIdTBP(id_tbp);
+        correspondence.setIdAPP(getAPPIdFromEmail(collaborator.getEmail()));
         correspondenceService.save(correspondence);
     }
 
@@ -72,49 +75,8 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
         return defaultDbPopulator.getActivities().stream().filter(typeDTO -> typeDTO.getId() == id).findFirst();
     }
 
-    private String generateEmail(String firstname, String lastname, boolean isEmailDuplicated) {
-        StringBuilder email = new StringBuilder();
-        if (isEmailDuplicated)
-            email.append(getFirstTwoLetters(firstname.toLowerCase()));
-        else
-            email.append(getEmailPrefix(firstname.toLowerCase()));
-        email.append(lastname.toLowerCase().replaceAll(SPACE, ""));
-        email.append(SQLI_COM);
-        return email.toString();
+    @Override
+    public String getAPPIdFromEmail(String email) {
+        return email.split(AT_SYMBOL)[FIRST_POSITION];
     }
-
-    private String getFirstLetter(String firstname) {
-        return String.valueOf(firstname.charAt(0));
-    }
-
-    private String getFirstTwoLetters(String firstname) {
-        if (firstname.isEmpty())
-            return SQLI_DEFAULT_EMAIL;
-        return firstname.substring(0, 2);
-    }
-
-    private String getEmailPrefix(String firstname) {
-        if (firstname.isEmpty())
-            return SQLI_DEFAULT_EMAIL;
-        else {
-            if (isComposed(firstname)) {
-                String[] tokens = firstname.split(SPACE);
-                return getFirstLetterOfEach(tokens);
-            }
-            return getFirstLetter(firstname);
-        }
-    }
-
-    private String getFirstLetterOfEach(String[] tokens) {
-        StringBuilder emailPrefix = new StringBuilder();
-        for (String token : tokens) {
-            emailPrefix.append(getFirstLetter(token));
-        }
-        return emailPrefix.toString();
-    }
-
-    private boolean isComposed(String firstname) {
-        return firstname.contains(SPACE);
-    }
-
 }

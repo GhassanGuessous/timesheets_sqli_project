@@ -31,16 +31,11 @@ import java.util.List;
 @Service
 public class DefaultDbPopulatorService implements DbPopulatorService {
 
-    private static final String PROJETS_URL = "projets";
-    private static final String PROJETS_TYPES_URL = "projets/types";
-    private static final String COLLABORATEURS_URL = "collaborateurs";
-    private static final String ACTIVITES_URL = "activites";
     private static final String BAD_TBP_CREDENTIALS = "Bad TBP Credentials";
-    private static final String SLASH = "/";
-    private static final String CHARGE_URL = "charge";
-    private static final String CHARGE_WITH_DATE_URL = "?date_debut=2019-02-01&date_fin=2019-02-28";
     private static final String EXCEL_FILE_PATH = "C:\\Users\\gguessous\\Desktop\\Imputation_projet\\STG-Comparateur_imputations_APP_Vs_PPMC.xls";
 
+    @Autowired
+    private TBPResourceService tbpResourceService;
     @Autowired
     private ActivityPopulatorService activityPopulatorService;
     @Autowired
@@ -71,13 +66,16 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
         return builder.build();
     }
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     @Override
-    public void populate(RestTemplate restTemplate) {
+    public void populate() {
 //        if (isDbEmpty()) {
-//            hitTbpWebService(restTemplate);
+        hitTbpWebService();
 //            persist();
-//            composeTeams(restTemplate);
-            matcherService.match(correspondenceRepository.findAll(), EXCEL_FILE_PATH);
+//            composeTeams();
+//            matcherService.match(correspondenceRepository.findAll(), EXCEL_FILE_PATH);
 //        }
     }
 
@@ -91,20 +89,20 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
         return activityRepository.findAll().isEmpty();
     }
 
-    private void hitTbpWebService(RestTemplate restTemplate) {
+    private void hitTbpWebService() {
         try {
-            setActivities(restTemplate);
-            setProjectTypes(restTemplate);
-            setTeams(restTemplate);
-            setCollaborators(restTemplate);
+            setActivities();
+            setProjectTypes();
+            setTeams();
+            setCollaborators();
         } catch (Exception e) {
             throw new TBPBadAuthentificationException(BAD_TBP_CREDENTIALS);
         }
     }
 
-    private void hitChargeTeamWebService(RestTemplate restTemplate, String idTeamTbp) {
+    private void hitChargeTeamWebService(String idTeamTbp) {
         try {
-            setChargeTeams(restTemplate, idTeamTbp);
+            setChargeTeams(idTeamTbp);
         } catch (Exception e) {
             throw new TBPBadAuthentificationException(BAD_TBP_CREDENTIALS);
         }
@@ -117,10 +115,10 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
         persistCollaborators();
     }
 
-    private void composeTeams(RestTemplate restTemplate) {
+    private void composeTeams() {
         List<Team> teams = teamRepository.findAll();
         teams.forEach(team -> {
-            hitChargeTeamWebService(restTemplate, team.getIdTbp());
+            hitChargeTeamWebService(team.getIdTbp());
             loopThroughChargeTeam(team);
         });
     }
@@ -160,39 +158,24 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
         return true;
     }
 
-    private HttpEntity<String> getTbpHttpHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.add(Constants.AUTHORIZATION, Constants.BASIC_AUTH);
-
-        HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
-        return entity;
+    private void setActivities() {
+        activityRestResponse = tbpResourceService.getAllActivities();
     }
 
-    private void setActivities(RestTemplate restTemplate) {
-        activityRestResponse = restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + ACTIVITES_URL + Constants.JSON_RESULT_FORMAT,
-            HttpMethod.GET, getTbpHttpHeaders(), ActivityRestResponse.class);
+    private void setProjectTypes() {
+        projectTypeRestResponse = tbpResourceService.getAllProjectTypes();
     }
 
-    private void setProjectTypes(RestTemplate restTemplate) {
-        projectTypeRestResponse = restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + PROJETS_TYPES_URL + Constants.JSON_RESULT_FORMAT,
-            HttpMethod.GET, getTbpHttpHeaders(), ProjectTypeRestResponse.class);
+    private void setTeams() {
+        teamRestResponse = tbpResourceService.getAllTeams();
     }
 
-    private void setTeams(RestTemplate restTemplate) {
-        teamRestResponse = restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + PROJETS_URL + Constants.JSON_RESULT_FORMAT,
-            HttpMethod.GET, getTbpHttpHeaders(), TeamRestResponse.class);
+    private void setCollaborators() {
+        collaboratorRestResponse = tbpResourceService.getAllCollaborators();
     }
 
-    private void setCollaborators(RestTemplate restTemplate) {
-        collaboratorRestResponse = restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + COLLABORATEURS_URL + Constants.JSON_RESULT_FORMAT,
-            HttpMethod.GET, getTbpHttpHeaders(), CollaboratorRestResponse.class);
-    }
-
-    private void setChargeTeams(RestTemplate restTemplate, String idTeamTbp) {
-        chargeTeamRestResponse = restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + PROJETS_URL + SLASH + idTeamTbp + SLASH + CHARGE_URL
-                + Constants.JSON_RESULT_FORMAT + CHARGE_WITH_DATE_URL,
-            HttpMethod.GET, getTbpHttpHeaders(), ChargeTeamRestResponse.class);
+    private void setChargeTeams(String idTeamTbp) {
+        chargeTeamRestResponse = tbpResourceService.getTeamCharges(idTeamTbp);
     }
 
     private void persistActivities() {
