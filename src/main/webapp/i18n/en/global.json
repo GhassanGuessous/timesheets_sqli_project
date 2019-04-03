@@ -19,7 +19,11 @@
                 "imputationType": "Imputation Type",
                 "collaboratorMonthlyImputation": "Collaborator Monthly Imputation",
                 "collaboratorDailyImputation": "Collaborator Daily Imputation",
-                "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
+                "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+                "app-timesheet": "APP Timesheet",
+                "tbp-timesheet": "TBP Timesheet",
+                "importTBP": "Import TBP",
+                "importAPP": "Import APP"
             },
             "account": {
                 "main": "Account",

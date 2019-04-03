@@ -18,7 +18,10 @@
             "month": "Month",
             "year": "Year",
             "monthlyImputation": "Monthly Imputation",
-            "imputationType": "Imputation Type"
+            "imputationType": "Imputation Type",
+            "project_code": "Project code",
+            "debut_day": "Debut day",
+            "md_period": "Duration Man/day"
         }
     }
 }
