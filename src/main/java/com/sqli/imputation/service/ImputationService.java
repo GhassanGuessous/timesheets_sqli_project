@@ -2,9 +2,13 @@ package com.sqli.imputation.service;
 
 import com.sqli.imputation.domain.Imputation;
 
+import com.sqli.imputation.service.dto.ChargeTeamDTO;
+import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -43,4 +47,6 @@ public interface ImputationService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+    Imputation findTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO);
 }

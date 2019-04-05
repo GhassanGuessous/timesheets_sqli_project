@@ -11,6 +11,7 @@ export interface ITeam {
     deliveryCoordinator?: IDeliveryCoordinator;
     collaborators?: ICollaborator[];
     projects?: IProject[];
+    idTbp?: string;
 }
 
 export class Team implements ITeam {
@@ -20,6 +21,7 @@ export class Team implements ITeam {
         public deliveryCoordinator?: IDeliveryCoordinator,
         public collaborators?: ICollaborator[],
         public projects?: IProject[],
-        public projectType?: IProjectType
+        public projectType?: IProjectType,
+        public idTbp?: string
     ) {}
 }

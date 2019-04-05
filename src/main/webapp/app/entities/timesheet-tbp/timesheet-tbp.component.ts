@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { AccountService } from 'app/core';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { ITeam } from 'app/shared/model/team.model';
+import { ITbpRequestBody, TbpRequestBody } from 'app/shared/model/tbp-request-body';
+import { TimesheetTbpService } from 'app/entities/timesheet-tbp/timesheet-tbp.service';
+import { IImputation } from 'app/shared/model/imputation.model';
 import { TeamService } from 'app/entities/team';
 
 @Component({
@@ -11,19 +14,19 @@ import { TeamService } from 'app/entities/team';
 })
 export class TimesheetTbpComponent implements OnInit {
     currentAccount: any;
+    tbpRequestBody: ITbpRequestBody = new TbpRequestBody();
     myTeam: ITeam;
     allTeams: ITeam[];
-    currentYear: number = new Date().getFullYear();
-    years: Array<number> = [];
-    months: Array<number> = [];
-    days: Array<number> = [];
-    manDays: Array<number> = [];
+    imputation: IImputation;
     predicate: any;
     reverse: any;
-    constructor(protected accountService: AccountService, protected teamService: TeamService) {}
+    constructor(
+        protected accountService: AccountService,
+        protected teamService: TeamService,
+        protected timesheetTbpService: TimesheetTbpService
+    ) {}
 
     ngOnInit() {
-        this.initialize();
         this.accountService.identity().then(account => {
             this.currentAccount = account;
             this.loadAll();
@@ -47,36 +50,16 @@ export class TimesheetTbpComponent implements OnInit {
         return this.currentAccount.authorities.includes('ROLE_DELCO');
     }
 
-    private initialize() {
-        this.initializeYears();
-        this.initializeMonth();
-        this.initializeDays();
-        this.initializeManDays();
+    getTimesheet() {
+        console.log('request body', this.tbpRequestBody);
+        this.timesheetTbpService.findTbpChargeByTeam(this.tbpRequestBody).subscribe(
+            res => {
+                this.imputation = res.body;
+                console.log(this.imputation);
+            },
+            error => {
+                console.log(error);
+            }
+        );
     }
-
-    private initializeYears() {
-        for (let i = 2015; i <= this.currentYear; i++) {
-            this.years.push(i);
-        }
-    }
-
-    private initializeMonth() {
-        for (let i = 1; i <= 12; i++) {
-            this.months.push(i);
-        }
-    }
-
-    private initializeDays() {
-        for (let i = 1; i <= 31; i++) {
-            this.days.push(i);
-        }
-    }
-
-    private initializeManDays() {
-        for (let i = 1; i <= 40; i++) {
-            this.manDays.push(i);
-        }
-    }
-
-    getTimesheet() {}
 }

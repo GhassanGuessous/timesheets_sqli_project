@@ -1,11 +1,15 @@
 package com.sqli.imputation.service.impl;
 
+import com.sqli.imputation.service.TbpImputationConverterService;
 import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.repository.ImputationRepository;
+import com.sqli.imputation.service.TBPResourceService;
+import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,11 @@ public class ImputationServiceImpl implements ImputationService {
     private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
 
     private final ImputationRepository imputationRepository;
+
+    @Autowired
+    private TbpImputationConverterService tbpImputationConverterService;
+    @Autowired
+    private TBPResourceService tbpResourceService;
 
     public ImputationServiceImpl(ImputationRepository imputationRepository) {
         this.imputationRepository = imputationRepository;
@@ -76,5 +85,10 @@ public class ImputationServiceImpl implements ImputationService {
     public void delete(Long id) {
         log.debug("Request to delete Imputation : {}", id);
         imputationRepository.deleteById(id);
+    }
+
+    @Override
+    public Imputation findTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
+        return tbpImputationConverterService.convert(tbpResourceService.getTeamCharges(tbpRequestBodyDTO).getBody().getData().getCharge(), tbpRequestBodyDTO);
     }
 }

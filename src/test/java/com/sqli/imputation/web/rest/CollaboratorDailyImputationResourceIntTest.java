@@ -44,8 +44,8 @@ public class CollaboratorDailyImputationResourceIntTest {
     private static final Integer DEFAULT_DAY = 1;
     private static final Integer UPDATED_DAY = 2;
 
-    private static final Integer DEFAULT_CHARGE = 1;
-    private static final Integer UPDATED_CHARGE = 2;
+    private static final Double DEFAULT_CHARGE = 1D;
+    private static final Double UPDATED_CHARGE = 2D;
 
     @Autowired
     private CollaboratorDailyImputationRepository collaboratorDailyImputationRepository;
