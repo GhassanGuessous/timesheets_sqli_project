@@ -2,6 +2,7 @@ package com.sqli.imputation.service;
 
 import com.sqli.imputation.domain.Imputation;
 
+import com.sqli.imputation.service.dto.AppRequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -43,4 +44,12 @@ public interface ImputationService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+    /**
+     * Get the App imputation.
+     *
+     * @param appRequestDTO the app imputation request
+     * @return the entity
+     */
+    Imputation getAppImputation(AppRequestDTO appRequestDTO);
 }

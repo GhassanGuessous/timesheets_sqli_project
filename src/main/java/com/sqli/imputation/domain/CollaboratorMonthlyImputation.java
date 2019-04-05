@@ -134,8 +134,11 @@ public class CollaboratorMonthlyImputation implements Serializable {
     @Override
     public String toString() {
         return "CollaboratorMonthlyImputation{" +
-            "id=" + getId() +
-            ", total=" + getTotal() +
-            "}";
+            "id=" + id +
+            ", total=" + total +
+            ", collaborator=" + collaborator +
+            ", imputation=" + imputation +
+            ", dailyImputations=" + dailyImputations +
+            '}';
     }
 }

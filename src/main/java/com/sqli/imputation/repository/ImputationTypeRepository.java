@@ -12,4 +12,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ImputationTypeRepository extends JpaRepository<ImputationType, Long> {
 
+    ImputationType findByNameLike(String app);
 }

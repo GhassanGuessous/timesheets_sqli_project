@@ -1,6 +1,7 @@
 package com.sqli.imputation.web.rest;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.service.ImputationService;
+import com.sqli.imputation.service.dto.AppRequestDTO;
 import com.sqli.imputation.web.rest.errors.BadRequestAlertException;
 import com.sqli.imputation.web.rest.util.HeaderUtil;
 import com.sqli.imputation.web.rest.util.PaginationUtil;
@@ -54,6 +55,20 @@ public class ImputationResource {
         return ResponseEntity.created(new URI("/api/imputations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * POST  /imputations/app : get app imputation from webservice.
+     *
+     * @param appRequestDTO the app imputation request
+     * @return the ResponseEntity with imputation of type APP
+     */
+    @PostMapping("/imputations/app")
+    public ResponseEntity<Imputation> getAppImputation(@RequestBody AppRequestDTO appRequestDTO) {
+        System.out.println("hjjhghk");
+        log.debug("REST request to get APP Imputation : {}", appRequestDTO);
+        Imputation result = imputationService.getAppImputation(appRequestDTO);
+        return ResponseEntity.ok().body(result);
     }
 
     /**
