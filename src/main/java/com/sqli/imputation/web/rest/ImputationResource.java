@@ -130,9 +130,13 @@ public class ImputationResource {
     public ResponseEntity<Imputation> getTbpImputation(@RequestBody TbpRequestBodyDTO tbpRequestBodyDTO) throws URISyntaxException {
         log.debug("REST request to get Imputation charge given a team and a date : {}", tbpRequestBodyDTO);
         if (tbpRequestBodyDTO.getIdTbp() == null) {
-            throw new BadRequestAlertException("TBP id is required", "", "");
+            throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
+        }else if(tbpRequestBodyDTO.getStartDate() == null || tbpRequestBodyDTO.getEndDate() == null){
+            throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
         }
-        Imputation imputation = imputationService.findTbpImputation(tbpRequestBodyDTO);
-        return ResponseEntity.ok().body(imputation);
+        else{
+            Imputation imputation = imputationService.findTbpImputation(tbpRequestBodyDTO);
+            return ResponseEntity.ok().body(imputation);
+        }
     }
 }

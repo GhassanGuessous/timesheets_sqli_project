@@ -145,7 +145,9 @@
         "userexists": "Login déjà utilisé !",
         "emailexists": "Email déjà utilisé !",
         "idexists": "Une nouvelle entité {{entityName}} ne peut pas avoir d'ID !",
-        "idnull": "Invalid ID"
+        "idnull": "Invalid ID",
+        "projectnull": "Vous devez sélectionner un projet!",
+        "datenull": "Les dates de debut et de fin ne peuvent pas être vides!"
     },
     "footer": "Ceci est votre pied de page"
 }

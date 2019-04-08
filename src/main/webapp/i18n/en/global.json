@@ -146,7 +146,9 @@
         "userexists": "Login name already used!",
         "emailexists": "Email is already in use!",
         "idexists": "A new {{ entityName }} cannot already have an ID",
-        "idnull": "Invalid ID"
+        "idnull": "Invalid ID",
+        "projectnull": "Project cannot be empty!",
+        "datenull": "Start date Or End date cannot be empty!"
     },
     "footer": "This is your footer"
 }

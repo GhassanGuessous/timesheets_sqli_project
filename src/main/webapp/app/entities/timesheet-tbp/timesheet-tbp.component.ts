@@ -50,6 +50,10 @@ export class TimesheetTbpComponent implements OnInit {
         return this.currentAccount.authorities.includes('ROLE_DELCO');
     }
 
+    isAdmin() {
+        return this.currentAccount.authorities.includes('ROLE_ADMIN');
+    }
+
     getTimesheet() {
         console.log('request body', this.tbpRequestBody);
         this.timesheetTbpService.findTbpChargeByTeam(this.tbpRequestBody).subscribe(
