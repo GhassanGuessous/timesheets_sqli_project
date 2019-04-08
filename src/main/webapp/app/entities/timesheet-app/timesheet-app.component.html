@@ -2,7 +2,7 @@
     <h2 id="page-heading">
         <span jhiTranslate="global.menu.entities.app-timesheet">APP Timesheet</span>
     </h2>
-    <div class="row justify-content-center" *ngIf="allTeams">
+    <div class="row justify-content-center" *ngIf="allTeams || myTeam">
         <div>
             <form class="form-inline" name="appImputationForm" role="form" novalidate #appImputationForm="ngForm"
                   [ngSwitch]="isAdmin()" (ngSubmit)="getTimesheet()">
@@ -24,16 +24,20 @@
                     </select>
                 </div>
                 <div class="form-group tbp-import-form">
-                    <label class="form-control-label"
-                           for="field_start_date">Start Date</label>
-                    <input class="form-control" type="date" id="field_start_date" name="start_date"
-                           [(ngModel)]="appRequestBody.startDate"/>
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.year"
+                           for="field_year">Year</label>
+                    <select class="form-control" id="field_year" name="year"
+                            [(ngModel)]="appRequestBody.year">
+                        <option *ngFor="let year of years" [selected]="year == currentYear">{{year}}</option>
+                    </select>
                 </div>
                 <div class="form-group tbp-import-form">
-                    <label class="form-control-label"
-                           for="field_end_date">End Date</label>
-                    <input class="form-control" type="date" id="field_end_date" name="end_date"
-                           [(ngModel)]="appRequestBody.endDate"/>
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.month"
+                           for="field_month">Month</label>
+                    <select class="form-control" id="field_month" name="month"
+                            [(ngModel)]="appRequestBody.month">
+                        <option *ngFor="let month of months" [selected]="month == currentMonth">{{month}}</option>
+                    </select>
                 </div>
                 <div class="form-group tbp-import-form">
                     <button type="submit" id="tbp-timesheet-import-button" class="btn btn-primary float-right">
@@ -48,7 +52,7 @@
     </div>
     <jhi-alert></jhi-alert>
     <br/>
-    <div class="table-responsive" *ngIf="imputations">
+    <div class=" table table-bordered table-responsive" *ngIf="imputations">
         <table class="table table-striped">
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
@@ -61,35 +65,18 @@
                 <th><span>Total</span>
                     <fa-icon [icon]="'sort'"></fa-icon>
                 </th>
-                <th jhiSortBy="month"><span jhiTranslate="imputationSqliApp.imputation.month">Month</span>
-                    <fa-icon [icon]="'sort'"></fa-icon>
-                </th>
-                <th jhiSortBy="year"><span jhiTranslate="imputationSqliApp.imputation.year">Year</span>
-                    <fa-icon [icon]="'sort'"></fa-icon>
-                </th>
-                <!--<th jhiSortBy="imputationType.id"><span-->
-                <!--jhiTranslate="imputationSqliApp.imputation.imputationType">Imputation Type</span>-->
-                <!--<fa-icon [icon]="'sort'"></fa-icon>-->
-                <!--</th>-->
                 <th *ngFor="let day of days" [id]="day">{{day + '/' + imputations.month}}</th>
-                <th></th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let monthlyImputation of imputations.monthlyImputations ;trackBy: trackId">
                 <!--<td><a [routerLink]="['/imputation', imputations.id, 'view' ]">{{imputations.id}}</a></td>-->
-                <td>{{monthlyImputation.collaborator.lastname + ' ' + monthlyImputation.collaborator.firstname}}</td>
-                <td>{{monthlyImputation.total}}</td>
-                <td>{{imputations.month}}</td>
-                <td>{{imputations.year}}</td>
-                <!--<td>-->
-                <!--<div *ngIf="imputations.imputationType">-->
-                <!--<a-->
-                <!--[routerLink]="['../imputation-type', imputations.imputationType?.id, 'view' ]">{{imputations.imputationType?.name}}</a>-->
-                <!--</div>-->
-                <!--</td>-->
-                <td *ngFor="let day of days" [id]="day">
-                    <span *ngFor="let dailyImputation of monthlyImputation.dailyImputations">{{day == dailyImputation.day? dailyImputation.charge:''}}</span>
+                <td class="text-center">{{monthlyImputation.collaborator.lastname + ' ' + monthlyImputation.collaborator.firstname}}</td>
+                <td class="text-center">{{monthlyImputation.total}}</td>
+                <td class="text-center" *ngFor="let day of days" [id]="day">
+                    <span
+                        *ngFor="let dailyImputation of monthlyImputation.dailyImputations">{{day == dailyImputation.day ? dailyImputation.charge : ''}}
+                    </span>
                 </td>
                 <!--<td class="text-right">-->
                 <!--<div class="btn-group flex-btn-group-container">-->

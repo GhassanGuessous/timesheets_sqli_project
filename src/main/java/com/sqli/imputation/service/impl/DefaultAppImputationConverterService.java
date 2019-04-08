@@ -37,9 +37,7 @@ public class DefaultAppImputationConverterService implements AppImputationConver
 
     private Imputation createImputation(AppRequestDTO appRequestDTO) {
         ImputationType imputationType = imputationTypeRepository.findByNameLike(APP_NAME);
-        int year = getYearFromDateRequest(appRequestDTO.getStartDate());
-        int month = getMonthFromDateRequest(appRequestDTO.getStartDate());
-        return imputationFactory.createImputation(year, month, imputationType);
+        return imputationFactory.createImputation(appRequestDTO.getYear(), appRequestDTO.getMonth(), imputationType);
     }
 
     private void fillImputation(Imputation imputation, List<AppChargeDTO> appChargeDTOS) {
@@ -59,7 +57,8 @@ public class DefaultAppImputationConverterService implements AppImputationConver
     }
 
     private CollaboratorMonthlyImputation getCollabMonthlyImputation(String appLogin, Imputation imputation) {
-        Collaborator collaborator = correspondenceRepository.findByIdAPP(appLogin).getCollaborator();
+        Correspondence correspondence = correspondenceRepository.findByIdAPP(appLogin);
+        Collaborator collaborator = correspondence.getCollaborator();
         if (isMontlyImputationExist(imputation, collaborator)) {
             return getMonthlyImputationOfCollab(imputation, collaborator);
         }

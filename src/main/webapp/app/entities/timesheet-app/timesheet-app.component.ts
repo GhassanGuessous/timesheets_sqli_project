@@ -15,7 +15,11 @@ export class TimesheetAppComponent implements OnInit {
     currentAccount: any;
     myTeam: ITeam;
     allTeams: ITeam[];
-    appRequestBody: IAppRequestBody = new AppRequestBody();
+    currentYear: number = new Date().getFullYear();
+    currentMonth: number = new Date().getMonth();
+    appRequestBody: IAppRequestBody = new AppRequestBody('', this.currentYear, this.currentMonth);
+    years: Array<number> = [];
+    months: Array<number> = [];
     predicate: any;
     reverse: any;
     imputations: any;
@@ -24,14 +28,15 @@ export class TimesheetAppComponent implements OnInit {
     constructor(protected service: TimesheetAppService, protected accountService: AccountService, protected teamService: TeamService) {}
 
     ngOnInit() {
+        this.initialize();
         console.log(new Date(2019, 2, 0).getDate());
         this.accountService.identity().then(account => {
             this.currentAccount = account;
-            // if (this.isAdmin()) {
-            this.loadAll();
-            // } else {
-            this.loadDelcoTeam(account.id);
-            //   }
+            if (this.isAdmin()) {
+                this.loadAll();
+            } else {
+                this.loadDelcoTeam(account.id);
+            }
         });
     }
 
@@ -59,13 +64,35 @@ export class TimesheetAppComponent implements OnInit {
         this.service.findAppChargeByTeam(this.appRequestBody).subscribe(res => {
             console.log(res.body);
             this.imputations = res.body;
-            this.initDays(res.body);
+            this.initializeDays(res.body);
         });
     }
 
-    private initDays(res: IImputation) {
-        res.monthlyImputations[res.monthlyImputations.length - 1].dailyImputations.forEach(item => {
-            return this.days.push(item.day);
+    private initializeDays(res: IImputation) {
+        res.monthlyImputations.forEach(monthly => {
+            monthly.dailyImputations.forEach(daily => this.days.push(daily.day));
         });
+        this.removeDuplecates(this.days);
+    }
+
+    private removeDuplecates(days: Array<number>) {
+        this.days = Array.from(new Set(days)).sort((a, b) => a - b);
+    }
+
+    private initialize() {
+        this.initializeYears();
+        this.initializeMonth();
+    }
+
+    private initializeYears() {
+        for (let i = 2015; i <= this.currentYear; i++) {
+            this.years.push(i);
+        }
+    }
+
+    private initializeMonth() {
+        for (let i = 1; i <= 12; i++) {
+            this.months.push(i);
+        }
     }
 }

@@ -3,8 +3,8 @@ package com.sqli.imputation.service.dto;
 public class AppRequestDTO {
 
     private String agresso;
-    private String startDate;
-    private String endDate;
+    private int year;
+    private int month;
 
     public String getAgresso() {
         return agresso;
@@ -14,28 +14,28 @@ public class AppRequestDTO {
         this.agresso = agresso;
     }
 
-    public String getStartDate() {
-        return startDate;
+    public int getYear() {
+        return year;
     }
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
+    public void setYear(int year) {
+        this.year = year;
     }
 
-    public String getEndDate() {
-        return endDate;
+    public int getMonth() {
+        return month;
     }
 
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
+    public void setMonth(int month) {
+        this.month = month;
     }
 
     @Override
     public String toString() {
         return "AppRequestDTO{" +
             "agresso='" + agresso + '\'' +
-            ", startDate='" + startDate + '\'' +
-            ", endDate='" + endDate + '\'' +
+            ", year=" + year +
+            ", month=" + month +
             '}';
     }
 }

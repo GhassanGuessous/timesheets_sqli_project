@@ -1,9 +1,9 @@
 export interface IAppRequestBody {
     agresso?: string;
-    startDate?: string;
-    endDate?: string;
+    year?: number;
+    month?: number;
 }
 
 export class AppRequestBody implements IAppRequestBody {
-    constructor(public agresso?: string, public startDate?: string, public endDate?: string) {}
+    constructor(public agresso?: string, public year?: number, public month?: number) {}
 }
