@@ -29,8 +29,11 @@ export class TimesheetTbpComponent implements OnInit {
     ngOnInit() {
         this.accountService.identity().then(account => {
             this.currentAccount = account;
-            this.loadAll();
-            this.loadDelcoTeam(account.id);
+            if (this.isAdmin()) {
+                this.loadAll();
+            } else {
+                this.loadDelcoTeam(account.id);
+            }
         });
     }
 
@@ -46,10 +49,6 @@ export class TimesheetTbpComponent implements OnInit {
         });
     }
 
-    isDelco() {
-        return this.currentAccount.authorities.includes('ROLE_DELCO');
-    }
-
     isAdmin() {
         return this.currentAccount.authorities.includes('ROLE_ADMIN');
     }
@@ -59,11 +58,9 @@ export class TimesheetTbpComponent implements OnInit {
         this.timesheetTbpService.findTbpChargeByTeam(this.tbpRequestBody).subscribe(
             res => {
                 this.imputation = res.body;
-                console.log(this.imputation);
+                console.log('************', this.imputation);
             },
-            error => {
-                console.log(error);
-            }
+            error => {}
         );
     }
 }

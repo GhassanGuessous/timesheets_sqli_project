@@ -5,6 +5,7 @@ import com.sqli.imputation.service.TbpImputationConverterService;
 import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.service.TBPResourceService;
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
+import com.sqli.imputation.service.util.DateUtil;
 import com.sqli.imputation.web.rest.errors.BadRequestAlertException;
 import com.sqli.imputation.web.rest.util.HeaderUtil;
 import com.sqli.imputation.web.rest.util.PaginationUtil;
@@ -131,10 +132,11 @@ public class ImputationResource {
         log.debug("REST request to get Imputation charge given a team and a date : {}", tbpRequestBodyDTO);
         if (tbpRequestBodyDTO.getIdTbp() == null) {
             throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
-        }else if(tbpRequestBodyDTO.getStartDate() == null || tbpRequestBodyDTO.getEndDate() == null){
+        } else if (tbpRequestBodyDTO.getStartDate() == null || tbpRequestBodyDTO.getEndDate() == null) {
             throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
-        }
-        else{
+        } else if(DateUtil.isDatesOrderNotValid(tbpRequestBodyDTO.getStartDate(), tbpRequestBodyDTO.getEndDate())){
+            throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
+        } else {
             Imputation imputation = imputationService.findTbpImputation(tbpRequestBodyDTO);
             return ResponseEntity.ok().body(imputation);
         }

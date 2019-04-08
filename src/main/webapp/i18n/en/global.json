@@ -148,7 +148,8 @@
         "idexists": "A new {{ entityName }} cannot already have an ID",
         "idnull": "Invalid ID",
         "projectnull": "Project cannot be empty!",
-        "datenull": "Start date Or End date cannot be empty!"
+        "datenull": "Start date Or End date cannot be empty!",
+        "orderdates": "End date should be greater than started date!"
     },
     "footer": "This is your footer"
 }

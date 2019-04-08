@@ -43,4 +43,13 @@ public class TbpRequestBodyDTO {
     public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
+
+    @Override
+    public String toString() {
+        return "TbpRequestBodyDTO{" +
+            "idTbp='" + idTbp + '\'' +
+            ", startDate='" + startDate + '\'' +
+            ", endDate='" + endDate + '\'' +
+            '}';
+    }
 }
