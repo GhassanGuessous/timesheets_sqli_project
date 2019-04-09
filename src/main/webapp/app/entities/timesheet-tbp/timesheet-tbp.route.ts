@@ -35,7 +35,7 @@ export const timesheetTbpRoute: Routes = [
         data: {
             authorities: ['ROLE_ADMIN', 'ROLE_DELCO'],
             defaultSort: 'id,asc',
-            pageTitle: 'imputationSqliApp.activity.home.title'
+            pageTitle: 'imputationSqliApp.imputation.home.tbpTitle'
         },
         canActivate: [UserRouteAccessService]
     }

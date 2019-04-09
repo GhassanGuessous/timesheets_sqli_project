@@ -24,10 +24,10 @@ public class ImputationFactory {
         return monthlyImputation;
     }
 
-    public CollaboratorDailyImputation createDailyImputation(int day, String charge, CollaboratorMonthlyImputation monthlyImputation) {
+    public CollaboratorDailyImputation createDailyImputation(int day, Double charge, CollaboratorMonthlyImputation monthlyImputation) {
         CollaboratorDailyImputation dailyImputation = new CollaboratorDailyImputation();
         dailyImputation.setDay(day);
-        dailyImputation.setCharge(Double.parseDouble(charge));
+        dailyImputation.setCharge(charge);
         dailyImputation.setCollaboratorMonthlyImputation(monthlyImputation);
         return dailyImputation;
     }

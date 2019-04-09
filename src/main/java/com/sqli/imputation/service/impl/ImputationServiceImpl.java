@@ -1,9 +1,12 @@
 package com.sqli.imputation.service.impl;
 
-import com.sqli.imputation.service.TbpImputationConverterService;
+import com.sqli.imputation.service.AppImputationConverterService;
 import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.repository.ImputationRepository;
+import com.sqli.imputation.service.dto.AppChargeDTO;
+import com.sqli.imputation.service.dto.AppRequestDTO;
+import com.sqli.imputation.service.TbpImputationConverterService;
 import com.sqli.imputation.service.TBPResourceService;
 import com.sqli.imputation.service.TbpRequestComposerService;
 import com.sqli.imputation.service.dto.ChargeTeamDTO;
@@ -17,8 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -27,6 +30,11 @@ import java.util.Optional;
 @Service
 @Transactional
 public class ImputationServiceImpl implements ImputationService {
+
+    @Autowired
+    private AppParserService appParserService;
+    @Autowired
+    private AppImputationConverterService appConverterService;
 
     private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
 
@@ -91,6 +99,18 @@ public class ImputationServiceImpl implements ImputationService {
     public void delete(Long id) {
         log.debug("Request to delete Imputation : {}", id);
         imputationRepository.deleteById(id);
+    }
+
+    /**
+     * Get the App imputation.
+     *
+     * @param appRequestDTO the app imputation request
+     * @return the entity
+     */
+    @Override
+    public Imputation getAppImputation(AppRequestDTO appRequestDTO) {
+        List<AppChargeDTO> appChargeDTOS= appParserService.parse();
+        return appConverterService.convert(appRequestDTO,appChargeDTOS);
     }
 
     @Override

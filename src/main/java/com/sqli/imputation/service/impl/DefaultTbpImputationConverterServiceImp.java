@@ -88,12 +88,12 @@ public class DefaultTbpImputationConverterServiceImp implements TbpImputationCon
 
     private Imputation createImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
         return imputationFactory.createImputation(DateUtil.getYear(tbpRequestBodyDTO.getStartDate()),
-                DateUtil.getMonth(tbpRequestBodyDTO.getStartDate()), imputationTypeRepository.findByName(TBP_TYPE_NAME));
+                DateUtil.getMonth(tbpRequestBodyDTO.getStartDate()), imputationTypeRepository.findByNameLike(TBP_TYPE_NAME));
     }
 
     private CollaboratorDailyImputation createCollaboratorDailyImputation(
         ChargeTeamDTO chargeTeamDTO, ChargeCollaboratorDTO collaborateurDTO, CollaboratorMonthlyImputation monthlyImputation) {
-        return imputationFactory.createDailyImputation(DateUtil.getDay(chargeTeamDTO.getDate()), collaborateurDTO.getCharge(), monthlyImputation);
+        return imputationFactory.createDailyImputation(DateUtil.getDay(chargeTeamDTO.getDate()), Double.parseDouble(collaborateurDTO.getCharge()), monthlyImputation);
     }
 
     private CollaboratorMonthlyImputation getCollaboratorMonthlyImputation(Imputation imputation, Collaborator collaborator) {

@@ -2,7 +2,9 @@
     "imputationSqliApp": {
         "imputation": {
             "home": {
-                "title": "Imputations",
+                "appTitle": "Imputations APP",
+                "tbpTitle": "Imputations TBP",
+                "ppmcTitle": "Imputations PPMC",
                 "createLabel": "Créer un nouveau Imputation",
                 "createOrEditLabel": "Créer ou éditer un Imputation"
             },
