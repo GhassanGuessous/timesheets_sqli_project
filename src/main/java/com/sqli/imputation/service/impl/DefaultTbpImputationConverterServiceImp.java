@@ -21,7 +21,7 @@ import static com.sqli.imputation.service.util.DateUtil.getNumberMonthsBetweenDa
 @Service
 public class DefaultTbpImputationConverterServiceImp implements TbpImputationConverterService {
 
-    public static final String TBP_TYPE_NAME = "tbp";
+    public static final String TBP_TYPE_NAME = "TBP";
     public static final String START = "start";
     public static final String DELIMITER = "-";
     public static final String TWO_DIGITS_FORMAT = "%02d";
@@ -135,12 +135,12 @@ public class DefaultTbpImputationConverterServiceImp implements TbpImputationCon
 
     private Imputation createImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
         return imputationFactory.createImputation(DateUtil.getYear(tbpRequestBodyDTO.getStartDate()),
-                DateUtil.getMonth(tbpRequestBodyDTO.getStartDate()), imputationTypeRepository.findByName(TBP_TYPE_NAME));
+                DateUtil.getMonth(tbpRequestBodyDTO.getStartDate()), imputationTypeRepository.findByNameLike(TBP_TYPE_NAME));
     }
 
     private CollaboratorDailyImputation createCollaboratorDailyImputation(
         ChargeTeamDTO chargeTeamDTO, ChargeCollaboratorDTO collaborateurDTO, CollaboratorMonthlyImputation monthlyImputation) {
-        return imputationFactory.createDailyImputation(DateUtil.getDay(chargeTeamDTO.getDate()), collaborateurDTO.getCharge(), monthlyImputation);
+        return imputationFactory.createDailyImputation(DateUtil.getDay(chargeTeamDTO.getDate()), Double.parseDouble(collaborateurDTO.getCharge()), monthlyImputation);
     }
 
     private CollaboratorMonthlyImputation getCollaboratorMonthlyImputation(Imputation imputation, Collaborator collaborator) {

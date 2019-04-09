@@ -12,5 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ImputationTypeRepository extends JpaRepository<ImputationType, Long> {
 
-    ImputationType findByName(String tbp);
+    ImputationType findByNameLike(String name);
+    ImputationType findByName(String name);
 }

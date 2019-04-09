@@ -17,6 +17,8 @@ public interface CorrespondenceRepository extends JpaRepository<Correspondence, 
 
     Correspondence findByIdTBP(String id);
 
+    Correspondence findByIdAPP(String appLogin);
+
     @Query(value = "select c from Correspondence c left join c.collaborator collab " +
         "where c.idAPP like %:key% or c.idPPMC like %:key% or c.idTBP like %:key%" +
         " or collab.firstname like %:key% or collab.lastname like %:key%")

@@ -338,6 +338,11 @@
             <artifactId>jaxb-api</artifactId>
             <version>2.3.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.nerdforge</groupId>
+            <artifactId>unxml</artifactId>
+            <version>0.9</version>
+        </dependency>
     </dependencies>
 
     <build>

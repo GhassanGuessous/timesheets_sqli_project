@@ -25,7 +25,7 @@ import java.util.List;
 public class DefaultDbPopulatorService implements DbPopulatorService {
 
     private static final String BAD_TBP_CREDENTIALS = "Bad TBP Credentials";
-    private static final String EXCEL_FILE_PATH = "C:\\Users\\gguessous\\Desktop\\Imputation_projet\\STG-Comparateur_imputations_APP_Vs_PPMC.xls";
+    private static final String EXCEL_FILE_PATH = "C:\\Users\\aaitbassou\\Desktop\\Imputation_projet\\STG-Comparateur_imputations_APP_Vs_PPMC.xls";
 
     @Autowired
     private TBPResourceService tbpResourceService;
@@ -57,12 +57,12 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
 
     @Override
     public void populate() {
-//        if (isDbEmpty()) {
-//        hitTbpWebService();
-//            persist();
-//            composeTeams();
-//            matcherService.match(correspondenceRepository.findAll(), EXCEL_FILE_PATH);
-//        }
+        if (isDbEmpty()) {
+            hitTbpWebService();
+            persist();
+            composeTeams();
+            matcherService.match(correspondenceRepository.findAll(), EXCEL_FILE_PATH);
+        }
     }
 
     /**
