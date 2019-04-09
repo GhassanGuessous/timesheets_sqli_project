@@ -128,7 +128,7 @@ public class ImputationResource {
     }
 
     @PostMapping("/imputations/tbp")
-    public ResponseEntity<Imputation> getTbpImputation(@RequestBody TbpRequestBodyDTO tbpRequestBodyDTO) throws URISyntaxException {
+    public ResponseEntity<List<Imputation>> getTbpImputation(@RequestBody TbpRequestBodyDTO tbpRequestBodyDTO) throws URISyntaxException {
         log.debug("REST request to get Imputation charge given a team and a date : {}", tbpRequestBodyDTO);
         if (tbpRequestBodyDTO.getIdTbp() == null) {
             throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
@@ -137,8 +137,8 @@ public class ImputationResource {
         } else if(DateUtil.isDatesOrderNotValid(tbpRequestBodyDTO.getStartDate(), tbpRequestBodyDTO.getEndDate())){
             throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
         } else {
-            Imputation imputation = imputationService.findTbpImputation(tbpRequestBodyDTO);
-            return ResponseEntity.ok().body(imputation);
+            List<Imputation> imputations = imputationService.findTbpImputation(tbpRequestBodyDTO);
+            return ResponseEntity.ok().body(imputations);
         }
     }
 }

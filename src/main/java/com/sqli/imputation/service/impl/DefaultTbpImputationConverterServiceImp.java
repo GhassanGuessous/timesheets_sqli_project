@@ -15,84 +15,37 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.sqli.imputation.service.util.DateUtil.END;
-import static com.sqli.imputation.service.util.DateUtil.getNumberMonthsBetweenDates;
-
 @Service
 public class DefaultTbpImputationConverterServiceImp implements TbpImputationConverterService {
 
+
     public static final String TBP_TYPE_NAME = "tbp";
-    public static final String START = "start";
-    public static final String DELIMITER = "-";
-    public static final String TWO_DIGITS_FORMAT = "%02d";
     @Autowired
-    ImputationFactory imputationFactory;
+    private ImputationFactory imputationFactory;
     @Autowired
-    ImputationTypeRepository imputationTypeRepository;
+    private ImputationTypeRepository imputationTypeRepository;
     @Autowired
-    CorrespondenceRepository correspondenceRepository;
+    private CorrespondenceRepository correspondenceRepository;
 
     @Override
     public Imputation convert(List<ChargeTeamDTO> chargeTeamDTOS, TbpRequestBodyDTO tbpRequestBodyDTO) {
-        List<TbpRequestBodyDTO> bodyDTOS = dividePeriod(tbpRequestBodyDTO);
-
         Imputation imputation = createImputation(tbpRequestBodyDTO);
-
-        for (ChargeTeamDTO chargeTeamDTO : chargeTeamDTOS) {
-            for (ChargeCollaboratorDTO collaborateurDTO : chargeTeamDTO.getCollaborateurs()) {
-                Collaborator collaborator = findCollabByCorrespondence(collaborateurDTO);
-
-                CollaboratorMonthlyImputation monthlyImputation = getCollaboratorMonthlyImputation(imputation, collaborator);
-                CollaboratorDailyImputation dailyImputation = createCollaboratorDailyImputation(chargeTeamDTO, collaborateurDTO, monthlyImputation);
-
-                addDailyToMonthlyImputation(monthlyImputation, dailyImputation);
-                setTotalImputationOfCollab(collaborateurDTO, monthlyImputation);
-
-                addMonthlyImputationToImputation(imputation, monthlyImputation);
-            }
-        }
+        chargeTeamDTOS.forEach(chargeTeamDTO -> fillMonthlyImputationForFachCollab(imputation, chargeTeamDTO));
         sortImputations(imputation);
         return imputation;
     }
 
-    private List<TbpRequestBodyDTO> dividePeriod(TbpRequestBodyDTO tbpRequestBodyDTO) {
-        List<TbpRequestBodyDTO> bodyDTOS = new ArrayList<>();
-        Map<Integer, Map<String, Integer>> months;
+    private void fillMonthlyImputationForFachCollab(Imputation imputation, ChargeTeamDTO chargeTeamDTO) {
+        chargeTeamDTO.getCollaborateurs().forEach(collaborateurDTO -> {
+            Collaborator collaborator = findCollabByCorrespondence(collaborateurDTO);
 
-        if(isMultipleMonths(tbpRequestBodyDTO)){
-            int numberOfMonths = DateUtil.getNumberMonthsBetweenDates(tbpRequestBodyDTO.getStartDate(), tbpRequestBodyDTO.getEndDate());
-            months = DateUtil.getMonths(tbpRequestBodyDTO.getStartDate(), tbpRequestBodyDTO.getEndDate(), numberOfMonths);
-            bodyDTOS = getTbpRequestBodyDTOS(months, DateUtil.getYear(tbpRequestBodyDTO.getStartDate()), tbpRequestBodyDTO.getIdTbp());
-        }else{
-            bodyDTOS.add(tbpRequestBodyDTO);
-        }
-        return bodyDTOS;
-    }
+            CollaboratorMonthlyImputation monthlyImputation = getCollaboratorMonthlyImputation(imputation, collaborator);
+            CollaboratorDailyImputation dailyImputation = createCollaboratorDailyImputation(chargeTeamDTO, collaborateurDTO, monthlyImputation);
 
-    public List<TbpRequestBodyDTO> getTbpRequestBodyDTOS(Map<Integer, Map<String, Integer>> months, int year, String idTbp) {
-        List<TbpRequestBodyDTO> bodyDTOS = new ArrayList<>();
-        months.forEach((month, startEndMap) -> {
-            StringBuilder startDateBuilder = new StringBuilder(year + DELIMITER);
-            StringBuilder endDateBuilder = new StringBuilder(year + DELIMITER);
-            composeStartDate(month, startEndMap, startDateBuilder);
-            composeEndDate(month, startEndMap, endDateBuilder);
-            bodyDTOS.add(new TbpRequestBodyDTO(idTbp, startDateBuilder.toString(), endDateBuilder.toString()));
+            addDailyToMonthlyImputation(monthlyImputation, dailyImputation);
+            setTotalImputationOfCollab(collaborateurDTO, monthlyImputation);
+            addMonthlyImputationToImputation(imputation, monthlyImputation);
         });
-        return bodyDTOS;
-    }
-
-    private void composeEndDate(Integer month, Map<String, Integer> startEndMap, StringBuilder endDateBuilder) {
-        endDateBuilder.append(String.format(TWO_DIGITS_FORMAT, month) + DELIMITER);
-        endDateBuilder.append(String.format(TWO_DIGITS_FORMAT, startEndMap.get(END)));
-    }
-
-    private void composeStartDate(Integer month, Map<String, Integer> startEndMap, StringBuilder startDateBuilder) {
-        startDateBuilder.append(String.format(TWO_DIGITS_FORMAT, month) + DELIMITER);
-        startDateBuilder.append(String.format(TWO_DIGITS_FORMAT, startEndMap.get(START)));
-    }
-
-    private boolean isMultipleMonths(TbpRequestBodyDTO tbpRequestBodyDTO) {
-        return getNumberMonthsBetweenDates(tbpRequestBodyDTO.getStartDate(), tbpRequestBodyDTO.getEndDate()) != 0;
     }
 
     private void sortImputations(Imputation imputation) {
@@ -144,7 +97,7 @@ public class DefaultTbpImputationConverterServiceImp implements TbpImputationCon
     }
 
     private CollaboratorMonthlyImputation getCollaboratorMonthlyImputation(Imputation imputation, Collaborator collaborator) {
-        CollaboratorMonthlyImputation monthlyImputation = null;
+        CollaboratorMonthlyImputation monthlyImputation;
 
         if(isMonthlyImputationExistForCurrentCollab(imputation, collaborator))
             monthlyImputation = findMonthlyImputationByCollab(imputation, collaborator);

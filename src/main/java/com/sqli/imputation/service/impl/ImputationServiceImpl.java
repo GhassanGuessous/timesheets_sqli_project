@@ -5,6 +5,8 @@ import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.repository.ImputationRepository;
 import com.sqli.imputation.service.TBPResourceService;
+import com.sqli.imputation.service.TbpRequestComposerService;
+import com.sqli.imputation.service.dto.ChargeTeamDTO;
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -32,6 +36,8 @@ public class ImputationServiceImpl implements ImputationService {
     private TbpImputationConverterService tbpImputationConverterService;
     @Autowired
     private TBPResourceService tbpResourceService;
+    @Autowired
+    private TbpRequestComposerService composerService;
 
     public ImputationServiceImpl(ImputationRepository imputationRepository) {
         this.imputationRepository = imputationRepository;
@@ -88,7 +94,14 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     @Override
-    public Imputation findTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
-        return tbpImputationConverterService.convert(tbpResourceService.getTeamCharges(tbpRequestBodyDTO).getBody().getData().getCharge(), tbpRequestBodyDTO);
+    public List<Imputation> findTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
+        List<Imputation> imputations = new ArrayList<>();
+        List<TbpRequestBodyDTO> requestBodies = composerService.dividePeriod(tbpRequestBodyDTO);
+        requestBodies.forEach(requestBody -> {
+            List<ChargeTeamDTO> chargeTeamDTOS = tbpResourceService.getTeamCharges(requestBody).getBody().getData().getCharge();
+            Imputation imputation = tbpImputationConverterService.convert(chargeTeamDTOS, requestBody);
+            imputations.add(imputation);
+        });
+        return imputations;
     }
 }
