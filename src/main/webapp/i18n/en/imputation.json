@@ -18,6 +18,7 @@
                 "title": "Imputation"
             },
             "month": "Month",
+            "monthNumber": "Month {{ month }}",
             "year": "Year",
             "monthlyImputation": "Monthly Imputation",
             "imputationType": "Imputation Type",

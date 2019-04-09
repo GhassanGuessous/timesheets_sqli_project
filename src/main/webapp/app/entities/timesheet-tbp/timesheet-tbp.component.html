@@ -45,41 +45,34 @@
     </div>
     <jhi-alert></jhi-alert>
     <br/>
-    <div class="table-responsive" *ngIf="imputation">
-        <table class="table table-striped">
-            <thead>
-            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
-                <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
-                    <fa-icon [icon]="'sort'"></fa-icon>
-                </th>
-                <th jhiSortBy="month"><span>Collaborator</span>
-                    <fa-icon [icon]="'sort'"></fa-icon>
-                </th>
-                <th jhiSortBy="year"><span>Total</span>
-                    <fa-icon [icon]="'sort'"></fa-icon>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let monthlyImputation of imputation.monthlyImputations ;trackBy: trackId">
-                <td>{{monthlyImputation.collaborator.id}}</td>
-                <td>{{monthlyImputation.collaborator.lastname + ' ' + monthlyImputation.collaborator.firstname}}</td>
-                <td>{{monthlyImputation.total}}</td>
-                <td *ngFor="let dailyImputation of monthlyImputation.dailyImputations">
-                    {{dailyImputation.charge}}
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div *ngIf="imputations && imputations.length">
-        <div class="row justify-content-center">
-            <jhi-item-count [page]="page" [total]="totalItems" [maxSize]="5"
-                            [itemsPerPage]="itemsPerPage"></jhi-item-count>
-        </div>
-        <div class="row justify-content-center">
-            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5"
-                            [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+    <div *ngIf="imputations">
+        <div class="table-responsive" *ngFor="let imputation of imputations">
+            <h3>
+                <span jhiTranslate="imputationSqliApp.imputation.monthNumber" [translateValues]="{month: imputation.month}">Month : </span>
+            </h3>
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
+                    <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
+                    </th>
+                    <th jhiSortBy="month"><span>Collaborator</span>
+                    </th>
+                    <th jhiSortBy="year"><span>Total</span>
+                    </th>
+                    <th *ngFor="let day of imputationDays.get(imputation)" [id]="day">{{day + '/' + imputation.month}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let monthlyImputation of imputation.monthlyImputations">
+                    <td>{{monthlyImputation.collaborator.id}}</td>
+                    <td><a [routerLink]="['/collaborator', monthlyImputation.collaborator.id, 'view' ]">{{monthlyImputation.collaborator.lastname + ' ' + monthlyImputation.collaborator.firstname}}</a></td>
+                    <td class="text-center"><b>{{monthlyImputation.total}}</b></td>
+                    <td class="text-center" *ngFor="let day of imputationDays.get(imputation)" [id]="day">
+                        <span *ngFor="let dailyImputation of monthlyImputation.dailyImputations">{{day == dailyImputation.day ? dailyImputation.charge : ''}}</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
