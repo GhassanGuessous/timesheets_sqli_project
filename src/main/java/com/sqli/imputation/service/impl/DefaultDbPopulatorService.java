@@ -8,15 +8,12 @@ import com.sqli.imputation.repository.CollaboratorRepository;
 import com.sqli.imputation.repository.CorrespondenceRepository;
 import com.sqli.imputation.repository.TeamRepository;
 import com.sqli.imputation.service.*;
+import com.sqli.imputation.service.dto.*;
 import com.sqli.imputation.service.dto.db_populator.Team.ChargeTeamRestResponse;
 import com.sqli.imputation.service.dto.db_populator.Team.TeamRestResponse;
 import com.sqli.imputation.service.dto.db_populator.activity.ActivityRestResponse;
 import com.sqli.imputation.service.dto.db_populator.collaborator.CollaboratorRestResponse;
 import com.sqli.imputation.service.dto.db_populator.projectType.ProjectTypeRestResponse;
-import com.sqli.imputation.service.dto.ActivityDTO;
-import com.sqli.imputation.service.dto.ChargeCollaboratorDTO;
-import com.sqli.imputation.service.dto.ChargeTeamDTO;
-import com.sqli.imputation.service.dto.ProjectTypeDTO;
 import com.sqli.imputation.web.rest.errors.TBPBadAuthentificationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -164,7 +161,7 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
     }
 
     private void setChargeTeams(String idTeamTbp) {
-        chargeTeamRestResponse = tbpResourceService.getTeamCharges(idTeamTbp);
+        chargeTeamRestResponse = tbpResourceService.getTeamCharges(new TbpRequestBodyDTO(idTeamTbp));
     }
 
     private void persistActivities() {

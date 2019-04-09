@@ -16,10 +16,7 @@ import java.util.stream.Collectors;
 @Service
 public class DefaultAppImputationConverterService implements AppImputationConverterService {
 
-    public static final String DATE_SEPARATOR = "-";
-    public static final int MONTH_POSITION = 1;
-    public static final int YEAR_POSITION = 0;
-    public static final String APP_NAME = "APP";
+    private static final String APP_NAME = "APP";
     @Autowired
     private ImputationTypeRepository imputationTypeRepository;
     @Autowired
@@ -49,8 +46,7 @@ public class DefaultAppImputationConverterService implements AppImputationConver
     }
 
     private void fillCollaboratorMonthlyImputation(CollaboratorMonthlyImputation monthlyImputation, AppChargeDTO appChargeDTO) {
-        //TODO REPLACE INT TO DOUBLE VALUE
-        CollaboratorDailyImputation dailyImputation = imputationFactory.createDailyImputation(monthlyImputation, appChargeDTO.getDay(), appChargeDTO.getCharge().intValue());
+        CollaboratorDailyImputation dailyImputation = imputationFactory.createDailyImputation(appChargeDTO.getDay(), appChargeDTO.getCharge(),monthlyImputation);
         monthlyImputation.getDailyImputations().add(dailyImputation);
         monthlyImputation.setTotal(monthlyImputation.getTotal() + dailyImputation.getCharge());
 
@@ -81,7 +77,7 @@ public class DefaultAppImputationConverterService implements AppImputationConver
 
     private CollaboratorMonthlyImputation getMonthlyImputationOfCollab(Imputation imputation, Collaborator collaborator) {
         return imputation.getMonthlyImputations().stream()
-            .filter(monthlyImputation -> monthlyImputation.getCollaborator().equals(collaborator)).collect(Collectors.toList()).get(0);
+            .filter(monthlyImputation -> monthlyImputation.getCollaborator().equals(collaborator)).findFirst().get();
     }
 
     private void sortImputations(Imputation imputation) {
@@ -107,17 +103,4 @@ public class DefaultAppImputationConverterService implements AppImputationConver
         return imputationFactory.createMonthlyImputation(imputation, collaborator);
     }
 
-    private int getYearFromDateRequest(String date) {
-        String[] splitDate = splitDate(date);
-        return Integer.parseInt(splitDate[YEAR_POSITION]);
-    }
-
-    private int getMonthFromDateRequest(String date) {
-        String[] splitDate = splitDate(date);
-        return Integer.parseInt(splitDate[MONTH_POSITION]);
-    }
-
-    private String[] splitDate(String date) {
-        return date.split(DATE_SEPARATOR);
-    }
 }

@@ -41,8 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ImputationSqliApp.class)
 public class CollaboratorMonthlyImputationResourceIntTest {
 
-    private static final Integer DEFAULT_TOTAL = 1;
-    private static final Integer UPDATED_TOTAL = 2;
+    private static final Double DEFAULT_TOTAL = 1D;
+    private static final Double UPDATED_TOTAL = 2D;
 
     @Autowired
     private CollaboratorMonthlyImputationRepository collaboratorMonthlyImputationRepository;

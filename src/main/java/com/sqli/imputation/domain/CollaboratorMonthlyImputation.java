@@ -25,7 +25,7 @@ public class CollaboratorMonthlyImputation implements Serializable {
     private Long id;
 
     @Column(name = "total")
-    private Integer total;
+    private Double total;
 
     @ManyToOne
     @JsonIgnoreProperties("monthlyImputations")
@@ -46,16 +46,16 @@ public class CollaboratorMonthlyImputation implements Serializable {
         this.id = id;
     }
 
-    public Integer getTotal() {
+    public Double getTotal() {
         return total;
     }
 
-    public CollaboratorMonthlyImputation total(Integer total) {
+    public CollaboratorMonthlyImputation total(Double total) {
         this.total = total;
         return this;
     }
 
-    public void setTotal(Integer total) {
+    public void setTotal(Double total) {
         this.total = total;
     }
 

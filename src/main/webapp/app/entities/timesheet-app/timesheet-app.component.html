@@ -71,7 +71,7 @@
             <tbody>
             <tr *ngFor="let monthlyImputation of imputations.monthlyImputations ;trackBy: trackId">
                 <!--<td><a [routerLink]="['/imputation', imputations.id, 'view' ]">{{imputations.id}}</a></td>-->
-                <td class="text-center">{{monthlyImputation.collaborator.lastname + ' ' + monthlyImputation.collaborator.firstname}}</td>
+                <td>{{monthlyImputation.collaborator.lastname + ' ' + monthlyImputation.collaborator.firstname}}</td>
                 <td class="text-center">{{monthlyImputation.total}}</td>
                 <td class="text-center" *ngFor="let day of days" [id]="day">
                     <span

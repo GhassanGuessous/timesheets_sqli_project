@@ -2,52 +2,35 @@
     <h2 id="page-heading">
         <span jhiTranslate="global.menu.entities.tbp-timesheet">TBP Timesheet</span>
     </h2>
-    <div class="row justify-content-center" *ngIf="allTeams">
+    <div class="row justify-content-center" *ngIf="allTeams || myTeam">
         <div>
-            <form class="form-inline" name="tbpImputationForm" role="form" novalidate #tbpImputationForm="ngForm" [ngSwitch]="isDelco()" (ngSubmit)="getTimesheet()">
-                <jhi-alert-error></jhi-alert-error>
-                <div class="form-group tbp-import-form" *ngSwitchCase="false">
-                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.project_code"
-                           for="field_code_project_admin">Code projet</label>
-                    <select class="form-control" id="field_code_project_admin" name="code_projet">
-                        <option [ngValue]="null"></option>
-                        <option *ngFor="let team of allTeams">{{team.name}}</option>
-                    </select>
-                </div>
+            <jhi-alert-error></jhi-alert-error>
+            <form class="form-inline" name="tbpImputationForm" role="form" novalidate #tbpImputationForm="ngForm" [ngSwitch]="isAdmin()" (ngSubmit)="getTimesheet()">
                 <div class="form-group tbp-import-form" *ngSwitchCase="true">
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.project_code"
+                           for="field_code_project_admin">Code projet</label>
+                    <select class="form-control" id="field_code_project_admin" name="code_project" [(ngModel)]="tbpRequestBody.idTbp">
+                        <option *ngFor="let team of allTeams" [ngValue]="team.idTbp">{{team.name}}</option>
+                    </select>
+                </div>
+                <div class="form-group tbp-import-form" *ngSwitchCase="false">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.project_code"
                            for="field_code_project_delco">Code projet</label>
-                    <select class="form-control" id="field_code_project_delco" name="code_projet">
-                        <option>{{myTeam.name}}</option>
+                    <select class="form-control" id="field_code_project_delco" name="code_project" [(ngModel)]="tbpRequestBody.idTbp">
+                        <option [ngValue]="myTeam.idTbp" [selected]="myTeam">{{myTeam.name}}</option>
                     </select>
                 </div>
                 <div class="form-group tbp-import-form">
-                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.year"
-                           for="field_year">Year</label>
-                    <select class="form-control" id="field_year" name="year">
-                        <option *ngFor="let year of years" [selected]="year == currentYear">{{year}}</option>
-                    </select>
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.start_date"
+                           for="field_start_date">Start Date</label>
+                    <input class="form-control" type="date" id="field_start_date" name="start_date"
+                           [(ngModel)]="tbpRequestBody.startDate"/>
                 </div>
                 <div class="form-group tbp-import-form">
-                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.month"
-                           for="field_month">Month</label>
-                    <select class="form-control" id="field_month" name="month">
-                        <option *ngFor="let month of months">{{month}}</option>
-                    </select>
-                </div>
-                <div class="form-group tbp-import-form">
-                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.debut_day"
-                           for="field_debut_day">Debut day</label>
-                    <select class="form-control" id="field_debut_day" name="debut_day">
-                        <option *ngFor="let day of days">{{day}}</option>
-                    </select>
-                </div>
-                <div class="form-group tbp-import-form">
-                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.md_period"
-                           for="field_duration">Duration man/day</label>
-                    <select class="form-control" id="field_duration" name="duration">
-                        <option *ngFor="let manDay of manDays">{{manDay}}</option>
-                    </select>
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.end_date"
+                           for="field_end_date">End Date</label>
+                    <input class="form-control" type="date" id="field_end_date" name="end_date"
+                           [(ngModel)]="tbpRequestBody.endDate"/>
                 </div>
                 <div class="form-group tbp-import-form">
                     <button type="submit" id="tbp-timesheet-import-button" class="btn btn-primary float-right">
@@ -62,58 +45,28 @@
     </div>
     <jhi-alert></jhi-alert>
     <br/>
-    <div class="table-responsive" *ngIf="imputations">
+    <div class="table-responsive" *ngIf="imputation">
         <table class="table table-striped">
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
                 <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
                     <fa-icon [icon]="'sort'"></fa-icon>
                 </th>
-                <th jhiSortBy="month"><span jhiTranslate="imputationSqliApp.imputation.month">Month</span>
+                <th jhiSortBy="month"><span>Collaborator</span>
                     <fa-icon [icon]="'sort'"></fa-icon>
                 </th>
-                <th jhiSortBy="year"><span jhiTranslate="imputationSqliApp.imputation.year">Year</span>
+                <th jhiSortBy="year"><span>Total</span>
                     <fa-icon [icon]="'sort'"></fa-icon>
                 </th>
-                <th jhiSortBy="imputationType.id"><span jhiTranslate="imputationSqliApp.imputation.imputationType">Imputation Type</span>
-                    <fa-icon [icon]="'sort'"></fa-icon>
-                </th>
-                <th></th>
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let imputation of imputations ;trackBy: trackId">
-                <td><a [routerLink]="['/imputation', imputation.id, 'view' ]">{{imputation.id}}</a></td>
-                <td>{{imputation.month}}</td>
-                <td>{{imputation.year}}</td>
-                <td>
-                    <div *ngIf="imputation.imputationType">
-                        <a [routerLink]="['../imputation-type', imputation.imputationType?.id, 'view' ]">{{imputation.imputationType?.name}}</a>
-                    </div>
-                </td>
-                <td class="text-right">
-                    <div class="btn-group flex-btn-group-container">
-                        <button type="submit"
-                                [routerLink]="['/imputation', imputation.id, 'view' ]"
-                                class="btn btn-info btn-sm">
-                            <fa-icon [icon]="'eye'"></fa-icon>
-                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                        </button>
-                        <button type="submit"
-                                [routerLink]="['/imputation', imputation.id, 'edit']"
-                                class="btn btn-primary btn-sm">
-                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                        </button>
-                        <button type="submit"
-                                [routerLink]="['/', 'imputation', { outlets: { popup: imputation.id + '/delete'} }]"
-                                replaceUrl="true"
-                                queryParamsHandling="merge"
-                                class="btn btn-danger btn-sm">
-                            <fa-icon [icon]="'times'"></fa-icon>
-                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                        </button>
-                    </div>
+            <tr *ngFor="let monthlyImputation of imputation.monthlyImputations ;trackBy: trackId">
+                <td>{{monthlyImputation.collaborator.id}}</td>
+                <td>{{monthlyImputation.collaborator.lastname + ' ' + monthlyImputation.collaborator.firstname}}</td>
+                <td>{{monthlyImputation.total}}</td>
+                <td *ngFor="let dailyImputation of monthlyImputation.dailyImputations">
+                    {{dailyImputation.charge}}
                 </td>
             </tr>
             </tbody>

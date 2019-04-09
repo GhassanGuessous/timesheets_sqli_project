@@ -25,7 +25,7 @@ public class CollaboratorDailyImputation implements Serializable {
     private Integer day;
 
     @Column(name = "charge")
-    private Integer charge;
+    private Double charge;
 
     @ManyToOne
     @JsonIgnoreProperties("dailyImputations")
@@ -53,16 +53,16 @@ public class CollaboratorDailyImputation implements Serializable {
         this.day = day;
     }
 
-    public Integer getCharge() {
+    public Double getCharge() {
         return charge;
     }
 
-    public CollaboratorDailyImputation charge(Integer charge) {
+    public CollaboratorDailyImputation charge(Double charge) {
         this.charge = charge;
         return this;
     }
 
-    public void setCharge(Integer charge) {
+    public void setCharge(Double charge) {
         this.charge = charge;
     }
 
