@@ -19,6 +19,7 @@
             },
             "month": "Mois",
             "year": "Année",
+            "manDay": "Durée en jour/homme",
             "monthlyImputation": "Imputation monsuelle",
             "imputationType": "Type d'imputation",
             "project_code": "Code projet",

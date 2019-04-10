@@ -12,24 +12,29 @@ import { IImputation } from 'app/shared/model/imputation.model';
     styles: []
 })
 export class TimesheetAppComponent implements OnInit {
-    currentAccount: any;
-    myTeam: ITeam;
-    allTeams: ITeam[];
-    currentYear: number = new Date().getFullYear();
-    currentMonth: number = new Date().getMonth();
-    appRequestBody: IAppRequestBody = new AppRequestBody('', this.currentYear, this.currentMonth);
-    years: Array<number> = [];
-    months: Array<number> = [];
-    predicate: any;
-    reverse: any;
-    imputations: any;
+    private currentAccount: any;
+    private myTeam: ITeam;
+    private allTeams: ITeam[];
+    private currentYear: number = new Date().getFullYear();
+    private currentMonth: number = new Date().getMonth();
+    private appRequestBody: IAppRequestBody = new AppRequestBody(
+        '',
+        this.currentYear,
+        this.currentMonth,
+        new Date(this.currentYear, this.currentMonth, 0).getDate()
+    );
+    private years: Array<number> = [];
+    private months: Array<number> = [];
+    private manDays: Array<number> = [];
+    private predicate: any;
+    private reverse: any;
+    private imputations: any;
     private days: Array<number> = [];
 
     constructor(protected service: TimesheetAppService, protected accountService: AccountService, protected teamService: TeamService) {}
 
     ngOnInit() {
         this.initialize();
-        console.log(new Date(2019, 2, 0).getDate());
         this.accountService.identity().then(account => {
             this.currentAccount = account;
             if (this.isAdmin()) {
@@ -82,6 +87,7 @@ export class TimesheetAppComponent implements OnInit {
     private initialize() {
         this.initializeYears();
         this.initializeMonth();
+        this.initializeManDays();
     }
 
     private initializeYears() {
@@ -93,6 +99,12 @@ export class TimesheetAppComponent implements OnInit {
     private initializeMonth() {
         for (let i = 1; i <= 12; i++) {
             this.months.push(i);
+        }
+    }
+
+    private initializeManDays() {
+        for (let i = 1; i <= 40; i++) {
+            this.manDays.push(i);
         }
     }
 }

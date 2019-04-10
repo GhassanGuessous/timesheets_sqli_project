@@ -77,8 +77,12 @@ public class ImputationResource {
     public ResponseEntity<Imputation> getAppImputation(@RequestBody AppRequestDTO appRequestDTO) {
         System.out.println("hjjhghk");
         log.debug("REST request to get APP Imputation : {}", appRequestDTO);
-        Imputation result = imputationService.getAppImputation(appRequestDTO);
-        return ResponseEntity.ok().body(result);
+        if (appRequestDTO.getAgresso().equals("")){
+            throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
+        } else{
+            Imputation result = imputationService.getAppImputation(appRequestDTO);
+            return ResponseEntity.ok().body(result);
+        }
     }
 
     /**

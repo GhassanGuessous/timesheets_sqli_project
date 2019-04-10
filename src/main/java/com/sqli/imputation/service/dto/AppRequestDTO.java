@@ -6,6 +6,16 @@ public class AppRequestDTO {
     private int year;
     private int month;
 
+    public int getManDay() {
+        return manDay;
+    }
+
+    public void setManDay(int manDay) {
+        this.manDay = manDay;
+    }
+
+    private int manDay;
+
     public String getAgresso() {
         return agresso;
     }
@@ -36,6 +46,7 @@ public class AppRequestDTO {
             "agresso='" + agresso + '\'' +
             ", year=" + year +
             ", month=" + month +
+            ", manDay=" + manDay +
             '}';
     }
 }
