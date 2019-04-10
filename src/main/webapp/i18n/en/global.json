@@ -149,7 +149,8 @@
         "idnull": "Invalid ID",
         "projectnull": "Project cannot be empty!",
         "datenull": "Start date Or End date cannot be empty!",
-        "orderdates": "End date should be greater than started date!"
+        "orderdates": "End date should be greater than start date!",
+        "different_years": "Please select dates in the same year!"
     },
     "footer": "This is your footer"
 }

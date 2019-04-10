@@ -148,7 +148,8 @@
         "idnull": "Invalid ID",
         "projectnull": "Vous devez sélectionner un projet!",
         "datenull": "Les dates de debut et de fin ne peuvent pas être vides!",
-        "orderdates": "Date fin doit être supérieur a Date début!"
+        "orderdates": "Date fin doit être supérieur a Date début!",
+        "different_years": "Veuillez sélectionner les dates de la même année!"
     },
     "footer": "Ceci est votre pied de page"
 }

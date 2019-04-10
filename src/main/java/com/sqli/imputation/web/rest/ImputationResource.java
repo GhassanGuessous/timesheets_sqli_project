@@ -1,10 +1,7 @@
 package com.sqli.imputation.web.rest;
-import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
 import com.sqli.imputation.domain.Imputation;
-import com.sqli.imputation.service.TbpImputationConverterService;
 import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.service.dto.AppRequestDTO;
-import com.sqli.imputation.service.TBPResourceService;
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import com.sqli.imputation.service.util.DateUtil;
 import com.sqli.imputation.web.rest.errors.BadRequestAlertException;
@@ -13,7 +10,6 @@ import com.sqli.imputation.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -25,7 +21,6 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * REST controller for managing Imputation.
@@ -39,10 +34,6 @@ public class ImputationResource {
     private static final String ENTITY_NAME = "imputation";
 
     private final ImputationService imputationService;
-    @Autowired
-    private TBPResourceService tbpResourceService;
-    @Autowired
-    private TbpImputationConverterService tbpImputationConverterService;
 
     public ImputationResource(ImputationService imputationService) {
         this.imputationService = imputationService;
@@ -75,7 +66,6 @@ public class ImputationResource {
      */
     @PostMapping("/imputations/app")
     public ResponseEntity<Imputation> getAppImputation(@RequestBody AppRequestDTO appRequestDTO) {
-        System.out.println("hjjhghk");
         log.debug("REST request to get APP Imputation : {}", appRequestDTO);
         if (appRequestDTO.getAgresso().equals("")){
             throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
@@ -147,14 +137,20 @@ public class ImputationResource {
     }
 
     @PostMapping("/imputations/tbp")
-    public ResponseEntity<List<Imputation>> getTbpImputation(@RequestBody TbpRequestBodyDTO tbpRequestBodyDTO) throws URISyntaxException {
+    public ResponseEntity<List<Imputation>> getTbpImputation(@RequestBody TbpRequestBodyDTO tbpRequestBodyDTO) {
         log.debug("REST request to get Imputation charge given a team and a date : {}", tbpRequestBodyDTO);
+
+        String startDate = tbpRequestBodyDTO.getStartDate();
+        String endDate = tbpRequestBodyDTO.getEndDate();
+
         if (tbpRequestBodyDTO.getIdTbp() == null) {
             throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
-        } else if (tbpRequestBodyDTO.getStartDate() == null || tbpRequestBodyDTO.getEndDate() == null) {
+        } else if (startDate == "" || endDate == "") {
             throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
-        } else if(DateUtil.isDatesOrderNotValid(tbpRequestBodyDTO.getStartDate(), tbpRequestBodyDTO.getEndDate())){
+        } else if(DateUtil.isDatesOrderNotValid(startDate, endDate)){
             throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
+        } else if(DateUtil.isDifferentYears(startDate, endDate)){
+            throw new BadRequestAlertException("Different years", ENTITY_NAME, "different_years");
         } else {
             List<Imputation> imputations = imputationService.findTbpImputation(tbpRequestBodyDTO);
             return ResponseEntity.ok().body(imputations);

@@ -18,6 +18,7 @@
                 "title": "Imputation"
             },
             "month": "Mois",
+            "monthNumber": "Mois {{ month }}",
             "year": "Année",
             "manDay": "Durée en jour/homme",
             "monthlyImputation": "Imputation monsuelle",

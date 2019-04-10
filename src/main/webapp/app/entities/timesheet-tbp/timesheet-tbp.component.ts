@@ -17,9 +17,10 @@ export class TimesheetTbpComponent implements OnInit {
     tbpRequestBody: ITbpRequestBody = new TbpRequestBody();
     myTeam: ITeam;
     allTeams: ITeam[];
-    imputation: IImputation;
+    imputations: any;
     predicate: any;
     reverse: any;
+    private imputationDays: Map<IImputation, Array<number>> = new Map<IImputation, Array<number>>();
     constructor(
         protected accountService: AccountService,
         protected teamService: TeamService,
@@ -54,13 +55,29 @@ export class TimesheetTbpComponent implements OnInit {
     }
 
     getTimesheet() {
-        console.log('request body', this.tbpRequestBody);
         this.timesheetTbpService.findTbpChargeByTeam(this.tbpRequestBody).subscribe(
             res => {
-                this.imputation = res.body;
-                console.log('************', this.imputation);
+                this.imputations = res.body;
+                for (let i = 0; i < this.imputations.length; i++) {
+                    this.initializeDays(this.imputations[i]);
+                }
             },
             error => {}
         );
+    }
+
+    private initializeDays(imputation: any) {
+        const days: Array<number> = new Array<number>();
+        imputation.monthlyImputations.forEach(monthly => {
+            monthly.dailyImputations.forEach(daily => {
+                days.push(daily.day);
+            });
+        });
+        this.removeDuplecates(days, imputation);
+    }
+
+    private removeDuplecates(days: Array<number>, imputation: IImputation) {
+        days = Array.from(new Set(days)).sort((a, b) => a - b);
+        this.imputationDays.set(imputation, days);
     }
 }
