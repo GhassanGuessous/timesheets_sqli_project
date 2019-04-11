@@ -1,6 +1,7 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TimesheetTbpComponent } from './timesheet-tbp/timesheet-tbp.component';
+import { TimesheetPpmcComponent } from './timesheet-ppmc/timesheet-ppmc.component';
 
 @NgModule({
     imports: [
@@ -63,6 +64,10 @@ import { TimesheetTbpComponent } from './timesheet-tbp/timesheet-tbp.component';
             {
                 path: 'timesheet-tbp',
                 loadChildren: './timesheet-tbp/timesheet-tbp.module#ImputationSqliTimesheetTbpModule'
+            },
+            {
+                path: 'timesheet-ppmc',
+                loadChildren: './timesheet-ppmc/timesheet-ppmc.module#ImputationSqliTimesheetPpmcModule'
             }
         ])
     ],

@@ -13,7 +13,7 @@ import static com.sqli.imputation.service.util.DateUtil.END;
 import static com.sqli.imputation.service.util.DateUtil.getNumberMonthsBetweenDates;
 
 @Service
-public class DefaultTbpRequestComposerServiceImp implements TbpRequestComposerService {
+public class DefaultTbpRequestComposerService implements TbpRequestComposerService {
 
     private static final String START = "start";
     private static final String DELIMITER = "-";

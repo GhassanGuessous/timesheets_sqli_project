@@ -23,4 +23,6 @@ public interface CollaboratorRepository extends JpaRepository<Collaborator, Long
 
     @Query(value = "select c from Collaborator c where c.id not in (select co.collaborator.id from Correspondence co)")
     List<Collaborator> findAllWithNoCorrespondence();
+
+    Collaborator findByFirstnameAndLastname(String firstname, String lastname);
 }

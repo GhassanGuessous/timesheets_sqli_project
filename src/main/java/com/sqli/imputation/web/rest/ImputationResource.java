@@ -3,22 +3,28 @@ import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.service.dto.AppRequestDTO;
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
+import com.sqli.imputation.service.impl.FilePPMCStorageService;
 import com.sqli.imputation.service.util.DateUtil;
+import com.sqli.imputation.service.util.FileExtensionUtil;
 import com.sqli.imputation.web.rest.errors.BadRequestAlertException;
 import com.sqli.imputation.web.rest.util.HeaderUtil;
 import com.sqli.imputation.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +40,11 @@ public class ImputationResource {
     private static final String ENTITY_NAME = "imputation";
 
     private final ImputationService imputationService;
+
+    @Autowired
+    FilePPMCStorageService storageService;
+
+    List<String> files = new ArrayList<String>();
 
     public ImputationResource(ImputationService imputationService) {
         this.imputationService = imputationService;
@@ -141,15 +152,29 @@ public class ImputationResource {
 
         if (tbpRequestBodyDTO.getIdTbp() == null) {
             throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
-        } else if (startDate == "" || endDate == "") {
+        } else if (startDate.equals("") || endDate.equals("")) {
             throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
         } else if(DateUtil.isDatesOrderNotValid(startDate, endDate)){
             throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
         } else if(DateUtil.isDifferentYears(startDate, endDate)){
             throw new BadRequestAlertException("Different years", ENTITY_NAME, "different_years");
         } else {
-            List<Imputation> imputations = imputationService.findTbpImputation(tbpRequestBodyDTO);
+            List<Imputation> imputations = imputationService.getTbpImputation(tbpRequestBodyDTO);
             return ResponseEntity.ok().body(imputations);
+        }
+    }
+
+    @PostMapping("/imputations/ppmc")
+    public ResponseEntity<Imputation> handleFileUpload(@RequestParam("file") MultipartFile file) {
+        log.debug("file original name : {}", file.getOriginalFilename());
+        log.debug("file original size : {}", file.getSize());
+        String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
+
+        if(FileExtensionUtil.isNotValidExcelExtension(extension)) {
+            throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
+        } else {
+            Imputation imputation = imputationService.getPpmcImputation(file);
+            return ResponseEntity.ok().body(imputation);
         }
     }
 }

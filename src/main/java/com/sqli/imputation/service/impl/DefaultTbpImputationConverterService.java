@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class DefaultTbpImputationConverterServiceImp implements TbpImputationConverterService {
+public class DefaultTbpImputationConverterService implements TbpImputationConverterService {
 
 
     public static final String TBP_TYPE_NAME = "tbp";

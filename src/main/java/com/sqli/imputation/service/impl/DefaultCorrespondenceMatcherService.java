@@ -23,8 +23,8 @@ import java.util.List;
 public class DefaultCorrespondenceMatcherService implements CorrespondenceMatcherService {
 
     private static final int SEVENTH_SHEET = 6;
-    private static final int ELEVENTH_COLUMN = 11;
-    private static final int TWELFTH_COLUMN = 12;
+    private static final int PPMC_ID_COLUMN = 11;
+    private static final int APP_ID_COLUMN = 12;
 
     @Autowired
     private CorrespondenceRepository correspondenceRepository;
@@ -48,10 +48,10 @@ public class DefaultCorrespondenceMatcherService implements CorrespondenceMatche
 
                 for (int j = row.getFirstCellNum(); j <= row.getLastCellNum(); j++) {
                     Cell cell = row.getCell(j);
-                    if (j == ELEVENTH_COLUMN) {
+                    if (j == PPMC_ID_COLUMN) {
                         correspondenceDTO.setId_ppmc(cell.getStringCellValue());
                     }
-                    if (j == TWELFTH_COLUMN) {
+                    if (j == APP_ID_COLUMN) {
                         correspondenceDTO.setId_app(cell.getStringCellValue());
                     }
                 }

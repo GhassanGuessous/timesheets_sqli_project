@@ -1,0 +1,48 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="global.menu.entities.ppmc-timesheet">PPMC Timesheet</span>
+    </h2>
+    <div class="row justify-content-center">
+        <div>
+            <jhi-alert-error></jhi-alert-error>
+            <div *ngIf="currentFileUpload" class="progress">
+                <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar"
+                     attr.aria-valuenow="{{progress.percentage}}"
+                     aria-valuemin="0" aria-valuemax="100" [ngStyle]="{width:progress.percentage+'%'}">
+                    {{progress.percentage}}%
+                </div>
+            </div>
+            <br/>
+            <div>
+                <input type="file" (change)="selectFile($event)">
+                <button class="btn btn-success" [disabled]="!selectedFiles" (click)="upload()">Upload & Get PPMC Timesheet</button>
+            </div>
+        </div>
+    </div>
+    <jhi-alert></jhi-alert>
+    <br/>
+    <div class=" table table-responsive" *ngIf="imputation">
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th><span>Collaborator</span>
+                </th>
+                <th><span>Total</span>
+                </th>
+                <th *ngFor="let day of days" [id]="day">{{day + '/' + imputation.month}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let monthlyImputation of imputation.monthlyImputations">
+                <td>{{monthlyImputation.collaborator.lastname + ' ' + monthlyImputation.collaborator.firstname}}</td>
+                <td class="text-center">{{monthlyImputation.total}}</td>
+                <td class="text-center" *ngFor="let day of days" [id]="day">
+                    <span
+                        *ngFor="let dailyImputation of monthlyImputation.dailyImputations">{{day == dailyImputation.day ? dailyImputation.charge : ''}}
+                    </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

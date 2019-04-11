@@ -7,7 +7,11 @@ import com.sqli.imputation.service.dto.ChargeTeamDTO;
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,5 +59,9 @@ public interface ImputationService {
      * @return the entity
      */
     Imputation getAppImputation(AppRequestDTO appRequestDTO);
-    List<Imputation> findTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO);
+
+    List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO);
+
+    Imputation getPpmcImputation(MultipartFile file);
+
 }

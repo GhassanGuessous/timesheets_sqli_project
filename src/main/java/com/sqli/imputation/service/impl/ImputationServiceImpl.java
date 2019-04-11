@@ -1,14 +1,10 @@
 package com.sqli.imputation.service.impl;
 
-import com.sqli.imputation.service.AppImputationConverterService;
-import com.sqli.imputation.service.ImputationService;
+import com.sqli.imputation.service.*;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.repository.ImputationRepository;
 import com.sqli.imputation.service.dto.AppChargeDTO;
 import com.sqli.imputation.service.dto.AppRequestDTO;
-import com.sqli.imputation.service.TbpImputationConverterService;
-import com.sqli.imputation.service.TBPResourceService;
-import com.sqli.imputation.service.TbpRequestComposerService;
 import com.sqli.imputation.service.dto.ChargeTeamDTO;
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import org.slf4j.Logger;
@@ -19,7 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -46,6 +44,8 @@ public class ImputationServiceImpl implements ImputationService {
     private TBPResourceService tbpResourceService;
     @Autowired
     private TbpRequestComposerService composerService;
+    @Autowired
+    private PpmcImputationConverterService ppmcImputationConverterService;
 
     public ImputationServiceImpl(ImputationRepository imputationRepository) {
         this.imputationRepository = imputationRepository;
@@ -114,7 +114,7 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     @Override
-    public List<Imputation> findTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
+    public List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
         List<Imputation> imputations = new ArrayList<>();
         List<TbpRequestBodyDTO> requestBodies = composerService.dividePeriod(tbpRequestBodyDTO);
         requestBodies.forEach(requestBody -> {
@@ -123,5 +123,10 @@ public class ImputationServiceImpl implements ImputationService {
             imputations.add(imputation);
         });
         return imputations;
+    }
+
+    @Override
+    public Imputation getPpmcImputation(MultipartFile file) {
+        return ppmcImputationConverterService.getPpmcImputationFromExcelFile(file);
     }
 }
