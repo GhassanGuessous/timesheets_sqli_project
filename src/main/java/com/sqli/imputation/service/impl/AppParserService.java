@@ -23,7 +23,7 @@ public class AppParserService {
     public List<AppChargeDTO> parse() {
         String xml = "";
         try {
-            xml = FileUtils.readFileToString(new File("C:/Users/gguessous/Desktop/data.xml"), "UTF-8");
+            xml = FileUtils.readFileToString(new File("C:/Users/aaitbassou/Desktop/data.xml"), "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -46,7 +46,6 @@ public class AppParserService {
             appChargeDTO.setDay(Integer.parseInt(item.get(DAY_POSITION).get("value").textValue()));
             appChargeDTO.setCharge(Double.parseDouble(item.get(CHARGE_POSITION).get("value").textValue()));
             appChargeDTOS.add(appChargeDTO);
-            System.out.println(appChargeDTO);
         });
         return appChargeDTOS;
     }

@@ -5,16 +5,8 @@ public class AppRequestDTO {
     private String agresso;
     private int year;
     private int month;
-
-    public int getManDay() {
-        return manDay;
-    }
-
-    public void setManDay(int manDay) {
-        this.manDay = manDay;
-    }
-
     private int manDay;
+    private int startDay;
 
     public String getAgresso() {
         return agresso;
@@ -40,6 +32,33 @@ public class AppRequestDTO {
         this.month = month;
     }
 
+    public int getManDay() {
+        return manDay;
+    }
+
+    public AppRequestDTO() {
+    }
+
+    public AppRequestDTO(String agresso, int year, int month, int startDay, int manDay) {
+        this.agresso = agresso;
+        this.year = year;
+        this.month = month;
+        this.startDay = startDay;
+        this.manDay = manDay;
+    }
+
+    public void setManDay(int manDay) {
+        this.manDay = manDay;
+    }
+
+    public int getStartDay() {
+        return startDay;
+    }
+
+    public void setStartDay(int startDay) {
+        this.startDay = startDay;
+    }
+
     @Override
     public String toString() {
         return "AppRequestDTO{" +
@@ -47,6 +66,7 @@ public class AppRequestDTO {
             ", year=" + year +
             ", month=" + month +
             ", manDay=" + manDay +
+            ", startDay=" + startDay +
             '}';
     }
 }

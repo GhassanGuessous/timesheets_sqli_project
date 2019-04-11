@@ -10,13 +10,11 @@ type EntityResponseType = HttpResponse<IImputation>;
 
 @Injectable({ providedIn: 'root' })
 export class TimesheetAppService {
-    public resourceUrl = SERVER_API_URL + 'api/imputations';
     public resourceAppUrl = SERVER_API_URL + 'api/imputations/app';
 
     constructor(protected http: HttpClient) {}
 
     findAppChargeByTeam(appRequestBody: IAppRequestBody): Observable<EntityResponseType> {
-        console.log(appRequestBody);
         return this.http.post<any>(this.resourceAppUrl, appRequestBody, { observe: 'response' });
     }
 }

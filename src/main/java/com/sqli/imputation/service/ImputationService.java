@@ -54,6 +54,6 @@ public interface ImputationService {
      * @param appRequestDTO the app imputation request
      * @return the entity
      */
-    Imputation getAppImputation(AppRequestDTO appRequestDTO);
+    List<Imputation> getAppImputation(AppRequestDTO appRequestDTO);
     List<Imputation> findTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO);
 }

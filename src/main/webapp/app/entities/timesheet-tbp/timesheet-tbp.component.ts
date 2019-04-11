@@ -47,6 +47,7 @@ export class TimesheetTbpComponent implements OnInit {
     loadDelcoTeam(id: bigint) {
         this.teamService.findByDelco(id).subscribe(data => {
             this.myTeam = data.body;
+            this.tbpRequestBody.idTbp = this.myTeam.idTbp;
         });
     }
 

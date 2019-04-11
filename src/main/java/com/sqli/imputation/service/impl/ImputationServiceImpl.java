@@ -108,15 +108,21 @@ public class ImputationServiceImpl implements ImputationService {
      * @return the entity
      */
     @Override
-    public Imputation getAppImputation(AppRequestDTO appRequestDTO) {
-        List<AppChargeDTO> appChargeDTOS= appParserService.parse();
-        return appConverterService.convert(appRequestDTO,appChargeDTOS);
+    public List<Imputation> getAppImputation(AppRequestDTO appRequestDTO) {
+        List<Imputation> imputations = new ArrayList<>();
+        List<AppRequestDTO> appRequestDTOS = composerService.appDividePeriod(appRequestDTO);
+        appRequestDTOS.forEach(dto -> {
+            List<AppChargeDTO> appChargeDTOS = appParserService.parse();
+            Imputation imputation = appConverterService.convert(dto, appChargeDTOS);
+            imputations.add(imputation);
+        });
+        return imputations;
     }
 
     @Override
     public List<Imputation> findTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
         List<Imputation> imputations = new ArrayList<>();
-        List<TbpRequestBodyDTO> requestBodies = composerService.dividePeriod(tbpRequestBodyDTO);
+        List<TbpRequestBodyDTO> requestBodies = composerService.tbpDividePeriod(tbpRequestBodyDTO);
         requestBodies.forEach(requestBody -> {
             List<ChargeTeamDTO> chargeTeamDTOS = tbpResourceService.getTeamCharges(requestBody).getBody().getData().getCharge();
             Imputation imputation = tbpImputationConverterService.convert(chargeTeamDTOS, requestBody);

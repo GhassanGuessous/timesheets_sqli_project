@@ -27,7 +27,7 @@ public class DefaultAppImputationConverterService implements AppImputationConver
     @Override
     public Imputation convert(AppRequestDTO appRequestDTO, List<AppChargeDTO> appChargeDTOS) {
         Imputation imputation = createImputation(appRequestDTO);
-        fillImputation(imputation, appChargeDTOS);
+        fillImputation(imputation, appChargeDTOS, appRequestDTO);
         sortImputations(imputation);
         return imputation;
     }
@@ -37,16 +37,22 @@ public class DefaultAppImputationConverterService implements AppImputationConver
         return imputationFactory.createImputation(appRequestDTO.getYear(), appRequestDTO.getMonth(), imputationType);
     }
 
-    private void fillImputation(Imputation imputation, List<AppChargeDTO> appChargeDTOS) {
+    private void fillImputation(Imputation imputation, List<AppChargeDTO> appChargeDTOS, AppRequestDTO appRequestDTO) {
         appChargeDTOS.forEach(appChargeDTO -> {
-            CollaboratorMonthlyImputation monthlyImputation = getCollabMonthlyImputation(appChargeDTO.getAppLogin(), imputation);
-            fillCollaboratorMonthlyImputation(monthlyImputation, appChargeDTO);
-            addMontlyToImputation(imputation, monthlyImputation);
+            if (isDayRequested(appChargeDTO, appRequestDTO)) {
+                CollaboratorMonthlyImputation monthlyImputation = getCollabMonthlyImputation(appChargeDTO.getAppLogin(), imputation);
+                fillCollaboratorMonthlyImputation(monthlyImputation, appChargeDTO);
+                addMontlyToImputation(imputation, monthlyImputation);
+            }
         });
     }
 
+    private boolean isDayRequested(AppChargeDTO appChargeDTO, AppRequestDTO appRequestDTO) {
+        return appChargeDTO.getDay() >= appRequestDTO.getStartDay() && appChargeDTO.getDay() < (appRequestDTO.getManDay() + appRequestDTO.getStartDay());
+    }
+
     private void fillCollaboratorMonthlyImputation(CollaboratorMonthlyImputation monthlyImputation, AppChargeDTO appChargeDTO) {
-        CollaboratorDailyImputation dailyImputation = imputationFactory.createDailyImputation(appChargeDTO.getDay(), appChargeDTO.getCharge(),monthlyImputation);
+        CollaboratorDailyImputation dailyImputation = imputationFactory.createDailyImputation(appChargeDTO.getDay(), appChargeDTO.getCharge(), monthlyImputation);
         monthlyImputation.getDailyImputations().add(dailyImputation);
         monthlyImputation.setTotal(monthlyImputation.getTotal() + dailyImputation.getCharge());
 

@@ -17,19 +17,22 @@ export class TimesheetAppComponent implements OnInit {
     private allTeams: ITeam[];
     private currentYear: number = new Date().getFullYear();
     private currentMonth: number = new Date().getMonth();
+    private numberOfDaysOfCurrentMonth: number = new Date(this.currentYear, this.currentMonth, 0).getDate();
     private appRequestBody: IAppRequestBody = new AppRequestBody(
         '',
         this.currentYear,
         this.currentMonth,
-        new Date(this.currentYear, this.currentMonth, 0).getDate()
+        1,
+        this.numberOfDaysOfCurrentMonth
     );
     private years: Array<number> = [];
     private months: Array<number> = [];
     private manDays: Array<number> = [];
+    private days: Array<number>;
+    private imputationDays: Map<IImputation, Array<number>> = new Map<IImputation, Array<number>>();
     private predicate: any;
     private reverse: any;
     private imputations: any;
-    private days: Array<number> = [];
 
     constructor(protected service: TimesheetAppService, protected accountService: AccountService, protected teamService: TeamService) {}
 
@@ -54,6 +57,7 @@ export class TimesheetAppComponent implements OnInit {
     loadDelcoTeam(id: bigint) {
         this.teamService.findByDelco(id).subscribe(data => {
             this.myTeam = data.body;
+            this.appRequestBody.agresso = this.myTeam.agresso;
         });
     }
 
@@ -66,27 +70,36 @@ export class TimesheetAppComponent implements OnInit {
     }
 
     getTimesheet() {
-        this.service.findAppChargeByTeam(this.appRequestBody).subscribe(res => {
-            console.log(res.body);
-            this.imputations = res.body;
-            this.initializeDays(res.body);
-        });
+        this.service.findAppChargeByTeam(this.appRequestBody).subscribe(
+            res => {
+                this.imputations = res.body;
+                for (let i = 0; i < this.imputations.length; i++) {
+                    this.initializeDays(this.imputations[i]);
+                }
+            },
+            error => {}
+        );
     }
 
-    private initializeDays(res: IImputation) {
-        res.monthlyImputations.forEach(monthly => {
-            monthly.dailyImputations.forEach(daily => this.days.push(daily.day));
+    private initializeDays(imputation: any) {
+        const days: Array<number> = new Array<number>();
+        imputation.monthlyImputations.forEach(monthly => {
+            monthly.dailyImputations.forEach(daily => {
+                days.push(daily.day);
+            });
         });
-        this.removeDuplecates(this.days);
+        this.removeDuplecates(days, imputation);
     }
 
-    private removeDuplecates(days: Array<number>) {
-        this.days = Array.from(new Set(days)).sort((a, b) => a - b);
+    private removeDuplecates(days: Array<number>, imputation: IImputation) {
+        days = Array.from(new Set(days)).sort((a, b) => a - b);
+        this.imputationDays.set(imputation, days);
     }
 
     private initialize() {
         this.initializeYears();
         this.initializeMonth();
+        this.initializeDayOfCurrentMonth();
         this.initializeManDays();
     }
 
@@ -106,5 +119,16 @@ export class TimesheetAppComponent implements OnInit {
         for (let i = 1; i <= 40; i++) {
             this.manDays.push(i);
         }
+    }
+
+    private initializeDayOfCurrentMonth() {
+        this.days = [];
+        for (let i = 1; i <= this.getDaysOfMonth(this.appRequestBody.year, this.appRequestBody.month); i++) {
+            this.days.push(i);
+        }
+    }
+
+    getDaysOfMonth(year, month) {
+        return new Date(year, month, 0).getDate();
     }
 }

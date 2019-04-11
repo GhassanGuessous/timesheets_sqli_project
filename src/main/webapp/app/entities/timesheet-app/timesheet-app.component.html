@@ -16,18 +16,13 @@
                     </select>
                 </div>
                 <div class="form-group tbp-import-form" *ngSwitchCase="false">
-                    <label class="form-control-label"
-                           for="field_code_project_delco">Code project</label>
-                    <select class="form-control" id="field_code_project_delco" name="code_project"
-                            [(ngModel)]="appRequestBody.agresso">
-                        <option [value]="myTeam.agresso">{{myTeam.name}}</option>
-                    </select>
+                    <span id="field_code_project_delco"><b>{{myTeam.name}}</b></span>
                 </div>
                 <div class="form-group tbp-import-form">
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.year"
                            for="field_year">Year</label>
                     <select class="form-control" id="field_year" name="year"
-                            [(ngModel)]="appRequestBody.year">
+                            [(ngModel)]="appRequestBody.year" (change)="initializeDayOfCurrentMonth()">
                         <option *ngFor="let year of years" [selected]="year == currentYear">{{year}}</option>
                     </select>
                 </div>
@@ -35,8 +30,16 @@
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.month"
                            for="field_month">Month</label>
                     <select class="form-control" id="field_month" name="month"
-                            [(ngModel)]="appRequestBody.month">
+                            [(ngModel)]="appRequestBody.month" (change)="initializeDayOfCurrentMonth()">
                         <option *ngFor="let month of months" [selected]="month == currentMonth">{{month}}</option>
+                    </select>
+                </div>
+                <div class="form-group tbp-import-form">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.startDay"
+                           for="field_month">Month</label>
+                    <select class="form-control" id="field_startDay" name="startDay"
+                            [(ngModel)]="appRequestBody.startDay">
+                        <option *ngFor="let day of days" >{{day}}</option>
                     </select>
                 </div>
                 <div class="form-group tbp-import-form">
@@ -60,38 +63,34 @@
     </div>
     <jhi-alert></jhi-alert>
     <br/>
-    <div class=" table table-bordered table-responsive" *ngIf="imputations">
-        <table class="table table-striped">
-            <thead>
-            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
-                <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
-                <fa-icon [icon]="'sort'"></fa-icon>
-                </th>
-                <th><span>Collaborartor</span>
-                    <fa-icon [icon]="'sort'"></fa-icon>
-                </th>
-                <th><span>Total</span>
-                    <fa-icon [icon]="'sort'"></fa-icon>
-                </th>
-                <th *ngFor="let day of days" [id]="day">{{day + '/' + imputations.month}}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let monthlyImputation of imputations.monthlyImputations ;trackBy: trackId">
-                <td>{{monthlyImputation.collaborator?.id}}</td>
-                <td>
-                    <div *ngIf="monthlyImputation.collaborator">
-                        <a [routerLink]="['../collaborator', monthlyImputation.collaborator?.id, 'view' ]">{{monthlyImputation.collaborator?.firstname + ' ' + monthlyImputation.collaborator?.lastname}}</a>
-                    </div>
-                </td>
-                <td class="text-center"><b>{{monthlyImputation.total}}</b></td>
-                <td class="text-center" *ngFor="let day of days" [id]="day">
-                    <span
-                        *ngFor="let dailyImputation of monthlyImputation.dailyImputations">{{day == dailyImputation.day ? dailyImputation.charge : ''}}
-                    </span>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+    <div *ngIf="imputations">
+        <div class="table-responsive" *ngFor="let imputation of imputations">
+            <h3>
+                <span jhiTranslate="imputationSqliApp.imputation.yearMonth" [translateValues]="{year:imputation.year, month: imputation.month}">Month : </span>
+            </h3>
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
+                    <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
+                    </th>
+                    <th jhiSortBy="month"><span>Collaborator</span>
+                    </th>
+                    <th jhiSortBy="year"><span>Total</span>
+                    </th>
+                    <th *ngFor="let day of imputationDays.get(imputation)" [id]="day">{{day + '/' + imputation.month}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let monthlyImputation of imputation.monthlyImputations">
+                    <td>{{monthlyImputation.collaborator.id}}</td>
+                    <td><a [routerLink]="['/collaborator', monthlyImputation.collaborator.id, 'view' ]">{{monthlyImputation.collaborator.lastname + ' ' + monthlyImputation.collaborator.firstname}}</a></td>
+                    <td class="text-center"><b>{{monthlyImputation.total}}</b></td>
+                    <td class="text-center" *ngFor="let day of imputationDays.get(imputation)" [id]="day">
+                        <span *ngFor="let dailyImputation of monthlyImputation.dailyImputations">{{day == dailyImputation.day ? dailyImputation.charge : ''}}</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

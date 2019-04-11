@@ -14,11 +14,7 @@
                     </select>
                 </div>
                 <div class="form-group tbp-import-form" *ngSwitchCase="false">
-                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.project_code"
-                           for="field_code_project_delco">Code projet</label>
-                    <select class="form-control" id="field_code_project_delco" name="code_project" [(ngModel)]="tbpRequestBody.idTbp">
-                        <option [ngValue]="myTeam.idTbp" [selected]="myTeam">{{myTeam.name}}</option>
-                    </select>
+                    <span id="field_code_project_delco"><b>{{myTeam.name}}</b></span>
                 </div>
                 <div class="form-group tbp-import-form">
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.start_date"

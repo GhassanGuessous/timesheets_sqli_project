@@ -65,13 +65,13 @@ public class ImputationResource {
      * @return the ResponseEntity with imputation of type APP
      */
     @PostMapping("/imputations/app")
-    public ResponseEntity<Imputation> getAppImputation(@RequestBody AppRequestDTO appRequestDTO) {
+    public ResponseEntity<List<Imputation>> getAppImputation(@RequestBody AppRequestDTO appRequestDTO) {
         log.debug("REST request to get APP Imputation : {}", appRequestDTO);
         if (appRequestDTO.getAgresso().equals("")){
             throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
         } else{
-            Imputation result = imputationService.getAppImputation(appRequestDTO);
-            return ResponseEntity.ok().body(result);
+            List<Imputation> imputations = imputationService.getAppImputation(appRequestDTO);
+            return ResponseEntity.ok().body(imputations);
         }
     }
 
