@@ -22,6 +22,7 @@
                 "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
                 "app-timesheet": "APP Timesheet",
                 "tbp-timesheet": "TBP Timesheet",
+                "ppmc-timesheet": "PPMC Timesheet",
                 "importTBP": "Import TBP",
                 "importAPP": "Import APP"
             },
@@ -150,7 +151,8 @@
         "projectnull": "Project cannot be empty!",
         "datenull": "Start date Or End date cannot be empty!",
         "orderdates": "End date should be greater than start date!",
-        "different_years": "Please select dates in the same year!"
+        "different_years": "Please select dates in the same year!",
+        "extension_support": "This type of files is not supported, please use one of the following extensions : 'xsl', 'xslx'"
     },
     "footer": "This is your footer"
 }

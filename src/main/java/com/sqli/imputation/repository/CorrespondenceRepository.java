@@ -15,9 +15,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CorrespondenceRepository extends JpaRepository<Correspondence, Long> {
 
-    Correspondence findByIdTBP(String id);
+    Correspondence findByIdTBP(String tbpId);
 
-    Correspondence findByIdAPP(String appLogin);
+    Correspondence findByIdAPP(String appID);
+
+    Correspondence findByIdPPMC(String ppmcId);
 
     @Query(value = "select c from Correspondence c left join c.collaborator collab " +
         "where c.idAPP like %:key% or c.idPPMC like %:key% or c.idTBP like %:key%" +

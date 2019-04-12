@@ -3,10 +3,10 @@ package com.sqli.imputation.service;
 import com.sqli.imputation.domain.Imputation;
 
 import com.sqli.imputation.service.dto.AppRequestDTO;
-import com.sqli.imputation.service.dto.ChargeTeamDTO;
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,5 +55,9 @@ public interface ImputationService {
      * @return the entity
      */
     List<Imputation> getAppImputation(AppRequestDTO appRequestDTO);
-    List<Imputation> findTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO);
+
+    List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO);
+
+    Optional<Imputation> getPpmcImputation(MultipartFile file);
+
 }

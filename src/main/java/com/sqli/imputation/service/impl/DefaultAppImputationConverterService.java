@@ -2,49 +2,52 @@ package com.sqli.imputation.service.impl;
 
 import com.sqli.imputation.domain.*;
 import com.sqli.imputation.repository.CorrespondenceRepository;
-import com.sqli.imputation.repository.ImputationTypeRepository;
 import com.sqli.imputation.service.AppImputationConverterService;
 import com.sqli.imputation.service.dto.AppChargeDTO;
 import com.sqli.imputation.service.dto.AppRequestDTO;
-import com.sqli.imputation.service.factory.ImputationFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class DefaultAppImputationConverterService implements AppImputationConverterService {
 
     private static final String APP_NAME = "APP";
+
     @Autowired
-    private ImputationTypeRepository imputationTypeRepository;
+    private ImputationConverterUtilService imputationConverterUtilService;
     @Autowired
     private CorrespondenceRepository correspondenceRepository;
-    @Autowired
-    private ImputationFactory imputationFactory;
 
     @Override
     public Imputation convert(AppRequestDTO appRequestDTO, List<AppChargeDTO> appChargeDTOS) {
         Imputation imputation = createImputation(appRequestDTO);
         fillImputation(imputation, appChargeDTOS, appRequestDTO);
-        sortImputations(imputation);
+        imputationConverterUtilService.sortImputations(imputation);
         return imputation;
     }
 
     private Imputation createImputation(AppRequestDTO appRequestDTO) {
-        ImputationType imputationType = imputationTypeRepository.findByNameLike(APP_NAME);
-        return imputationFactory.createImputation(appRequestDTO.getYear(), appRequestDTO.getMonth(), imputationType);
+        ImputationType imputationType = imputationConverterUtilService.findImputationTypeByNameLike(APP_NAME);
+        return imputationConverterUtilService.createImputation(appRequestDTO.getYear(), appRequestDTO.getMonth(), imputationType);
     }
 
     private void fillImputation(Imputation imputation, List<AppChargeDTO> appChargeDTOS, AppRequestDTO appRequestDTO) {
         appChargeDTOS.forEach(appChargeDTO -> {
             if (isDayRequested(appChargeDTO, appRequestDTO)) {
-                CollaboratorMonthlyImputation monthlyImputation = getCollabMonthlyImputation(appChargeDTO.getAppLogin(), imputation);
+                Collaborator collaborator = findCollabByCorrespondence(appChargeDTO.getAppLogin());
+                CollaboratorMonthlyImputation monthlyImputation = imputationConverterUtilService.getCollabMonthlyImputation(imputation, collaborator);
                 fillCollaboratorMonthlyImputation(monthlyImputation, appChargeDTO);
-                addMontlyToImputation(imputation, monthlyImputation);
+                imputationConverterUtilService.addMonthlyImputationToImputation(imputation, monthlyImputation);
             }
         });
+    }
+
+    private Collaborator findCollabByCorrespondence(String appLogin) {
+        Correspondence correspondence = correspondenceRepository.findByIdAPP(appLogin);
+        Collaborator collaborator = correspondence.getCollaborator();
+        return collaborator;
     }
 
     private boolean isDayRequested(AppChargeDTO appChargeDTO, AppRequestDTO appRequestDTO) {
@@ -52,61 +55,9 @@ public class DefaultAppImputationConverterService implements AppImputationConver
     }
 
     private void fillCollaboratorMonthlyImputation(CollaboratorMonthlyImputation monthlyImputation, AppChargeDTO appChargeDTO) {
-        CollaboratorDailyImputation dailyImputation = imputationFactory.createDailyImputation(appChargeDTO.getDay(), appChargeDTO.getCharge(), monthlyImputation);
+        CollaboratorDailyImputation dailyImputation = imputationConverterUtilService.createDailyImputation(appChargeDTO.getDay(), appChargeDTO.getCharge(), monthlyImputation);
         monthlyImputation.getDailyImputations().add(dailyImputation);
-        monthlyImputation.setTotal(monthlyImputation.getTotal() + dailyImputation.getCharge());
-
-    }
-
-    private CollaboratorMonthlyImputation getCollabMonthlyImputation(String appLogin, Imputation imputation) {
-        Correspondence correspondence = correspondenceRepository.findByIdAPP(appLogin);
-        Collaborator collaborator = correspondence.getCollaborator();
-        if (isMontlyImputationExist(imputation, collaborator)) {
-            return getMonthlyImputationOfCollab(imputation, collaborator);
-        }
-        return createNewMonthlyImputation(imputation, collaborator);
-    }
-
-    private void addMontlyToImputation(Imputation imputation, CollaboratorMonthlyImputation monthlyImputation) {
-        if (isMontlyImputationExist(imputation, monthlyImputation.getCollaborator())) {
-            replaceMonthlyImputation(imputation, monthlyImputation);
-        } else {
-            imputation.getMonthlyImputations().add(monthlyImputation);
-        }
-    }
-
-    private void replaceMonthlyImputation(Imputation imputation, CollaboratorMonthlyImputation monthlyImputation) {
-        List<CollaboratorMonthlyImputation> monthlyImputations = new ArrayList<>(imputation.getMonthlyImputations());
-        monthlyImputations.set(monthlyImputations.indexOf(monthlyImputation), getMonthlyImputationOfCollab(imputation, monthlyImputation.getCollaborator()));
-        imputation.setMonthlyImputations(new HashSet<>(monthlyImputations));
-    }
-
-    private CollaboratorMonthlyImputation getMonthlyImputationOfCollab(Imputation imputation, Collaborator collaborator) {
-        return imputation.getMonthlyImputations().stream()
-            .filter(monthlyImputation -> monthlyImputation.getCollaborator().equals(collaborator)).findFirst().get();
-    }
-
-    private void sortImputations(Imputation imputation) {
-        imputation.setMonthlyImputations(sortMonthlyImputations(imputation.getMonthlyImputations()));
-        imputation.getMonthlyImputations().forEach(collaboratorMonthlyImputation -> {
-            collaboratorMonthlyImputation.setDailyImputations(sortDailyImputations(collaboratorMonthlyImputation.getDailyImputations()));
-        });
-    }
-
-    private Set<CollaboratorMonthlyImputation> sortMonthlyImputations(Set<CollaboratorMonthlyImputation> monthlyImputations) {
-        return monthlyImputations.stream().sorted(Comparator.comparing(CollaboratorMonthlyImputation::getTotal)).collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    private Set<CollaboratorDailyImputation> sortDailyImputations(Set<CollaboratorDailyImputation> dailyImputations) {
-        return dailyImputations.stream().sorted(Comparator.comparing(CollaboratorDailyImputation::getDay)).collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    private boolean isMontlyImputationExist(Imputation imputation, Collaborator collaborator) {
-        return imputation.getMonthlyImputations().stream().anyMatch(item -> item.getCollaborator().equals(collaborator));
-    }
-
-    private CollaboratorMonthlyImputation createNewMonthlyImputation(Imputation imputation, Collaborator collaborator) {
-        return imputationFactory.createMonthlyImputation(imputation, collaborator);
+        imputationConverterUtilService.setTotalImputationOfCollab(monthlyImputation, dailyImputation.getCharge());
     }
 
 }
