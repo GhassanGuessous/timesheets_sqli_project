@@ -32,6 +32,7 @@ export class TimesheetPpmcComponent implements OnInit {
                     this.progress.percentage = Math.round((100 * event.loaded) / event.total);
                 } else if (event instanceof HttpResponse) {
                     this.imputation = JSON.parse(event.body.toString());
+                    console.log(this.imputation);
                     this.initializeDays(this.imputation);
                 }
             },

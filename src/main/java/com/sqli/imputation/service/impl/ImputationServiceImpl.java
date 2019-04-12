@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -126,7 +125,7 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     @Override
-    public Imputation getPpmcImputation(MultipartFile file) {
+    public Optional<Imputation> getPpmcImputation(MultipartFile file) {
         return ppmcImputationConverterService.getPpmcImputationFromExcelFile(file);
     }
 }

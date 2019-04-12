@@ -4,19 +4,10 @@ public class CollabExcelImputationDTO {
 
     private String collaborator;
     private String projectRequestMisc;
-    private String npdiProject;
     private int day;
     private double charge;
 
     public CollabExcelImputationDTO() {
-    }
-
-    public CollabExcelImputationDTO(String collaborator, String projectRequestMisc, String npdiProject, int day, double charge) {
-        this.collaborator = collaborator;
-        this.projectRequestMisc = projectRequestMisc;
-        this.npdiProject = npdiProject;
-        this.day = day;
-        this.charge = charge;
     }
 
     public String getProjectRequestMisc() {
@@ -25,14 +16,6 @@ public class CollabExcelImputationDTO {
 
     public void setProjectRequestMisc(String projectRequestMisc) {
         this.projectRequestMisc = projectRequestMisc;
-    }
-
-    public String getNpdiProject() {
-        return npdiProject;
-    }
-
-    public void setNpdiProject(String npdiProject) {
-        this.npdiProject = npdiProject;
     }
 
     public int getDay() {
@@ -64,7 +47,6 @@ public class CollabExcelImputationDTO {
         return "CollabExcelImputationDTO{" +
             "collaborator='" + collaborator + '\'' +
             ", projectRequestMisc='" + projectRequestMisc + '\'' +
-            ", npdiProject='" + npdiProject + '\'' +
             ", day=" + day +
             ", charge=" + charge +
             '}';

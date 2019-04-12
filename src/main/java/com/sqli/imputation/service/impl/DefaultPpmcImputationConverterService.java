@@ -1,10 +1,10 @@
 package com.sqli.imputation.service.impl;
 
 import com.sqli.imputation.domain.*;
-import com.sqli.imputation.repository.CollaboratorRepository;
-import com.sqli.imputation.repository.CorrespondenceRepository;
-import com.sqli.imputation.repository.ImputationTypeRepository;
+import com.sqli.imputation.repository.*;
+import com.sqli.imputation.security.SecurityUtils;
 import com.sqli.imputation.service.PpmcImputationConverterService;
+import com.sqli.imputation.service.TeamService;
 import com.sqli.imputation.service.dto.CollabExcelImputationDTO;
 import com.sqli.imputation.service.factory.ImputationFactory;
 import com.sqli.imputation.service.util.FileExtensionUtil;
@@ -24,45 +24,103 @@ import java.util.stream.Collectors;
 @Service
 public class DefaultPpmcImputationConverterService implements PpmcImputationConverterService {
 
-    public static final int SECOND_SHEET = 1;
-    public static final String PPMC_TYPE_NAME = "ppmc";
-    public static final int PROJECT_REQUEST_MISC_COLUMN = 11;
-    public static final int NPDI_PROJECT_COLUMN = 13;
-    public static final int DAY_COLUMN = 17;
-    public static final int MAN_DAY = 20;
-    public static final String OUT_OF_OFFICE = "Out of Office";
-    public static final int ID_PPMC_COLUMN = 1;
+    private static final int HEADER_INDEX = 0;
+    private static final int FIRST_LINE_INDEX = 1;
+    private static final String PPMC_TYPE_NAME = "ppmc";
+    private static final String OUT_OF_OFFICE = "Out of Office";
+    private static final String ROLE_DELCO = "ROLE_DELCO";
+    private static final String RESOURCE_USER_NAME = "Resource User Name";
+    private static final String PROJECT_REQUEST_MISC = "Project/Request/Misc";
+    private static final String DAY = "Day";
+    private static final String ACTUAL_EFFORT_MAN_DAY = "Actual Effort (Man/Day)";
+    private static final String WEEKLY_ACTUAL_EFFORT_COLUMN = "Weekly Actual Effort";
+    private static final String MONTH = "Month";
+    private static final String YEAR = "Year";
+
+    private Map<String, Integer> headerColumns = new HashMap<>();
 
     @Autowired
     private ImputationFactory imputationFactory;
     @Autowired
     private ImputationTypeRepository imputationTypeRepository;
     @Autowired
-    private CollaboratorRepository collaboratorRepository;
-    @Autowired
     private CorrespondenceRepository correspondenceRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private TeamService teamService;
 
     @Override
-    public Imputation getPpmcImputationFromExcelFile(MultipartFile file) {
+    public Optional<Imputation> getPpmcImputationFromExcelFile(MultipartFile file) {
         try {
             InputStream excelFile = file.getInputStream();
-            String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
-            Sheet sheet = getRows(excelFile, extension);
+            Optional<Sheet> sheet = getWeeklyActualEffortSheet(file, excelFile);
+            headerColumns = getHeaderCoumns(sheet.get());
 
-            Imputation imputation = createPpmcImputation();
-            Set<String> collaborators = getCollaborators(sheet);
+            Set<String> collaborators = getCollaborators(sheet.get(), headerColumns);
+            List<CollabExcelImputationDTO> excelImputationDTOS = getExcelCollabDTOS(sheet.get(), headerColumns);
 
-            List<CollabExcelImputationDTO> excelImputationDTOS = getExcelCollabDTOS(sheet);
-            excelImputationDTOS = ignoreOutOfOfficeImputations(excelImputationDTOS);
-
+            Imputation imputation = createPpmcImputation(sheet.get(), headerColumns);
             createDailyImputationsForEachCollab(collaborators, excelImputationDTOS, imputation);
 
+            getImputationsOfConnectedDelcoTeamOnly(imputation);
+            sortImputations(imputation);
+
             excelFile.close();
-            return imputation;
+            return Optional.of(imputation);
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            return Optional.empty();
         }
+    }
+
+    private Map<String, Integer> getHeaderCoumns(Sheet sheet) {
+        Map<String, Integer> headerColumns = new HashMap<>();
+        Row row = sheet.getRow(HEADER_INDEX);
+        for (int j = row.getFirstCellNum(); j <= row.getLastCellNum(); j++) {
+            Cell cell = row.getCell(j);
+            if(cell != null) headerColumns.put(cell.getStringCellValue(), j);
+        }
+        return headerColumns;
+    }
+
+    private void getImputationsOfConnectedDelcoTeamOnly(Imputation imputation) {
+        if(SecurityUtils.isCurrentUserInRole(ROLE_DELCO)){
+            Optional<User> user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());
+            Optional<Team> team = teamService.findOneByDelco(user.get().getId());
+
+            imputation.setMonthlyImputations(getTeamMembersOnly(imputation.getMonthlyImputations(), team));
+        }
+    }
+
+    private Set<CollaboratorMonthlyImputation> getTeamMembersOnly(Set<CollaboratorMonthlyImputation> monthlyImputations, Optional<Team> team) {
+        return monthlyImputations.stream().filter(monthlyImputation ->
+            monthlyImputation.getCollaborator().getTeam() != null
+                && monthlyImputation.getCollaborator().getTeam().getId().equals(team.get().getId())
+        ).collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    private Optional<Sheet> getWeeklyActualEffortSheet(MultipartFile file, InputStream excelFile) throws IOException {
+        String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
+        return getRows(excelFile, extension);
+    }
+
+    private void sortImputations(Imputation imputation) {
+        imputation.setMonthlyImputations(sortMonthlyImputations(imputation.getMonthlyImputations()));
+        imputation.getMonthlyImputations().forEach(collaboratorMonthlyImputation -> {
+            collaboratorMonthlyImputation.setDailyImputations(
+                sortDailyImputations(collaboratorMonthlyImputation.getDailyImputations())
+            );
+        });
+    }
+
+    private Set<CollaboratorMonthlyImputation> sortMonthlyImputations(Set<CollaboratorMonthlyImputation> monthlyImputations) {
+        return monthlyImputations.stream().sorted(Comparator.comparing(CollaboratorMonthlyImputation::getTotal))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    private Set<CollaboratorDailyImputation> sortDailyImputations(Set<CollaboratorDailyImputation> dailyImputations) {
+        return dailyImputations.stream().sorted(Comparator.comparing(CollaboratorDailyImputation::getDay))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private void createDailyImputationsForEachCollab(Set<String> ppmcIDs, List<CollabExcelImputationDTO> excelImputationDTOS, Imputation imputation) {
@@ -124,71 +182,74 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
         return excelImputationDTOS.stream().filter(collabExcelImputationDTO -> !collabExcelImputationDTO.getProjectRequestMisc().equals(OUT_OF_OFFICE)).collect(Collectors.toList());
     }
 
-    private Imputation createPpmcImputation() {
+    private Imputation createPpmcImputation(Sheet rows, Map<String, Integer> headerColumns) {
         ImputationType imputationType = imputationTypeRepository.findByNameLike(PPMC_TYPE_NAME);
-        return imputationFactory.createImputation(2019, 02, imputationType);
+        Map<String, Integer> period = getPeriod(rows, headerColumns);
+        return imputationFactory.createImputation(period.get(YEAR), period.get(MONTH), imputationType);
     }
 
-    private List<CollabExcelImputationDTO> getExcelCollabDTOS(Sheet sheet) {
+    private Map<String, Integer> getPeriod(Sheet sheet, Map<String, Integer> headerColumns) {
+        Map<String, Integer> period = new HashMap<>();
+        int month = (int) sheet.getRow(FIRST_LINE_INDEX).getCell(headerColumns.get(MONTH)).getNumericCellValue();
+        int year = (int) sheet.getRow(FIRST_LINE_INDEX).getCell(headerColumns.get(YEAR)).getNumericCellValue();
+        period.put(MONTH, month);
+        period.put(YEAR, year);
+        return period;
+    }
+
+    private List<CollabExcelImputationDTO> getExcelCollabDTOS(Sheet sheet, Map<String, Integer> headerColumns) {
         List<CollabExcelImputationDTO> excelImputationDTOS = new ArrayList<>();
         for (int i = sheet.getFirstRowNum() + 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             CollabExcelImputationDTO dto = new CollabExcelImputationDTO();
             for (int j = row.getFirstCellNum(); j <= row.getLastCellNum(); j++) {
                 Cell cell = row.getCell(j);
-                buildCollabExcelDTO(dto, j, cell);
+                buildCollabExcelDTO(dto, j, cell, headerColumns);
             }
             excelImputationDTOS.add(dto);
         }
-        return excelImputationDTOS;
+        return ignoreOutOfOfficeImputations(excelImputationDTOS);
     }
 
-    private void buildCollabExcelDTO(CollabExcelImputationDTO dto, int j, Cell cell) {
-        setCollaborator(dto, j, cell);
-        setProjectRequestMisc(dto, j, cell);
-        setNPDIProject(dto, j, cell);
-        setDay(dto, j, cell);
-        setCharge(dto, j, cell);
+    private void buildCollabExcelDTO(CollabExcelImputationDTO dto, int currentElementColumnIndex, Cell cell, Map<String, Integer> headerColumns) {
+        setCollaborator(dto, currentElementColumnIndex, cell, headerColumns.get(RESOURCE_USER_NAME));
+        setProjectRequestMisc(dto, currentElementColumnIndex, cell, headerColumns.get(PROJECT_REQUEST_MISC));
+        setDay(dto, currentElementColumnIndex, cell, headerColumns.get(DAY));
+        setCharge(dto, currentElementColumnIndex, cell, headerColumns.get(ACTUAL_EFFORT_MAN_DAY));
     }
 
-    private void setCharge(CollabExcelImputationDTO dto, int j, Cell cell) {
-        if(j == MAN_DAY){
+    private void setCharge(CollabExcelImputationDTO dto, int currentElementColumnIndex, Cell cell, Integer manDayColumnIndex) {
+        if(currentElementColumnIndex == manDayColumnIndex){
             dto.setCharge(cell.getNumericCellValue());
         }
     }
 
-    private void setDay(CollabExcelImputationDTO dto, int j, Cell cell) {
-        if(j == DAY_COLUMN){
+    private void setDay(CollabExcelImputationDTO dto, int currentElementColumnIndex, Cell cell, Integer dayColumnIndex) {
+        if(currentElementColumnIndex == dayColumnIndex){
             dto.setDay((int) cell.getNumericCellValue());
         }
     }
 
-    private void setNPDIProject(CollabExcelImputationDTO dto, int j, Cell cell) {
-        if(j == NPDI_PROJECT_COLUMN){
-            dto.setNpdiProject(cell.getStringCellValue());
-        }
-    }
-
-    private void setProjectRequestMisc(CollabExcelImputationDTO dto, int j, Cell cell) {
-        if(j == PROJECT_REQUEST_MISC_COLUMN){
+    private void setProjectRequestMisc(CollabExcelImputationDTO dto, int currentElementColumnIndex, Cell cell, Integer requestMiscColumnIndex) {
+        if(currentElementColumnIndex == requestMiscColumnIndex){
             dto.setProjectRequestMisc(cell.getStringCellValue());
         }
     }
 
-    private void setCollaborator(CollabExcelImputationDTO dto, int j, Cell cell) {
-        if (j == ID_PPMC_COLUMN) {
+    private void setCollaborator(CollabExcelImputationDTO dto, int currentElementColumnIndex, Cell cell, Integer idPpmcColumnIndex) {
+        if (currentElementColumnIndex == idPpmcColumnIndex) {
             dto.setCollaborator(cell.getStringCellValue());
         }
     }
 
-    private Set<String> getCollaborators(Sheet sheet) {
+    private Set<String> getCollaborators(Sheet sheet, Map<String, Integer> headerColumns) {
         Set<String> collaborators = new HashSet<>();
         //I'm ignoring header for that I have +1 in loop
         for (int i = sheet.getFirstRowNum() + 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             for (int j = row.getFirstCellNum(); j <= row.getLastCellNum(); j++) {
                 Cell cell = row.getCell(j);
-                if (j == ID_PPMC_COLUMN) {
+                if (j == headerColumns.get(RESOURCE_USER_NAME)) {
                     collaborators.add(cell.getStringCellValue());
                 }
             }
@@ -196,16 +257,15 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
         return collaborators;
     }
 
-    private Sheet getRows(InputStream excelFile, String extension) throws IOException {
-        Sheet sheet = null;
+    private Optional<Sheet> getRows(InputStream excelFile, String extension) throws IOException {
         if(FileExtensionUtil.isXLS(extension)){
             HSSFWorkbook workbook = new HSSFWorkbook(excelFile);
-            sheet = workbook.getSheetAt(SECOND_SHEET);
+            return Optional.of(workbook.getSheet(WEEKLY_ACTUAL_EFFORT_COLUMN));
         }
         if(FileExtensionUtil.isXLSX(extension)){
             XSSFWorkbook workbook = new XSSFWorkbook(excelFile);
-            sheet = workbook.getSheetAt(SECOND_SHEET);
+            return Optional.of(workbook.getSheet(WEEKLY_ACTUAL_EFFORT_COLUMN));
         }
-        return sheet;
+        return Optional.empty();
     }
 }

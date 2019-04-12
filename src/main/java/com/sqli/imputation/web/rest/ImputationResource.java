@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -165,7 +164,7 @@ public class ImputationResource {
     }
 
     @PostMapping("/imputations/ppmc")
-    public ResponseEntity<Imputation> handleFileUpload(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Optional<Imputation>> handleFileUpload(@RequestParam("file") MultipartFile file) {
         log.debug("file original name : {}", file.getOriginalFilename());
         log.debug("file original size : {}", file.getSize());
         String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
@@ -173,7 +172,7 @@ public class ImputationResource {
         if(FileExtensionUtil.isNotValidExcelExtension(extension)) {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
         } else {
-            Imputation imputation = imputationService.getPpmcImputation(file);
+            Optional<Imputation> imputation = imputationService.getPpmcImputation(file);
             return ResponseEntity.ok().body(imputation);
         }
     }

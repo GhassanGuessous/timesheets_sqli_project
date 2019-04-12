@@ -50,9 +50,9 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
 
     private void sortImputations(Imputation imputation) {
         imputation.setMonthlyImputations(sortMonthlyImputations(imputation.getMonthlyImputations()));
-        imputation.getMonthlyImputations().forEach(collaboratorMonthlyImputation -> {
-            collaboratorMonthlyImputation.setDailyImputations(sortDailyImputations(collaboratorMonthlyImputation.getDailyImputations()));
-        });
+        imputation.getMonthlyImputations().forEach(collaboratorMonthlyImputation ->
+            collaboratorMonthlyImputation.setDailyImputations(sortDailyImputations(collaboratorMonthlyImputation.getDailyImputations()))
+        );
     }
 
     private Set<CollaboratorMonthlyImputation> sortMonthlyImputations(Set<CollaboratorMonthlyImputation> monthlyImputations) {
