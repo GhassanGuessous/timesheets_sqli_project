@@ -152,7 +152,8 @@
         "datenull": "Les dates de debut et de fin ne peuvent pas être vides!",
         "orderdates": "Date fin doit être supérieur a Date début!",
         "different_years": "Veuillez sélectionner les dates de la même année!",
-        "extension_support": "Ce type de fichier n'est pas supporté, veuillez sélectionner une des extensions : 'xsl', 'xslx'"
+        "extension_support": "Ce type de fichier n'est pas supporté, veuillez sélectionner une des extensions : 'xsl', 'xslx'",
+        "invalidPPMC": "Désolé, ce fichier n'est pas un fichier PPMC valide!"
     },
     "footer": "Ceci est votre pied de page"
 }

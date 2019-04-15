@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,8 +41,6 @@ public class ImputationResource {
 
     @Autowired
     FilePPMCStorageService storageService;
-
-    List<String> files = new ArrayList<String>();
 
     public ImputationResource(ImputationService imputationService) {
         this.imputationService = imputationService;
@@ -173,11 +170,12 @@ public class ImputationResource {
         log.debug("file original size : {}", file.getSize());
         String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
 
-        if(FileExtensionUtil.isNotValidExcelExtension(extension)) {
+        if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
         } else {
             Optional<Imputation> imputation = imputationService.getPpmcImputation(file);
-            return ResponseEntity.ok().body(imputation);
+            if(imputation.isPresent()) return ResponseEntity.ok().body(imputation);
+            else throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
         }
     }
 }

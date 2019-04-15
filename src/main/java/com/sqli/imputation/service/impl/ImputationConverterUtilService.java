@@ -82,7 +82,7 @@ public class ImputationConverterUtilService {
         return imputationFactory.createImputation(year, month, imputationType);
     }
 
-    private CollaboratorMonthlyImputation createMonthlyImputation(Imputation imputation, Collaborator collaborator) {
+    public CollaboratorMonthlyImputation createMonthlyImputation(Imputation imputation, Collaborator collaborator) {
         return imputationFactory.createMonthlyImputation(imputation, collaborator);
     }
 
