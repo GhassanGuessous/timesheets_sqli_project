@@ -24,7 +24,8 @@
                 "tbp-timesheet": "Timesheet TBP",
                 "ppmc-timesheet": "Timesheet PPMC",
                 "importTBP": "Importer TBP",
-                "importAPP": "Importer APP"
+                "importAPP": "Importer APP",
+                "comparison": "Comparison"
             },
             "account": {
                 "main": "Compte",

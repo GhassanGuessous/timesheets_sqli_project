@@ -5,6 +5,7 @@
                 "appTitle": "APP Imputations",
                 "tbpTitle": "TBP Imputations",
                 "ppmcTitle": "PPMC Imputations",
+                "APPvsTBP-title": "APP TBP Comparison",
                 "createLabel": "Create a new Imputation",
                 "createOrEditLabel": "Create or edit a Imputation"
             },
