@@ -1,8 +1,5 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { TimesheetTbpComponent } from './timesheet-tbp/timesheet-tbp.component';
-import { TimesheetPpmcComponent } from './timesheet-ppmc/timesheet-ppmc.component';
-import { ComparatorAppPpmcComponent } from './comparator-app-ppmc/comparator-app-ppmc.component';
 
 @NgModule({
     imports: [
@@ -69,6 +66,10 @@ import { ComparatorAppPpmcComponent } from './comparator-app-ppmc/comparator-app
             {
                 path: 'timesheet-ppmc',
                 loadChildren: './timesheet-ppmc/timesheet-ppmc.module#ImputationSqliTimesheetPpmcModule'
+            },
+            {
+                path: 'comparator-app-tbp',
+                loadChildren: './comparator-app-tbp/comparator-app-tbp.module#ComparatorAPPTBPModule'
             },
             {
                 path: 'comparator-app-ppmc',
