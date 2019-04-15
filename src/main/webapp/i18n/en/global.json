@@ -152,7 +152,8 @@
         "datenull": "Start date Or End date cannot be empty!",
         "orderdates": "End date should be greater than start date!",
         "different_years": "Please select dates in the same year!",
-        "extension_support": "This type of files is not supported, please use one of the following extensions : 'xsl', 'xslx'"
+        "extension_support": "This type of files is not supported, please use one of the following extensions : 'xsl', 'xslx'",
+        "invalidPPMC": "Sorry, this File is not a valid PPMC file!"
     },
     "footer": "This is your footer"
 }
