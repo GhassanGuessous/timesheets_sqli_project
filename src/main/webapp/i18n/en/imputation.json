@@ -6,7 +6,8 @@
                 "tbpTitle": "TBP Imputations",
                 "ppmcTitle": "PPMC Imputations",
                 "createLabel": "Create a new Imputation",
-                "createOrEditLabel": "Create or edit a Imputation"
+                "createOrEditLabel": "Create or edit a Imputation",
+                "comparatorAppPpmcTitle": "Comparator App-PPMC"
             },
             "created": "A new Imputation is created with identifier {{ param }}",
             "updated": "A Imputation is updated with identifier {{ param }}",

@@ -1,4 +1,5 @@
 package com.sqli.imputation.web.rest;
+
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.service.dto.AppRequestDTO;
@@ -33,6 +34,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class ImputationResource {
 
+    public static final String AN_EMPTY_STRING = "";
     private final Logger log = LoggerFactory.getLogger(ImputationResource.class);
 
     private static final String ENTITY_NAME = "imputation";
@@ -152,7 +154,7 @@ public class ImputationResource {
 
         if (tbpRequestBodyDTO.getIdTbp() == null) {
             throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
-        } else if (startDate.equals("") || endDate.equals("")) {
+        } else if (startDate.equals(AN_EMPTY_STRING) || endDate.equals(AN_EMPTY_STRING)) {
             throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
         } else if(DateUtil.isDatesOrderNotValid(startDate, endDate)){
             throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
