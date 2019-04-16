@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ITeam } from 'app/shared/model/team.model';
 import { AccountService } from 'app/core';
 import { TeamService } from 'app/entities/team';
-import { AppRequestBody, IAppRequestBody } from 'app/shared/model/app-request-body';
+import { AppRequestBody, IAppRequestBody } from 'app/shared/model/app-request.body';
 import { TimesheetAppService } from './timesheet-app.service';
 import { IImputation } from 'app/shared/model/imputation.model';
 
