@@ -5,14 +5,11 @@ import com.sqli.imputation.domain.Collaborator;
 public class ImputationComparatorDTO {
 
     private Collaborator collaborator;
-    private Double totalApp;
-    private Double totalCompared;
-    private Double difference;
+    private double totalApp;
+    private double totalCompared;
+    private double difference;
 
-    public ImputationComparatorDTO() {
-    }
-
-    public ImputationComparatorDTO(Collaborator collaborator, Double totalApp, Double totalCompared) {
+    public ImputationComparatorDTO(Collaborator collaborator, double totalApp, double totalCompared) {
         this.collaborator = collaborator;
         this.totalApp = totalApp;
         this.totalCompared = totalCompared;
@@ -26,37 +23,23 @@ public class ImputationComparatorDTO {
         this.collaborator = collaborator;
     }
 
-    public Double getTotalApp() {
+    public double getTotalApp() {
         return totalApp;
     }
 
-    public void setTotalApp(Double totalApp) {
-        this.totalApp = totalApp;
-    }
-
-    public Double getTotalCompared() {
+    public double getTotalCompared() {
         return totalCompared;
     }
 
-    public void setTotalCompared(Double totalCompared) {
+    public void setTotalCompared(double totalCompared) {
         this.totalCompared = totalCompared;
     }
 
-    public Double getDifference() {
+    public double getDifference() {
         return difference;
     }
 
-    public void setDifference(Double difference) {
+    public void setDifference(double difference) {
         this.difference = difference;
-    }
-
-    @Override
-    public String toString() {
-        return "ImputationComparatorDTO{" +
-            "collaborator=" + collaborator +
-            ", totalApp=" + totalApp +
-            ", totalCompared=" + totalCompared +
-            ", difference=" + difference +
-            '}';
     }
 }

@@ -25,7 +25,7 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
 
     private static final int HEADER_INDEX = 0;
     private static final int FIRST_LINE_INDEX = 1;
-    private static final String PPMC_TYPE_NAME = "ppmc";
+    private static final String PPMC_TYPE_NAME = "PPMC";
     private static final String OUT_OF_OFFICE = "Out of Office";
     private static final String ROLE_DELCO = "ROLE_DELCO";
     private static final String RESOURCE_USER_NAME = "Resource User Name";

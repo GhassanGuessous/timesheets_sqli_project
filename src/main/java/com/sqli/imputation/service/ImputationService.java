@@ -63,4 +63,7 @@ public interface ImputationService {
     Optional<Imputation> getPpmcImputation(MultipartFile file);
 
     List<ImputationComparatorDTO> compareAppAndTbp(AppTbpRequestBodyDTO appTbpRequest);
+
+    List<ImputationComparatorDTO> compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO);
+
 }

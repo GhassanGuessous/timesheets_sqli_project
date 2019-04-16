@@ -70,6 +70,10 @@ import { RouterModule } from '@angular/router';
             {
                 path: 'comparator-app-tbp',
                 loadChildren: './comparator-app-tbp/comparator-app-tbp.module#ComparatorAPPTBPModule'
+            },
+            {
+                path: 'comparator-app-ppmc',
+                loadChildren: './comparator-app-ppmc/comparator-app-ppmc.module#ComparatorAppPpmcModule'
             }
         ])
     ],

@@ -1,0 +1,80 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="global.menu.entities.comparator-app-ppmc">APP VS PPMC</span>
+    </h2>
+    <br />
+    <div class="row justify-content-center" *ngIf="allTeams || myTeam">
+        <div>
+            <jhi-alert-error></jhi-alert-error>
+            <form class="form-inline" name="comparatorForm" role="form" novalidate
+                  [ngSwitch]="isAdmin()" (ngSubmit)="compare()">
+                <div class="form-group tbp-import-form" *ngSwitchCase="true">
+                    <label class="form-control-label"
+                           for="field_code_project_admin">Code project</label>
+                    <select class="form-control" id="field_code_project_admin" name="code_project" [(ngModel)]="appRequestBody.agresso">
+                        <option *ngFor="let team of allTeams" [value]="team.agresso">{{team.name}}</option>
+                    </select>
+                </div>
+                <div class="form-group tbp-import-form" *ngSwitchCase="false">
+                    <span id="field_code_project_delco"><b>{{myTeam.name}}</b></span>
+                </div>
+                <div class="form-group tbp-import-form">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.year"
+                           for="field_year">Year</label>
+                    <select class="form-control" id="field_year" name="year" [(ngModel)]="appRequestBody.year">
+                        <option *ngFor="let year of years" [selected]="year == currentYear">{{year}}</option>
+                    </select>
+                </div>
+                <div class="form-group tbp-import-form">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.month"
+                           for="field_month">Month</label>
+                    <select class="form-control" id="field_month" name="month"
+                            [(ngModel)]="appRequestBody.month">
+                        <option *ngFor="let month of months" [selected]="month == currentMonth">{{month}}</option>
+                    </select>
+                </div>
+                <div class="form-group tbp-import-form">
+                    <input type="file" (change)="selectFile($event)">
+                    <button type="submit" class="btn btn-success" [disabled]="!selectedFiles">
+                        <span jhiTranslate="global.menu.entities.compare">
+                            Compare
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br/>
+    <div class=" table table-responsive" *ngIf="comparator">
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th><span jhiTranslate="global.field.id">ID</span>
+                </th>
+                <th><span jhiTranslate="imputationSqliApp.imputation.collaborator">Collaborator</span>
+                </th>
+                <th class="text-center"><span>APP</span>
+                </th>
+                <th class="text-center"><span>PPMC</span>
+                </th>
+                <th class="text-center"><span jhiTranslate="imputationSqliApp.imputation.difference">Difference</span>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let element of comparator">
+                <td class="text-center">{{element.collaborator.id}}
+                </td>
+                <td><a [routerLink]="['/collaborator', element.collaborator.id, 'view' ]">{{element.collaborator.firstname + ' ' + element.collaborator.lastname}}</a>
+                </td>
+                <td class="text-center">{{element.totalApp}}
+                </td>
+                <td class="text-center">{{element.totalPpmc}}
+                </td>
+                <td class="text-center" [ngStyle]="{color: getColor(element.difference)}"><b>{{element.difference}}</b>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

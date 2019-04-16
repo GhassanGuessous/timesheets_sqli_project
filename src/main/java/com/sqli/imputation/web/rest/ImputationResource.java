@@ -9,6 +9,7 @@ import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import com.sqli.imputation.service.impl.FilePPMCStorageService;
 import com.sqli.imputation.service.util.DateUtil;
 import com.sqli.imputation.service.util.FileExtensionUtil;
+import com.sqli.imputation.service.util.JsonUtil;
 import com.sqli.imputation.web.rest.errors.BadRequestAlertException;
 import com.sqli.imputation.web.rest.util.HeaderUtil;
 import com.sqli.imputation.web.rest.util.PaginationUtil;
@@ -22,12 +23,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sun.invoke.empty.Empty;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * REST controller for managing Imputation.
@@ -36,6 +38,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class ImputationResource {
 
+    public static final String AN_EMPTY_STRING = "";
     private final Logger log = LoggerFactory.getLogger(ImputationResource.class);
 
     private static final String ENTITY_NAME = "imputation";
@@ -138,9 +141,9 @@ public class ImputationResource {
     @PostMapping("/imputations/app")
     public ResponseEntity<List<Imputation>> getAppImputation(@RequestBody AppRequestDTO appRequestDTO) {
         log.debug("REST request to get APP Imputation : {}", appRequestDTO);
-        if (appRequestDTO.getAgresso().equals("")) {
+        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)){
             throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
-        } else {
+        } else{
             List<Imputation> imputations = imputationService.getAppImputation(appRequestDTO);
             return ResponseEntity.ok().body(imputations);
         }
@@ -155,7 +158,7 @@ public class ImputationResource {
 
         if (tbpRequestBodyDTO.getIdTbp() == null) {
             throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
-        } else if (startDate.equals("") || endDate.equals("")) {
+        } else if (startDate.equals(AN_EMPTY_STRING) || endDate.equals(AN_EMPTY_STRING)) {
             throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
         } else if (DateUtil.isDatesOrderNotValid(startDate, endDate)) {
             throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
@@ -168,11 +171,8 @@ public class ImputationResource {
     }
 
     @PostMapping("/imputations/ppmc")
-    public ResponseEntity<Optional<Imputation>> handleFileUpload(@RequestParam("file") MultipartFile file) {
-        log.debug("file original name : {}", file.getOriginalFilename());
-        log.debug("file original size : {}", file.getSize());
+    public ResponseEntity<Optional<Imputation>> getPPMCImputation(@RequestParam("file") MultipartFile file) {
         String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
-
         if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
         } else {
@@ -195,6 +195,25 @@ public class ImputationResource {
             throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
         } else {
             List<ImputationComparatorDTO> comparatorDTOS = imputationService.compareAppAndTbp(appTbpRequest);
+             return ResponseEntity.ok().body(comparatorDTOS);
+        }
+    }
+    
+    @PostMapping("/imputations/compare-app-ppmc")
+    public ResponseEntity<List<ImputationComparatorDTO>> handleFileUpload(
+        @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO
+    ) throws IOException {
+        AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
+        String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
+        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)){
+            throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
+        } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
+            throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
+        } else {
+            List<ImputationComparatorDTO> comparatorDTOS = imputationService.compare_app_ppmc(file, appRequestDTO);
+            if(comparatorDTOS.isEmpty()) {
+                throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
+            }
             return ResponseEntity.ok().body(comparatorDTOS);
         }
     }

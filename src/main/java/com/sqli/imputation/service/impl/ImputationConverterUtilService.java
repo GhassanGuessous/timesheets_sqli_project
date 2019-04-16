@@ -2,6 +2,7 @@ package com.sqli.imputation.service.impl;
 
 import com.sqli.imputation.domain.*;
 import com.sqli.imputation.repository.ImputationTypeRepository;
+import com.sqli.imputation.service.dto.ImputationComparatorDTO;
 import com.sqli.imputation.service.factory.ImputationFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -92,5 +93,43 @@ public class ImputationConverterUtilService {
 
     public ImputationType findImputationTypeByNameLike(String name) {
         return imputationTypeRepository.findByNameLike(name);
+    }
+
+    public List<ImputationComparatorDTO> compareImputations(Imputation appImputation, Imputation comparedImputation) {
+        List<ImputationComparatorDTO> comparatorDTOS = new ArrayList<>();
+        fillWithAppImputation(comparatorDTOS, appImputation);
+        fillWithComparedImputation(comparatorDTOS, comparedImputation);
+        setDifference(comparatorDTOS);
+        return comparatorDTOS;
+    }
+
+    private void fillWithComparedImputation(List<ImputationComparatorDTO> comparatorDTOS, Imputation comparedImputation) {
+        comparedImputation.getMonthlyImputations().forEach(monthly -> {
+            if(isAlreadyExist(comparatorDTOS, monthly.getCollaborator())){
+                setComparedTotal(comparatorDTOS, monthly);
+            }else{
+                comparatorDTOS.add(new ImputationComparatorDTO(monthly.getCollaborator(), 0D, monthly.getTotal()));
+            }
+        });
+    }
+
+    private void fillWithAppImputation(List<ImputationComparatorDTO> comparatorDTOS, Imputation appImputation) {
+        appImputation.getMonthlyImputations().forEach(
+            monthly -> comparatorDTOS.add(new ImputationComparatorDTO(monthly.getCollaborator(), monthly.getTotal(), 0D))
+        );
+    }
+
+    private void setDifference(List<ImputationComparatorDTO> comparatorDTOS) {
+        comparatorDTOS.forEach(dto -> dto.setDifference(dto.getTotalApp() - dto.getTotalCompared()));
+    }
+
+    private void setComparedTotal(List<ImputationComparatorDTO> comparatorDTOS, CollaboratorMonthlyImputation monthly) {
+        comparatorDTOS.stream().filter(
+            dto -> dto.getCollaborator().getId().equals(monthly.getCollaborator().getId())
+        ).findFirst().get().setTotalCompared(monthly.getTotal());
+    }
+
+    private boolean isAlreadyExist(List<ImputationComparatorDTO> comparatorDTOS, Collaborator collaborator) {
+        return comparatorDTOS.stream().anyMatch(dto -> dto.getCollaborator().getId().equals(collaborator.getId()));
     }
 }

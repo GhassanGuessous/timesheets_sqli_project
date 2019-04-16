@@ -15,9 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service Implementation for managing Imputation.
@@ -26,15 +24,14 @@ import java.util.Optional;
 @Transactional
 public class ImputationServiceImpl implements ImputationService {
 
+    private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
+    public static final int FIRST_ELEMENT_INDEX = 0;
+
+    private final ImputationRepository imputationRepository;
     @Autowired
     private AppParserService appParserService;
     @Autowired
     private AppImputationConverterService appConverterService;
-
-    private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
-
-    private final ImputationRepository imputationRepository;
-
     @Autowired
     private TbpImputationConverterService tbpImputationConverterService;
     @Autowired
@@ -45,6 +42,8 @@ public class ImputationServiceImpl implements ImputationService {
     private PpmcImputationConverterService ppmcImputationConverterService;
     @Autowired
     private RequestBodyFactory requestBodyFactory;
+    @Autowired
+    private ImputationConverterUtilService utilService;
 
     public ImputationServiceImpl(ImputationRepository imputationRepository) {
         this.imputationRepository = imputationRepository;
@@ -148,7 +147,19 @@ public class ImputationServiceImpl implements ImputationService {
 
         appImputation = appConverterService.convert(appRequestDTO, appChargeDTOS);
         tbpImputation = tbpImputationConverterService.convert(chargeTeamDTOS, tbpRequestBodyDTO);
-        comparatorDTOS = compareImputations(appImputation, tbpImputation);
+        comparatorDTOS = utilService.compareImputations(appImputation, tbpImputation);
         return comparatorDTOS;
+    }
+    
+    @Override
+    public List<ImputationComparatorDTO> compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO) {
+        Optional<Imputation> ppmcImputation = getPpmcImputation(file);
+        if(ppmcImputation.isPresent()) {
+            //compare month
+            Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
+            List<ImputationComparatorDTO> comparatorDTOS = utilService.compareImputations(appImputation, ppmcImputation.get());
+            return comparatorDTOS;
+        }
+        return Collections.EMPTY_LIST;
     }
 }
