@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service Implementation for managing Imputation.
@@ -27,6 +25,10 @@ import java.util.Optional;
 @Service
 @Transactional
 public class ImputationServiceImpl implements ImputationService {
+
+    public static final int FIRST_ELEMENT_INDEX = 0;
+    public static final String APP_STRING_KEY = "app";
+    public static final String PPMC_STRING_KEY = "ppmc";
 
     @Autowired
     private AppParserService appParserService;
@@ -133,5 +135,18 @@ public class ImputationServiceImpl implements ImputationService {
     @Override
     public Optional<Imputation> getPpmcImputation(MultipartFile file) {
         return ppmcImputationConverterService.getPpmcImputationFromExcelFile(file);
+    }
+
+    @Override
+    public Map<String, Imputation> compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO) {
+        Optional<Imputation> ppmcImputation = getPpmcImputation(file);
+        if(ppmcImputation.isPresent()) {
+            Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
+            Map<String, Imputation> app_ppmc = new HashMap<>();
+            app_ppmc.put(APP_STRING_KEY, appImputation);
+            app_ppmc.put(PPMC_STRING_KEY, ppmcImputation.get());
+            return app_ppmc;
+        }
+        return Collections.EMPTY_MAP;
     }
 }

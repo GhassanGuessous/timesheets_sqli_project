@@ -56,6 +56,7 @@ export class TimesheetTbpComponent implements OnInit {
     }
 
     getTimesheet() {
+        console.log(this.tbpRequestBody);
         this.timesheetTbpService.findTbpChargeByTeam(this.tbpRequestBody).subscribe(
             res => {
                 this.imputations = res.body;

@@ -61,10 +61,6 @@ export class TimesheetAppComponent implements OnInit {
         });
     }
 
-    isDelco() {
-        return this.currentAccount.authorities.includes('ROLE_DELCO');
-    }
-
     isAdmin() {
         return this.currentAccount.authorities.includes('ROLE_ADMIN');
     }

@@ -31,7 +31,7 @@ export class TimesheetPpmcComponent implements OnInit {
                 if (event.type === HttpEventType.UploadProgress) {
                     this.progress.percentage = Math.round((100 * event.loaded) / event.total);
                 } else if (event instanceof HttpResponse) {
-                    this.imputation = JSON.parse(event.body.toString());
+                    this.imputation = event.body;
                     console.log(this.imputation);
                     this.initializeDays(this.imputation);
                 }
@@ -43,6 +43,7 @@ export class TimesheetPpmcComponent implements OnInit {
 
         this.selectedFiles = undefined;
     }
+
     private initializeDays(res: IImputation) {
         res.monthlyImputations.forEach(monthly => {
             monthly.dailyImputations.forEach(daily => this.days.push(daily.day));

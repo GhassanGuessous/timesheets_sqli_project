@@ -24,7 +24,7 @@ export class TimesheetPpmcService {
         formdata.append('file', file);
         const req = new HttpRequest('POST', this.resourceUrl, formdata, {
             reportProgress: true,
-            responseType: 'text'
+            responseType: 'json'
         });
 
         return this.http.request(req);

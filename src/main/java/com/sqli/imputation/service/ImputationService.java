@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -59,5 +60,7 @@ public interface ImputationService {
     List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO);
 
     Optional<Imputation> getPpmcImputation(MultipartFile file);
+
+     Map<String, Imputation> compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO);
 
 }

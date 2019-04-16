@@ -1,5 +1,6 @@
 package com.sqli.imputation.web.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.service.dto.AppRequestDTO;
@@ -7,6 +8,7 @@ import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import com.sqli.imputation.service.impl.FilePPMCStorageService;
 import com.sqli.imputation.service.util.DateUtil;
 import com.sqli.imputation.service.util.FileExtensionUtil;
+import com.sqli.imputation.service.util.JsonUtil;
 import com.sqli.imputation.web.rest.errors.BadRequestAlertException;
 import com.sqli.imputation.web.rest.util.HeaderUtil;
 import com.sqli.imputation.web.rest.util.PaginationUtil;
@@ -20,12 +22,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sun.invoke.empty.Empty;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * REST controller for managing Imputation.
@@ -65,23 +68,6 @@ public class ImputationResource {
         return ResponseEntity.created(new URI("/api/imputations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
-    }
-
-    /**
-     * POST  /imputations/app : get app imputation from webservice.
-     *
-     * @param appRequestDTO the app imputation request
-     * @return the ResponseEntity with imputation of type APP
-     */
-    @PostMapping("/imputations/app")
-    public ResponseEntity<List<Imputation>> getAppImputation(@RequestBody AppRequestDTO appRequestDTO) {
-        log.debug("REST request to get APP Imputation : {}", appRequestDTO);
-        if (appRequestDTO.getAgresso().equals("")){
-            throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
-        } else{
-            List<Imputation> imputations = imputationService.getAppImputation(appRequestDTO);
-            return ResponseEntity.ok().body(imputations);
-        }
     }
 
     /**
@@ -145,6 +131,23 @@ public class ImputationResource {
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
+    /**
+     * POST  /imputations/app : get app imputation from webservice.
+     *
+     * @param appRequestDTO the app imputation request
+     * @return the ResponseEntity with imputation of type APP
+     */
+    @PostMapping("/imputations/app")
+    public ResponseEntity<List<Imputation>> getAppImputation(@RequestBody AppRequestDTO appRequestDTO) {
+        log.debug("REST request to get APP Imputation : {}", appRequestDTO);
+        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)){
+            throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
+        } else{
+            List<Imputation> imputations = imputationService.getAppImputation(appRequestDTO);
+            return ResponseEntity.ok().body(imputations);
+        }
+    }
+
     @PostMapping("/imputations/tbp")
     public ResponseEntity<List<Imputation>> getTbpImputation(@RequestBody TbpRequestBodyDTO tbpRequestBodyDTO) {
         log.debug("REST request to get Imputation charge given a team and a date : {}", tbpRequestBodyDTO);
@@ -167,17 +170,33 @@ public class ImputationResource {
     }
 
     @PostMapping("/imputations/ppmc")
-    public ResponseEntity<Optional<Imputation>> handleFileUpload(@RequestParam("file") MultipartFile file) {
-        log.debug("file original name : {}", file.getOriginalFilename());
-        log.debug("file original size : {}", file.getSize());
+    public ResponseEntity<Optional<Imputation>> getPPMCImputation(@RequestParam("file") MultipartFile file) {
         String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
-
         if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
         } else {
             Optional<Imputation> imputation = imputationService.getPpmcImputation(file);
             if(imputation.isPresent()) return ResponseEntity.ok().body(imputation);
             else throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
+        }
+    }
+
+    @PostMapping("/imputations/compare-app-ppmc")
+    public ResponseEntity<Map<String, Imputation>> handleFileUpload(
+        @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO
+    ) throws IOException {
+        AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
+        String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
+        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)){
+            throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
+        } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
+            throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
+        } else {
+            Map<String, Imputation> app_ppmc = imputationService.compare_app_ppmc(file, appRequestDTO);
+            if(app_ppmc.isEmpty()) {
+                throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
+            }
+            return ResponseEntity.ok().body(app_ppmc);
         }
     }
 }

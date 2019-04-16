@@ -74,12 +74,6 @@ public final class DateUtil {
     }
 
     public static int getLastDayOfMonth(int year, int month){
-//        GregorianCalendar calendar = new GregorianCalendar();
-//        // adjust the month for a zero based index
-//        month = month - 1;
-//        // set the date of the calendar to the date provided
-//        calendar.set(year, month, 1);
-//        int dayInt = calendar.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
         return YearMonth.of(year, month).lengthOfMonth();
     }
 
