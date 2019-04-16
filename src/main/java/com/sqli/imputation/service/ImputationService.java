@@ -3,13 +3,13 @@ package com.sqli.imputation.service;
 import com.sqli.imputation.domain.Imputation;
 
 import com.sqli.imputation.service.dto.AppRequestDTO;
+import com.sqli.imputation.service.dto.ImputationComparatorDTO;
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -61,6 +61,6 @@ public interface ImputationService {
 
     Optional<Imputation> getPpmcImputation(MultipartFile file);
 
-     Map<String, Imputation> compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO);
+     List<ImputationComparatorDTO> compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO);
 
 }

@@ -3,10 +3,7 @@ package com.sqli.imputation.service.impl;
 import com.sqli.imputation.service.*;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.repository.ImputationRepository;
-import com.sqli.imputation.service.dto.AppChargeDTO;
-import com.sqli.imputation.service.dto.AppRequestDTO;
-import com.sqli.imputation.service.dto.ChargeTeamDTO;
-import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
+import com.sqli.imputation.service.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,19 +23,14 @@ import java.util.*;
 @Transactional
 public class ImputationServiceImpl implements ImputationService {
 
+    private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
     public static final int FIRST_ELEMENT_INDEX = 0;
-    public static final String APP_STRING_KEY = "app";
-    public static final String PPMC_STRING_KEY = "ppmc";
 
+    private final ImputationRepository imputationRepository;
     @Autowired
     private AppParserService appParserService;
     @Autowired
     private AppImputationConverterService appConverterService;
-
-    private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
-
-    private final ImputationRepository imputationRepository;
-
     @Autowired
     private TbpImputationConverterService tbpImputationConverterService;
     @Autowired
@@ -47,6 +39,8 @@ public class ImputationServiceImpl implements ImputationService {
     private TbpRequestComposerService composerService;
     @Autowired
     private PpmcImputationConverterService ppmcImputationConverterService;
+    @Autowired
+    private ImputationConverterUtilService utilService;
 
     public ImputationServiceImpl(ImputationRepository imputationRepository) {
         this.imputationRepository = imputationRepository;
@@ -138,15 +132,14 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     @Override
-    public Map<String, Imputation> compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO) {
+    public List<ImputationComparatorDTO> compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO) {
         Optional<Imputation> ppmcImputation = getPpmcImputation(file);
         if(ppmcImputation.isPresent()) {
+            //compare month
             Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
-            Map<String, Imputation> app_ppmc = new HashMap<>();
-            app_ppmc.put(APP_STRING_KEY, appImputation);
-            app_ppmc.put(PPMC_STRING_KEY, ppmcImputation.get());
-            return app_ppmc;
+            List<ImputationComparatorDTO> comparatorDTOS = utilService.compareImputations(appImputation, ppmcImputation.get());
+            return comparatorDTOS;
         }
-        return Collections.EMPTY_MAP;
+        return Collections.EMPTY_LIST;
     }
 }

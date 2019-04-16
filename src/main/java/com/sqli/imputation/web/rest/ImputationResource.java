@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.service.dto.AppRequestDTO;
+import com.sqli.imputation.service.dto.ImputationComparatorDTO;
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import com.sqli.imputation.service.impl.FilePPMCStorageService;
 import com.sqli.imputation.service.util.DateUtil;
@@ -182,7 +183,7 @@ public class ImputationResource {
     }
 
     @PostMapping("/imputations/compare-app-ppmc")
-    public ResponseEntity<Map<String, Imputation>> handleFileUpload(
+    public ResponseEntity<List<ImputationComparatorDTO>> handleFileUpload(
         @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO
     ) throws IOException {
         AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
@@ -192,11 +193,11 @@ public class ImputationResource {
         } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
         } else {
-            Map<String, Imputation> app_ppmc = imputationService.compare_app_ppmc(file, appRequestDTO);
-            if(app_ppmc.isEmpty()) {
+            List<ImputationComparatorDTO> comparatorDTOS = imputationService.compare_app_ppmc(file, appRequestDTO);
+            if(comparatorDTOS.isEmpty()) {
                 throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
             }
-            return ResponseEntity.ok().body(app_ppmc);
+            return ResponseEntity.ok().body(comparatorDTOS);
         }
     }
 }
