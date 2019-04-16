@@ -39,7 +39,7 @@
                            for="field_month">Month</label>
                     <select class="form-control" id="field_startDay" name="startDay"
                             [(ngModel)]="appRequestBody.startDay">
-                        <option *ngFor="let day of days" >{{day}}</option>
+                        <option *ngFor="let day of days">{{day}}</option>
                     </select>
                 </div>
                 <div class="form-group tbp-import-form">
@@ -47,7 +47,7 @@
                            for="field_month">Month</label>
                     <select class="form-control" id="field_man_day" name="manDay"
                             [(ngModel)]="appRequestBody.manDay">
-                        <option *ngFor="let manDay of manDays" >{{manDay}}</option>
+                        <option *ngFor="let manDay of manDays">{{manDay}}</option>
                     </select>
                 </div>
                 <div class="form-group tbp-import-form">
@@ -66,7 +66,8 @@
     <div *ngIf="imputations">
         <div class="table-responsive" *ngFor="let imputation of imputations">
             <h3>
-                <span jhiTranslate="imputationSqliApp.imputation.yearMonth" [translateValues]="{year:imputation.year, month: imputation.month}">Month : </span>
+                <span jhiTranslate="imputationSqliApp.imputation.yearMonth"
+                      [translateValues]="{year:imputation.year, month: imputation.month}">Month : </span>
             </h3>
             <table class="table table-bordered table-striped">
                 <thead>
@@ -77,16 +78,20 @@
                     </th>
                     <th jhiSortBy="year"><span>Total</span>
                     </th>
-                    <th *ngFor="let day of imputationDays.get(imputation)" [id]="day">{{day + '/' + imputation.month}}</th>
+                    <th *ngFor="let day of imputationDays.get(imputation)"
+                        [id]="day">{{day + '/' + imputation.month}}</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr *ngFor="let monthlyImputation of imputation.monthlyImputations">
                     <td>{{monthlyImputation.collaborator.id}}</td>
-                    <td><a [routerLink]="['/collaborator', monthlyImputation.collaborator.id, 'view' ]">{{monthlyImputation.collaborator.lastname + ' ' + monthlyImputation.collaborator.firstname}}</a></td>
+                    <td><a
+                        [routerLink]="['/collaborator', monthlyImputation.collaborator.id, 'view' ]">{{monthlyImputation.collaborator.lastname + ' ' + monthlyImputation.collaborator.firstname}}</a>
+                    </td>
                     <td class="text-center"><b>{{monthlyImputation.total}}</b></td>
                     <td class="text-center" *ngFor="let day of imputationDays.get(imputation)" [id]="day">
-                        <span *ngFor="let dailyImputation of monthlyImputation.dailyImputations">{{day == dailyImputation.day ? dailyImputation.charge : ''}}</span>
+                        <span
+                            *ngFor="let dailyImputation of monthlyImputation.dailyImputations">{{day == dailyImputation.day ? dailyImputation.charge : ''}}</span>
                     </td>
                 </tr>
                 </tbody>

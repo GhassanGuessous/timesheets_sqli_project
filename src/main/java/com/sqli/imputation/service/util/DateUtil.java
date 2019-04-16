@@ -18,23 +18,24 @@ public final class DateUtil {
     public static final String END = "end";
     public static final int FIRST_DAY_OF_MONTH = 1;
     public static final int FIRST_MONTH = 0;
+    private static final String TWO_DIGITS_FORMAT = "%02d";
 
-    public static int getYear(String date){
+    public static int getYear(String date) {
         String[] tokens = date.split(DELIMITER);
         return Integer.parseInt(tokens[FIRST_POSITION]);
     }
 
-    public static int getMonth(String date){
+    public static int getMonth(String date) {
         String[] tokens = date.split(DELIMITER);
         return Integer.parseInt(tokens[SECOND_POSITION]);
     }
 
-    public static int getDay(String date){
+    public static int getDay(String date) {
         String[] tokens = date.split(DELIMITER);
         return Integer.parseInt(tokens[THIRD_POSITION]);
     }
 
-    public static boolean isDatesOrderNotValid(String startDate, String endDate){
+    public static boolean isDatesOrderNotValid(String startDate, String endDate) {
         DateFormat dateFormat = new SimpleDateFormat(PATTERN);
         try {
             Date date1 = dateFormat.parse(startDate);
@@ -57,13 +58,13 @@ public final class DateUtil {
 
         for (int i = FIRST_MONTH; i <= numberMonths; i++) {
             Map<String, Integer> start_end_days = new HashMap<>();
-            if(i == FIRST_MONTH){
+            if (i == FIRST_MONTH) {
                 start_end_days.put(START, getDay(startDate));
                 start_end_days.put(END, getLastDayOfMonth(year, startMonth));
-            }else if(i == numberMonths){
+            } else if (i == numberMonths) {
                 start_end_days.put(START, FIRST_DAY_OF_MONTH);
                 start_end_days.put(END, getDay(endDate));
-            }else{
+            } else {
                 start_end_days.put(START, FIRST_DAY_OF_MONTH);
                 start_end_days.put(END, getLastDayOfMonth(year, startMonth));
             }
@@ -73,17 +74,27 @@ public final class DateUtil {
         return months;
     }
 
-    public static int getLastDayOfMonth(int year, int month){
-//        GregorianCalendar calendar = new GregorianCalendar();
-//        // adjust the month for a zero based index
-//        month = month - 1;
-//        // set the date of the calendar to the date provided
-//        calendar.set(year, month, 1);
-//        int dayInt = calendar.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
+    public static int getLastDayOfMonth(int year, int month) {
         return YearMonth.of(year, month).lengthOfMonth();
     }
 
     public static boolean isDifferentYears(String startDate, String endDate) {
         return getYear(startDate) != getYear(endDate);
+    }
+
+    public static String getDateOfFirstDay(int year, int month) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(year).append(DELIMITER).append(toTwoDidit(month)).append(DELIMITER).append(toTwoDidit(FIRST_DAY_OF_MONTH));
+        return builder.toString();
+    }
+
+    public static String getDateOfLastDay(int year, int month) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(year).append(DELIMITER).append(toTwoDidit(month)).append(DELIMITER).append(getLastDayOfMonth(year, month));
+        return builder.toString();
+    }
+
+    public static String toTwoDidit(int number) {
+        return String.format(TWO_DIGITS_FORMAT, number);
     }
 }
