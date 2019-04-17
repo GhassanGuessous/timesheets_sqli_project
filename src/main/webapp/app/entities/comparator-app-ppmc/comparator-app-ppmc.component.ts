@@ -73,7 +73,6 @@ export class ComparatorAppPpmcComponent implements OnInit {
             this.comparatorAppPpmcService.pushFileToStorage(this.currentFileUpload, this.appRequestBody).subscribe(
                 event => {
                     if (event instanceof HttpResponse) {
-                        console.log(event.body);
                         this.comparator = event.body;
                     }
                 },
