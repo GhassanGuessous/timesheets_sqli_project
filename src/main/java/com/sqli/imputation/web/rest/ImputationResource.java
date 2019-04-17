@@ -198,7 +198,7 @@ public class ImputationResource {
              return ResponseEntity.ok().body(comparatorDTOS);
         }
     }
-    
+
     @PostMapping("/imputations/compare-app-ppmc")
     public ResponseEntity<List<ImputationComparatorDTO>> handleFileUpload(
         @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO
