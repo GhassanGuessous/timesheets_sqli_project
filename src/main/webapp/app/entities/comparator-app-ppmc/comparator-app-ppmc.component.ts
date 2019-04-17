@@ -3,7 +3,7 @@ import { ITeam } from 'app/shared/model/team.model';
 import { ComparatorAppPpmcService } from 'app/entities/comparator-app-ppmc/comparator-app-ppmc.service';
 import { AccountService } from 'app/core';
 import { TeamService } from 'app/entities/team';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 import { AppRequestBody, IAppRequestBody } from 'app/shared/model/app-request-body';
 
 @Component({
@@ -15,7 +15,6 @@ export class ComparatorAppPpmcComponent implements OnInit {
     private selectedFiles: FileList;
     private currentFileUpload: File;
     private comparator?: any;
-    private progress: { percentage: number } = { percentage: 0 };
     private currentAccount: any;
     private myTeam: ITeam;
     private allTeams: ITeam[];
@@ -87,9 +86,9 @@ export class ComparatorAppPpmcComponent implements OnInit {
         if (difference < 0) {
             return 'red';
         } else if (difference > 0) {
-            return 'green';
-        } else {
             return 'orange';
+        } else {
+            return 'green';
         }
     }
 

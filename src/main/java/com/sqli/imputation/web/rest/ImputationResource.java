@@ -183,7 +183,7 @@ public class ImputationResource {
     }
 
     @PostMapping("/imputations/compare-app-ppmc")
-    public ResponseEntity<List<ImputationComparatorDTO>> handleFileUpload(
+    public ResponseEntity<List<ImputationComparatorDTO>> get_app_ppmc_comparison(
         @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO
     ) throws IOException {
         AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
