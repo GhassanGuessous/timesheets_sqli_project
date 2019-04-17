@@ -144,9 +144,9 @@ public class ImputationResource {
     @PostMapping("/imputations/app")
     public ResponseEntity<List<Imputation>> getAppImputation(@RequestBody AppRequestDTO appRequestDTO) {
         log.debug("REST request to get APP Imputation : {}", appRequestDTO);
-        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)){
+        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
-        } else{
+        } else {
             List<Imputation> imputations = imputationService.getAppImputation(appRequestDTO);
             return ResponseEntity.ok().body(imputations);
         }
@@ -208,7 +208,7 @@ public class ImputationResource {
     ) throws IOException {
         AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
         String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
-        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)){
+        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");

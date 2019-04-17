@@ -74,6 +74,10 @@ import { RouterModule } from '@angular/router';
             {
                 path: 'comparator-app-ppmc',
                 loadChildren: './comparator-app-ppmc/comparator-app-ppmc.module#ComparatorAppPpmcModule'
+            },
+            {
+                path: 'advanced-comparator-app-ppmc',
+                loadChildren: './comparator-app-ppmc-advanced/comparator-app-ppmc-advanced.module#ComparatorAppPpmcAdvancedModule'
             }
         ])
     ],

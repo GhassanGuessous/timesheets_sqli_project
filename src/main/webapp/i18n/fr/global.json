@@ -28,7 +28,8 @@
                 "app-vs-tbp": "APP VS TBP",
                 "compare": "comparer",
                 "comparison": "Comparaison",
-                "comparator-app-ppmc": "APP vs PPMC"
+                "comparator-app-ppmc": "APP vs PPMC",
+                "comparator-app-ppmc-advanced": "APP vs PPMC - Détaillé"
             },
             "account": {
                 "main": "Compte",

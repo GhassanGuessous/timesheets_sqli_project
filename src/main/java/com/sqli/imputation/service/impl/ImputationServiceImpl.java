@@ -158,7 +158,13 @@ public class ImputationServiceImpl implements ImputationService {
      *
      * @param file
      * @param appRequestDTO
-     * @return
+     * @return an array contains :
+     * first element : a list of DTOs of imputation comparison (full or empty)
+     * second element : a status that describe what happened ;
+     *  # -1 : comparison of two different months
+     *  # 0 : something wrong happened while reading excel file
+     *  # 1 : all good
+     *
      */
     @Override
     public Object[] compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO) {
