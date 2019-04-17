@@ -8,7 +8,7 @@
                 "APPvsTBP-title": "APP TBP Comparison",
                 "createLabel": "Create a new Imputation",
                 "createOrEditLabel": "Create or edit a Imputation",
-                "comparatorAppPpmcTitle": "Comparator App-PPMC"
+                "comparatorAppPpmcTitle": "Comparator APP-PPMC"
             },
             "created": "A new Imputation is created with identifier {{ param }}",
             "updated": "A Imputation is updated with identifier {{ param }}",

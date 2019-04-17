@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 @Service
 public class ImputationConverterUtilService {
 
-
     @Autowired
     private ImputationFactory imputationFactory;
     @Autowired
