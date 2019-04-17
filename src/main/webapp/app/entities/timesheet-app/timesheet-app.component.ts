@@ -66,15 +66,12 @@ export class TimesheetAppComponent implements OnInit {
     }
 
     getTimesheet() {
-        this.service.findAppChargeByTeam(this.appRequestBody).subscribe(
-            res => {
-                this.imputations = res.body;
-                for (let i = 0; i < this.imputations.length; i++) {
-                    this.initializeDays(this.imputations[i]);
-                }
-            },
-            error => {}
-        );
+        this.service.findAppChargeByTeam(this.appRequestBody).subscribe(res => {
+            this.imputations = res.body;
+            for (let i = 0; i < this.imputations.length; i++) {
+                this.initializeDays(this.imputations[i]);
+            }
+        });
     }
 
     private initializeDays(imputation: any) {

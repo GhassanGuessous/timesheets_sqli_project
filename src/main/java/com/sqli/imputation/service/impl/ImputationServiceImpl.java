@@ -4,6 +4,7 @@ import com.sqli.imputation.service.*;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.repository.ImputationRepository;
 import com.sqli.imputation.service.dto.*;
+import com.sqli.imputation.service.factory.RequestBodyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,8 @@ public class ImputationServiceImpl implements ImputationService {
     private TbpRequestComposerService composerService;
     @Autowired
     private PpmcImputationConverterService ppmcImputationConverterService;
+    @Autowired
+    private RequestBodyFactory requestBodyFactory;
     @Autowired
     private ImputationConverterUtilService utilService;
 
@@ -129,6 +132,23 @@ public class ImputationServiceImpl implements ImputationService {
     @Override
     public Optional<Imputation> getPpmcImputation(MultipartFile file) {
         return ppmcImputationConverterService.getPpmcImputationFromExcelFile(file);
+    }
+
+    @Override
+    public List<ImputationComparatorDTO> compareAppAndTbp(AppTbpRequestBodyDTO appTbpRequest) {
+        List<ImputationComparatorDTO> comparatorDTOS ;
+        Imputation appImputation;
+        Imputation tbpImputation;
+        AppRequestDTO appRequestDTO = requestBodyFactory.createAppRequestDTO(appTbpRequest.getTeam().getAgresso(), appTbpRequest.getYear(), appTbpRequest.getMonth());
+        TbpRequestBodyDTO tbpRequestBodyDTO = requestBodyFactory.createTbpRequestBodyDTO(appTbpRequest.getTeam().getIdTbp(), appTbpRequest.getYear(), appTbpRequest.getMonth());
+
+        List<AppChargeDTO> appChargeDTOS = appParserService.parse();
+        List<ChargeTeamDTO> chargeTeamDTOS = tbpResourceService.getTeamCharges(tbpRequestBodyDTO).getBody().getData().getCharge();
+
+        appImputation = appConverterService.convert(appRequestDTO, appChargeDTOS);
+        tbpImputation = tbpImputationConverterService.convert(chargeTeamDTOS, tbpRequestBodyDTO);
+        comparatorDTOS = utilService.compareImputations(appImputation, tbpImputation);
+        return comparatorDTOS;
     }
 
     @Override

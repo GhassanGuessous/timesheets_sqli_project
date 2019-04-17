@@ -1,9 +1,9 @@
 package com.sqli.imputation.web.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.service.dto.AppRequestDTO;
+import com.sqli.imputation.service.dto.AppTbpRequestBodyDTO;
 import com.sqli.imputation.service.dto.ImputationComparatorDTO;
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import com.sqli.imputation.service.impl.FilePPMCStorageService;
@@ -160,9 +160,9 @@ public class ImputationResource {
             throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
         } else if (startDate.equals(AN_EMPTY_STRING) || endDate.equals(AN_EMPTY_STRING)) {
             throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
-        } else if(DateUtil.isDatesOrderNotValid(startDate, endDate)){
+        } else if (DateUtil.isDatesOrderNotValid(startDate, endDate)) {
             throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
-        } else if(DateUtil.isDifferentYears(startDate, endDate)){
+        } else if (DateUtil.isDifferentYears(startDate, endDate)) {
             throw new BadRequestAlertException("Different years", ENTITY_NAME, "different_years");
         } else {
             List<Imputation> imputations = imputationService.getTbpImputation(tbpRequestBodyDTO);
@@ -177,8 +177,25 @@ public class ImputationResource {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
         } else {
             Optional<Imputation> imputation = imputationService.getPpmcImputation(file);
-            if(imputation.isPresent()) return ResponseEntity.ok().body(imputation);
+            if (imputation.isPresent()) return ResponseEntity.ok().body(imputation);
             else throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
+        }
+    }
+
+    /**
+     * POST  /imputations/compare-app-tbp : compare app and tbp imputation.
+     *
+     * @param appTbpRequest the comparison request
+     * @return the ResponseEntity with compared imputations of type APP
+     */
+    @PostMapping("/imputations/compare-app-tbp")
+    public ResponseEntity<List<ImputationComparatorDTO>> compareAppAndTbpImputations(@RequestBody AppTbpRequestBodyDTO appTbpRequest) {
+        log.debug("REST request to get APP Imputation : {}", appTbpRequest);
+        if (appTbpRequest.getTeam() == null) {
+            throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
+        } else {
+            List<ImputationComparatorDTO> comparatorDTOS = imputationService.compareAppAndTbp(appTbpRequest);
+             return ResponseEntity.ok().body(comparatorDTOS);
         }
     }
 

@@ -23,7 +23,7 @@ public class AppParserService {
     public List<AppChargeDTO> parse() {
         String xml = "";
         try {
-            xml = FileUtils.readFileToString(new File("C:/Users/gguessous/Desktop/data.xml"), "UTF-8");
+            xml = FileUtils.readFileToString(new File("C:/Users/aaitbassou/Desktop/data.xml"), "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
         }

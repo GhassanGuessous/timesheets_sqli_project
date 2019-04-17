@@ -29,7 +29,9 @@
             "imputationType": "Type d'imputation",
             "project_code": "Code projet",
             "start_date": "Date début",
-            "end_date": "Date fin"
+            "end_date": "Date fin",
+            "difference": "Différence",
+            "collaborator": "Collaborateur"
         }
     }
 }
