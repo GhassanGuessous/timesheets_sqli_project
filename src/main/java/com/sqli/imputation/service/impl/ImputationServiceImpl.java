@@ -24,6 +24,9 @@ import java.util.*;
 @Transactional
 public class ImputationServiceImpl implements ImputationService {
 
+    public static final int INCOMPATIBLE_MONTHS_STATUS = -1;
+    public static final int ALL_GOOD_STATUS = 1;
+    public static final int INVALID_FILE_STATUS = 0;
     private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
     public static final int FIRST_ELEMENT_INDEX = 0;
 
@@ -151,15 +154,23 @@ public class ImputationServiceImpl implements ImputationService {
         return comparatorDTOS;
     }
 
+    /**
+     *
+     * @param file
+     * @param appRequestDTO
+     * @return
+     */
     @Override
-    public List<ImputationComparatorDTO> compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO) {
+    public Object[] compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO) {
         Optional<Imputation> ppmcImputation = getPpmcImputation(file);
         if(ppmcImputation.isPresent()) {
-            //compare month
+            if(!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
+                return new Object[]{Collections.EMPTY_LIST, INCOMPATIBLE_MONTHS_STATUS};
+            }
             Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
             List<ImputationComparatorDTO> comparatorDTOS = utilService.compareImputations(appImputation, ppmcImputation.get());
-            return comparatorDTOS;
+            return new Object[]{comparatorDTOS, ALL_GOOD_STATUS};
         }
-        return Collections.EMPTY_LIST;
+        return new Object[]{Collections.EMPTY_LIST, INVALID_FILE_STATUS};
     }
 }

@@ -64,6 +64,6 @@ public interface ImputationService {
 
     List<ImputationComparatorDTO> compareAppAndTbp(AppTbpRequestBodyDTO appTbpRequest);
 
-    List<ImputationComparatorDTO> compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO);
+    Object[] compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO);
 
 }

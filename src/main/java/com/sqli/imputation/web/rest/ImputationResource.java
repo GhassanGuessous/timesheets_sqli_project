@@ -39,6 +39,9 @@ import java.util.*;
 public class ImputationResource {
 
     public static final String AN_EMPTY_STRING = "";
+    public static final int INCOMPATIBLE_MONTHS_STATUS = -1;
+    public static final int STATUS_POSITION = 1;
+    public static final int LIST_DTOs_POSITION = 0;
     private final Logger log = LoggerFactory.getLogger(ImputationResource.class);
 
     private static final String ENTITY_NAME = "imputation";
@@ -210,11 +213,20 @@ public class ImputationResource {
         } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
         } else {
-            List<ImputationComparatorDTO> comparatorDTOS = imputationService.compare_app_ppmc(file, appRequestDTO);
-            if(comparatorDTOS.isEmpty()) {
-                throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
-            }
-            return ResponseEntity.ok().body(comparatorDTOS);
+            return getComparison(file, appRequestDTO);
         }
+    }
+
+    private ResponseEntity<List<ImputationComparatorDTO>> getComparison(MultipartFile file, AppRequestDTO appRequestDTO) {
+        Object[] result = imputationService.compare_app_ppmc(file, appRequestDTO);
+        List<ImputationComparatorDTO> comparatorDTOS = (List<ImputationComparatorDTO>) result[LIST_DTOs_POSITION];
+        int status = (int) result[STATUS_POSITION];
+        if(comparatorDTOS.isEmpty()) {
+            if(status == INCOMPATIBLE_MONTHS_STATUS) {
+                throw new BadRequestAlertException("Different months", ENTITY_NAME, "differentMonths");
+            }
+            throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
+        }
+        return ResponseEntity.ok().body(comparatorDTOS);
     }
 }

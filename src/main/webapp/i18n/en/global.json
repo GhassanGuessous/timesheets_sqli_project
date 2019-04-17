@@ -157,7 +157,8 @@
         "orderdates": "End date should be greater than start date!",
         "different_years": "Please select dates in the same year!",
         "extension_support": "This type of files is not supported, please use one of the following extensions : 'xsl', 'xslx'",
-        "invalidPPMC": "Sorry, this File is not a valid PPMC file!"
+        "invalidPPMC": "Sorry, this File is not a valid PPMC file!",
+        "differentMonths": "Sorry, the selected month and the month of the file must be the same!"
     },
     "footer": "This is your footer"
 }

@@ -19,7 +19,7 @@ export class ComparatorAppPpmcComponent implements OnInit {
     private myTeam: ITeam;
     private allTeams: ITeam[];
     private currentYear: number = new Date().getFullYear();
-    private currentMonth: number = new Date().getMonth();
+    private currentMonth: number = new Date().getMonth() + 1;
     private years: Array<number> = [];
     private months: Array<number> = [];
     private numberOfDaysOfCurrentMonth: number = new Date(this.currentYear, this.currentMonth, 0).getDate();
@@ -68,17 +68,19 @@ export class ComparatorAppPpmcComponent implements OnInit {
     }
 
     compare() {
-        this.currentFileUpload = this.selectedFiles.item(0);
-        this.comparatorAppPpmcService.pushFileToStorage(this.currentFileUpload, this.appRequestBody).subscribe(
-            event => {
-                if (event instanceof HttpResponse) {
-                    this.comparator = event.body;
+        if (this.selectedFiles !== undefined) {
+            this.currentFileUpload = this.selectedFiles.item(0);
+            this.comparatorAppPpmcService.pushFileToStorage(this.currentFileUpload, this.appRequestBody).subscribe(
+                event => {
+                    if (event instanceof HttpResponse) {
+                        this.comparator = event.body;
+                    }
+                },
+                error => {
+                    console.log(error);
                 }
-            },
-            error => {
-                console.log(error);
-            }
-        );
+            );
+        }
         this.selectedFiles = undefined;
     }
 
@@ -108,7 +110,12 @@ export class ComparatorAppPpmcComponent implements OnInit {
     }
 
     private initializeMonth() {
-        for (let i = 1; i <= 12; i++) {
+        let lastYear = 12;
+        this.months = [];
+        if (this.appRequestBody.year == this.currentYear) {
+            lastYear = this.currentMonth;
+        }
+        for (let i = 1; i <= lastYear; i++) {
             this.months.push(i);
         }
     }
