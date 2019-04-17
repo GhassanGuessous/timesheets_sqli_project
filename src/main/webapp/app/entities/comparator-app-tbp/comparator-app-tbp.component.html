@@ -11,8 +11,8 @@
                     <label class="form-control-label"
                            for="field_code_project_admin">Code project</label>
                     <select class="form-control" id="field_code_project_admin" name="code_project"
-                            [(ngModel)]="appTbpRequestBody.team">
-                        <option *ngFor="let team of allTeams" [value]="team">{{team.name}}</option>
+                           [(ngModel)]="appTbpRequestBody.team">
+                        <option *ngFor="let team of allTeams" [ngValue]="team">{{team.name}}</option>
                     </select>
                 </div>
                 <div class="form-group tbp-import-form" *ngSwitchCase="false">

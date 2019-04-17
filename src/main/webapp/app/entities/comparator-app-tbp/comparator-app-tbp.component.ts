@@ -3,7 +3,7 @@ import { ITeam } from 'app/shared/model/team.model';
 import { AccountService } from 'app/core';
 import { TeamService } from 'app/entities/team';
 import { ComparatorAPPTBPService } from 'app/entities/comparator-app-tbp/comparator-app-tbp.service';
-import { AppTbpRequestBody } from 'app/shared/model/app-tbp-request.body';
+import { AppTbpRequestBody } from 'app/shared/model/app-tbp-request-body';
 
 @Component({
     selector: 'jhi-comparator-app-tbp',
@@ -13,7 +13,7 @@ import { AppTbpRequestBody } from 'app/shared/model/app-tbp-request.body';
 export class ComparatorAPPTBPComponent implements OnInit {
     private currentAccount: any;
     private myTeam: ITeam;
-    private allTeams: ITeam[];
+    private allTeams: Array<ITeam>;
     private currentYear: number = new Date().getFullYear();
     private currentMonth: number = new Date().getMonth();
     private years: Array<number> = [];
@@ -77,12 +77,10 @@ export class ComparatorAPPTBPComponent implements OnInit {
     }
 
     compare() {
-        this.service.compare(this.appTbpRequestBody).subscribe(
-            res => {
-                this.comparator = res.body;
-            },
-            error => {}
-        );
+        console.log(this.appTbpRequestBody);
+        this.service.compare(this.appTbpRequestBody).subscribe(res => {
+            this.comparator = res.body;
+        });
     }
 
     getcolor(difference: number): string {

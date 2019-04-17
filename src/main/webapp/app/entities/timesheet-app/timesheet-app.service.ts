@@ -3,7 +3,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { SERVER_API_URL } from 'app/app.constants';
-import { IAppRequestBody } from 'app/shared/model/app-request.body';
+import { IAppRequestBody } from 'app/shared/model/app-request-body';
 import { IImputation } from 'app/shared/model/imputation.model';
 
 type EntityResponseType = HttpResponse<IImputation>;

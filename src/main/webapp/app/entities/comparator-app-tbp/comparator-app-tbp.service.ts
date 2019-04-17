@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SERVER_API_URL } from 'app/app.constants';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { AppTbpRequestBody } from 'app/shared/model/app-tbp-request.body';
+import { AppTbpRequestBody } from 'app/shared/model/app-tbp-request-body';
 import { Observable } from 'rxjs';
 
 type EntityResponseType = HttpResponse<any>;

@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountService } from 'app/core';
-import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { ITeam } from 'app/shared/model/team.model';
-import { ITbpRequestBody, TbpRequestBody } from 'app/shared/model/tbp-request.body';
+import { ITbpRequestBody, TbpRequestBody } from 'app/shared/model/tbp-request-body';
 import { TimesheetTbpService } from 'app/entities/timesheet-tbp/timesheet-tbp.service';
 import { IImputation } from 'app/shared/model/imputation.model';
 import { TeamService } from 'app/entities/team';
@@ -57,15 +56,12 @@ export class TimesheetTbpComponent implements OnInit {
 
     getTimesheet() {
         console.log(this.tbpRequestBody);
-        this.timesheetTbpService.findTbpChargeByTeam(this.tbpRequestBody).subscribe(
-            res => {
-                this.imputations = res.body;
-                for (let i = 0; i < this.imputations.length; i++) {
-                    this.initializeDays(this.imputations[i]);
-                }
-            },
-            error => {}
-        );
+        this.timesheetTbpService.findTbpChargeByTeam(this.tbpRequestBody).subscribe(res => {
+            this.imputations = res.body;
+            for (let i = 0; i < this.imputations.length; i++) {
+                this.initializeDays(this.imputations[i]);
+            }
+        });
     }
 
     private initializeDays(imputation: any) {

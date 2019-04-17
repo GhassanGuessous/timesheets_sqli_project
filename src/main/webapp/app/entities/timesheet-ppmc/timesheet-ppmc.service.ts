@@ -3,10 +3,6 @@ import { HttpClient, HttpResponse, HttpRequest, HttpEvent } from '@angular/commo
 import { Observable } from 'rxjs';
 
 import { SERVER_API_URL } from 'app/app.constants';
-import { IImputation } from 'app/shared/model/imputation.model';
-import { ITbpRequestBody } from 'app/shared/model/tbp-request.body';
-
-type EntityResponseType = HttpResponse<IImputation>;
 
 @Injectable({ providedIn: 'root' })
 export class TimesheetPpmcService {
