@@ -1,5 +1,6 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { ComparatorAppTbpAdvancedComponent } from './comparator-app-tbp-advanced/comparator-app-tbp-advanced.component';
 
 @NgModule({
     imports: [
@@ -74,6 +75,10 @@ import { RouterModule } from '@angular/router';
             {
                 path: 'comparator-app-ppmc',
                 loadChildren: './comparator-app-ppmc/comparator-app-ppmc.module#ComparatorAppPpmcModule'
+            },
+            {
+                path: 'advanced-comparator-app-tbp',
+                loadChildren: './comparator-app-tbp-advanced/comparator-app-tbp-advanced.module#ComparatorAppTbpAdvancedModule'
             }
         ])
     ],

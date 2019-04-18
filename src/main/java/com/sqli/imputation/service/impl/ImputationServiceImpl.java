@@ -136,18 +136,12 @@ public class ImputationServiceImpl implements ImputationService {
 
     @Override
     public List<ImputationComparatorDTO> compareAppAndTbp(AppTbpRequestBodyDTO appTbpRequest) {
-        List<ImputationComparatorDTO> comparatorDTOS ;
-        Imputation appImputation;
-        Imputation tbpImputation;
         AppRequestDTO appRequestDTO = requestBodyFactory.createAppRequestDTO(appTbpRequest.getTeam().getAgresso(), appTbpRequest.getYear(), appTbpRequest.getMonth());
         TbpRequestBodyDTO tbpRequestBodyDTO = requestBodyFactory.createTbpRequestBodyDTO(appTbpRequest.getTeam().getIdTbp(), appTbpRequest.getYear(), appTbpRequest.getMonth());
 
-        List<AppChargeDTO> appChargeDTOS = appParserService.parse();
-        List<ChargeTeamDTO> chargeTeamDTOS = tbpResourceService.getTeamCharges(tbpRequestBodyDTO).getBody().getData().getCharge();
-
-        appImputation = appConverterService.convert(appRequestDTO, appChargeDTOS);
-        tbpImputation = tbpImputationConverterService.convert(chargeTeamDTOS, tbpRequestBodyDTO);
-        comparatorDTOS = utilService.compareImputations(appImputation, tbpImputation);
+        Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
+        Imputation tbpImputation = getTbpImputation(tbpRequestBodyDTO).get(FIRST_ELEMENT_INDEX);
+        List<ImputationComparatorDTO> comparatorDTOS = utilService.compareImputations(appImputation, tbpImputation);
         return comparatorDTOS;
     }
 

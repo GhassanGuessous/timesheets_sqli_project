@@ -1,0 +1,82 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="global.menu.entities.advanced-app-vs-tbp">APP VS TBP Advanced</span>
+    </h2>
+    <div class="row justify-content-center" *ngIf="allTeams || myTeam">
+        <div>
+            <jhi-alert-error></jhi-alert-error>
+            <form class="form-inline" name="comparatorForm" role="form" novalidate
+                  [ngSwitch]="isAdmin()" (ngSubmit)="compare()">
+                <div class="form-group tbp-import-form" *ngSwitchCase="true">
+                    <label class="form-control-label"
+                           for="field_code_project_admin">Code project</label>
+                    <select class="form-control" id="field_code_project_admin" name="code_project"
+                            [(ngModel)]="appTbpRequestBody.team">
+                        <option *ngFor="let team of allTeams" [ngValue]="team">{{team.name}}</option>
+                    </select>
+                </div>
+                <div class="form-group tbp-import-form" *ngSwitchCase="false">
+                    <span id="field_code_project_delco"><b>{{myTeam.name}}</b></span>
+                </div>
+                <div class="form-group tbp-import-form">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.year"
+                           for="field_year">Year</label>
+                    <select class="form-control" id="field_year" name="year"
+                            [(ngModel)]="appTbpRequestBody.year" (change)="initializeMonth()">
+                        <option *ngFor="let year of years" [value]="year"
+                                [selected]="year == currentYear">{{year}}</option>
+                    </select>
+                </div>
+                <div class="form-group tbp-import-form">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.month"
+                           for="field_month">Month</label>
+                    <select class="form-control" id="field_month" name="month" [(ngModel)]="appTbpRequestBody.month">
+                        <option *ngFor="let month of months" [selected]="month == currentMonth">{{month}}</option>
+                    </select>
+                </div>
+                <div class="form-group tbp-import-form">
+                    <button type="submit" id="tbp-timesheet-import-button" class="btn btn-primary float-right">
+                        <span jhiTranslate="global.menu.entities.compare">
+                            Compare
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <jhi-alert></jhi-alert>
+    <br/>
+    <div>
+        <div class="table-responsive">
+            <table class="table table-bordered ">
+                <thead>
+                <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
+                    <th colspan="2"><span jhiTranslate="imputationSqliApp.imputation.collaborator">Collaborator</span>
+                    </th>
+                    <th *ngFor="let day of imputationDays"
+                        [id]="day">{{day}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let element of comparator">
+                    <td rowspan="2"><a
+                        [routerLink]="['/collaborator', element.collaborator.id, 'view' ]">{{element.collaborator.lastname + ' ' + element.collaborator.firstname}}</a>
+                    </td>
+                    <td>APP</td>
+                    <td class="text-center" *ngFor="let day of imputationDays" [id]="day">
+                        <span
+                            *ngFor="let daily of element.appMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}</span>
+                    </td>
+                </tr>
+                <tr *ngFor="let element of comparator">
+                    <td>TBP</td>
+                    <td class="text-center" *ngFor="let day of imputationDays" [id]="day">
+                        <span
+                            *ngFor="let daily of element.tbpMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
