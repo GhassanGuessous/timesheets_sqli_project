@@ -66,4 +66,6 @@ public interface ImputationService {
 
     Object[] compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO);
 
+    Object[] compare_app_ppmc_advanced(MultipartFile file, AppRequestDTO appRequestDTO);
+
 }

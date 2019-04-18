@@ -179,4 +179,30 @@ public class ImputationServiceImpl implements ImputationService {
         }
         return new Object[]{Collections.EMPTY_LIST, INVALID_FILE_STATUS};
     }
+
+    /**
+     *
+     * @param file
+     * @param appRequestDTO
+     * @return an array contains :
+     * first element : a list of DTOs of imputation comparison (full or empty)
+     * second element : a status that describe what happened ;
+     *  # -1 : comparison of two different months
+     *  # 0 : something wrong happened while reading excel file
+     *  # 1 : all good
+     *
+     */
+    @Override
+    public Object[] compare_app_ppmc_advanced(MultipartFile file, AppRequestDTO appRequestDTO) {
+        Optional<Imputation> ppmcImputation = getPpmcImputation(file);
+        if(ppmcImputation.isPresent()) {
+            if(!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
+                return new Object[]{Collections.EMPTY_LIST, INCOMPATIBLE_MONTHS_STATUS};
+            }
+            Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
+            List<ImputationComparatorAdvancedDTO> comparatorDTOS = utilService.compareImputationsAdvanced(appImputation, ppmcImputation.get());
+            return new Object[]{comparatorDTOS, ALL_GOOD_STATUS};
+        }
+        return new Object[]{Collections.EMPTY_LIST, INVALID_FILE_STATUS};
+    }
 }

@@ -7,7 +7,7 @@ import { AppRequestBody } from 'app/shared/model/app-request-body';
 
 @Injectable({ providedIn: 'root' })
 export class ComparatorAppPpmcAdvancedService {
-    public resourceAppPpmcUrl = SERVER_API_URL + 'api/imputations/compare-app-ppmc-with-detail';
+    public resourceAppPpmcUrl = SERVER_API_URL + 'api/imputations/compare-app-ppmc-advanced';
 
     constructor(protected http: HttpClient) {}
 

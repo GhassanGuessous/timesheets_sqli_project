@@ -72,6 +72,7 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
             this.comparatorAppPpmcAdvancedService.getAdvancedComparison(this.currentFileUpload, this.appRequestBody).subscribe(
                 event => {
                     if (event instanceof HttpResponse) {
+                        console.log(event.body);
                         this.comparator = event.body;
                     }
                 },

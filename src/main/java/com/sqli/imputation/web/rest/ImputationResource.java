@@ -2,10 +2,7 @@ package com.sqli.imputation.web.rest;
 
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.service.ImputationService;
-import com.sqli.imputation.service.dto.AppRequestDTO;
-import com.sqli.imputation.service.dto.AppTbpRequestBodyDTO;
-import com.sqli.imputation.service.dto.ImputationComparatorDTO;
-import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
+import com.sqli.imputation.service.dto.*;
 import com.sqli.imputation.service.impl.FilePPMCStorageService;
 import com.sqli.imputation.service.util.DateUtil;
 import com.sqli.imputation.service.util.FileExtensionUtil;
@@ -228,5 +225,33 @@ public class ImputationResource {
             throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
         }
         return ResponseEntity.ok().body(comparatorDTOS);
+    }
+
+    @PostMapping("/imputations/compare-app-ppmc-advanced")
+    public ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedAppPpmcComparison(
+        @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO
+    ) throws IOException {
+        AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
+        String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
+        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
+            throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
+        } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
+            throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
+        } else {
+            return getAdvancedComparison(file, appRequestDTO);
+        }
+    }
+
+    private ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedComparison(MultipartFile file, AppRequestDTO appRequestDTO) {
+        Object[] result = imputationService.compare_app_ppmc_advanced(file, appRequestDTO);
+        List<ImputationComparatorAdvancedDTO> advancedComparatorDTOS = (List<ImputationComparatorAdvancedDTO>) result[LIST_DTOS_POSITION];
+        int status = (int) result[STATUS_POSITION];
+        if(advancedComparatorDTOS.isEmpty()) {
+            if(status == INCOMPATIBLE_MONTHS_STATUS) {
+                throw new BadRequestAlertException("Different months", ENTITY_NAME, "differentMonths");
+            }
+            throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
+        }
+        return ResponseEntity.ok().body(advancedComparatorDTOS);
     }
 }

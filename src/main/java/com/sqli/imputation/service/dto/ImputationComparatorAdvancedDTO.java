@@ -7,7 +7,13 @@ public class ImputationComparatorAdvancedDTO {
 
     private Collaborator collaborator;
     private CollaboratorMonthlyImputation appMonthlyImputation;
-    private CollaboratorMonthlyImputation ppmcMonthlyImputation;
+    private CollaboratorMonthlyImputation comparedMonthlyImputation;
+
+    public ImputationComparatorAdvancedDTO(Collaborator collaborator, CollaboratorMonthlyImputation appMonthlyImputation, CollaboratorMonthlyImputation comparedMonthlyImputation) {
+        this.collaborator = collaborator;
+        this.appMonthlyImputation = appMonthlyImputation;
+        this.comparedMonthlyImputation = comparedMonthlyImputation;
+    }
 
     public Collaborator getCollaborator() {
         return collaborator;
@@ -25,11 +31,11 @@ public class ImputationComparatorAdvancedDTO {
         this.appMonthlyImputation = appMonthlyImputation;
     }
 
-    public CollaboratorMonthlyImputation getPpmcMonthlyImputation() {
-        return ppmcMonthlyImputation;
+    public CollaboratorMonthlyImputation getComparedMonthlyImputation() {
+        return comparedMonthlyImputation;
     }
 
-    public void setPpmcMonthlyImputation(CollaboratorMonthlyImputation ppmcMonthlyImputation) {
-        this.ppmcMonthlyImputation = ppmcMonthlyImputation;
+    public void setComparedMonthlyImputation(CollaboratorMonthlyImputation comparedMonthlyImputation) {
+        this.comparedMonthlyImputation = comparedMonthlyImputation;
     }
 }
