@@ -15,7 +15,7 @@ export class ComparatorAPPTBPComponent implements OnInit {
     private myTeam: ITeam;
     private allTeams: Array<ITeam>;
     private currentYear: number = new Date().getFullYear();
-    private currentMonth: number = new Date().getMonth();
+    private currentMonth: number = new Date().getMonth() + 1;
     private years: Array<number> = [];
     private months: Array<number>;
     private predicate: any;

@@ -85,20 +85,29 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
         console.log(this.appTbpRequestBody);
         this.service.compare(this.appTbpRequestBody).subscribe(res => {
             this.comparator = res.body;
+            console.log(res.body);
             this.initializeDays();
         });
     }
+
     private initializeDays() {
         this.imputationDays = [];
-        this.addDaysFromMonthlyImputation(this.comparator.appMonthlyImputation);
-        this.addDaysFromMonthlyImputation(this.comparator.comparerdMonthlyImputation);
+        this.addDaysFromMonthlyImputation();
         this.removeDuplecates();
     }
 
-    private addDaysFromMonthlyImputation(monthly) {
-        monthly.dailyImputations.forEach(daily => {
-            this.imputationDays.push(daily.day);
+    private addDaysFromMonthlyImputation() {
+        this.comparator.forEach(element => {
+            if (element.appMonthlyImputation) {
+                element.appMonthlyImputation.dailyImputations.forEach(daily => {
+                    this.imputationDays.push(daily.day);
+                });
+                element.comparedMonthlyImputation.dailyImputations.forEach(daily => {
+                    this.imputationDays.push(daily.day);
+                });
+            }
         });
+        console.log(this.imputationDays);
     }
 
     private removeDuplecates() {

@@ -2,10 +2,7 @@ package com.sqli.imputation.service;
 
 import com.sqli.imputation.domain.Imputation;
 
-import com.sqli.imputation.service.dto.AppRequestDTO;
-import com.sqli.imputation.service.dto.AppTbpRequestBodyDTO;
-import com.sqli.imputation.service.dto.ImputationComparatorDTO;
-import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
+import com.sqli.imputation.service.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,6 +61,10 @@ public interface ImputationService {
 
     List<ImputationComparatorDTO> compareAppAndTbp(AppTbpRequestBodyDTO appTbpRequest);
 
-    List<ImputationComparatorDTO> compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO);
+    List<ImputationComparatorAdvancedDTO> compareAppAndTbpAdvanced(AppTbpRequestBodyDTO appTbpRequest);
+
+    Object[] compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO);
+
+    Object[] compare_app_ppmc_advanced(MultipartFile file, AppRequestDTO appRequestDTO);
 
 }

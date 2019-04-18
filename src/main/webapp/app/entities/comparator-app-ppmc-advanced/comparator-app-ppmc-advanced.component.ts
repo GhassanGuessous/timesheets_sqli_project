@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { ITeam } from 'app/shared/model/team.model';
-import { ComparatorAppPpmcService } from 'app/entities/comparator-app-ppmc/comparator-app-ppmc.service';
+import { AppRequestBody, IAppRequestBody } from 'app/shared/model/app-request-body';
+import { ComparatorAppPpmcAdvancedService } from 'app/entities/comparator-app-ppmc-advanced/comparator-app-ppmc-advanced.service';
 import { AccountService } from 'app/core';
 import { TeamService } from 'app/entities/team';
-import { HttpResponse } from '@angular/common/http';
-import { AppRequestBody, IAppRequestBody } from 'app/shared/model/app-request-body';
 
 @Component({
-    selector: 'jhi-comparator-app-ppmc',
-    templateUrl: './comparator-app-ppmc.component.html',
+    selector: 'jhi-comparator-app-ppmc-advanced',
+    templateUrl: './comparator-app-ppmc-advanced.component.html',
     styles: []
 })
-export class ComparatorAppPpmcComponent implements OnInit {
+export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     private selectedFiles: FileList;
     private currentFileUpload: File;
     private comparator?: any;
@@ -34,7 +34,7 @@ export class ComparatorAppPpmcComponent implements OnInit {
     constructor(
         protected accountService: AccountService,
         protected teamService: TeamService,
-        protected comparatorAppPpmcService: ComparatorAppPpmcService
+        protected comparatorAppPpmcAdvancedService: ComparatorAppPpmcAdvancedService
     ) {}
 
     ngOnInit() {
@@ -69,9 +69,10 @@ export class ComparatorAppPpmcComponent implements OnInit {
     compare() {
         if (this.selectedFiles !== undefined) {
             this.currentFileUpload = this.selectedFiles.item(0);
-            this.comparatorAppPpmcService.getComparison(this.currentFileUpload, this.appRequestBody).subscribe(
+            this.comparatorAppPpmcAdvancedService.getAdvancedComparison(this.currentFileUpload, this.appRequestBody).subscribe(
                 event => {
                     if (event instanceof HttpResponse) {
+                        console.log(event.body);
                         this.comparator = event.body;
                     }
                 },

@@ -24,6 +24,9 @@ import java.util.*;
 @Transactional
 public class ImputationServiceImpl implements ImputationService {
 
+    public static final int INCOMPATIBLE_MONTHS_STATUS = -1;
+    public static final int ALL_GOOD_STATUS = 1;
+    public static final int INVALID_FILE_STATUS = 0;
     private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
     public static final int FIRST_ELEMENT_INDEX = 0;
 
@@ -100,7 +103,7 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     /**
-     * Get the App imputation.
+     * Get the App imputations.
      *
      * @param appRequestDTO the app imputation request
      * @return the entity
@@ -117,6 +120,12 @@ public class ImputationServiceImpl implements ImputationService {
         return imputations;
     }
 
+    /**
+     * Get TPB imputations.
+     *
+     * @param tbpRequestBodyDTO
+     * @return
+     */
     @Override
     public List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
         List<Imputation> imputations = new ArrayList<>();
@@ -129,6 +138,12 @@ public class ImputationServiceImpl implements ImputationService {
         return imputations;
     }
 
+    /**
+     * Get PPMC imputations from Excel file.
+     *
+     * @param file
+     * @return
+     */
     @Override
     public Optional<Imputation> getPpmcImputation(MultipartFile file) {
         return ppmcImputationConverterService.getPpmcImputationFromExcelFile(file);
@@ -145,15 +160,72 @@ public class ImputationServiceImpl implements ImputationService {
         return comparatorDTOS;
     }
 
+    /**
+     * Get advanced comparison of APP & TBP imputataions
+     *
+     * @param appTbpRequest
+     * @return
+     */
     @Override
-    public List<ImputationComparatorDTO> compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO) {
+    public List<ImputationComparatorAdvancedDTO> compareAppAndTbpAdvanced(AppTbpRequestBodyDTO appTbpRequest) {
+        AppRequestDTO appRequestDTO = requestBodyFactory.createAppRequestDTO(appTbpRequest.getTeam().getAgresso(), appTbpRequest.getYear(), appTbpRequest.getMonth());
+        TbpRequestBodyDTO tbpRequestBodyDTO = requestBodyFactory.createTbpRequestBodyDTO(appTbpRequest.getTeam().getIdTbp(), appTbpRequest.getYear(), appTbpRequest.getMonth());
+
+        Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
+        Imputation tbpImputation = getTbpImputation(tbpRequestBodyDTO).get(FIRST_ELEMENT_INDEX);
+        List<ImputationComparatorAdvancedDTO> comparatorDTOS = utilService.compareImputationsAdvanced(appImputation, tbpImputation);
+        return comparatorDTOS;
+    }
+
+    /**
+     *
+     * @param file
+     * @param appRequestDTO
+     * @return an array contains :
+     * first element : a list of DTOs of imputation comparison (full or empty)
+     * second element : a status that describe what happened ;
+     *  # -1 : comparison of two different months
+     *  # 0 : something wrong happened while reading excel file
+     *  # 1 : all good
+     *
+     */
+    @Override
+    public Object[] compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO) {
         Optional<Imputation> ppmcImputation = getPpmcImputation(file);
         if(ppmcImputation.isPresent()) {
-            //compare month
+            if(!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
+                return new Object[]{Collections.EMPTY_LIST, INCOMPATIBLE_MONTHS_STATUS};
+            }
             Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
             List<ImputationComparatorDTO> comparatorDTOS = utilService.compareImputations(appImputation, ppmcImputation.get());
-            return comparatorDTOS;
+            return new Object[]{comparatorDTOS, ALL_GOOD_STATUS};
         }
-        return Collections.EMPTY_LIST;
+        return new Object[]{Collections.EMPTY_LIST, INVALID_FILE_STATUS};
+    }
+
+    /**
+     *
+     * @param file
+     * @param appRequestDTO
+     * @return an array contains :
+     * first element : a list of DTOs of advanced imputation comparison (full or empty)
+     * second element : a status that describe what happened ;
+     *  # -1 : comparison of two different months
+     *  # 0 : something wrong happened while reading excel file
+     *  # 1 : all good
+     *
+     */
+    @Override
+    public Object[] compare_app_ppmc_advanced(MultipartFile file, AppRequestDTO appRequestDTO) {
+        Optional<Imputation> ppmcImputation = getPpmcImputation(file);
+        if(ppmcImputation.isPresent()) {
+            if(!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
+                return new Object[]{Collections.EMPTY_LIST, INCOMPATIBLE_MONTHS_STATUS};
+            }
+            Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
+            List<ImputationComparatorAdvancedDTO> comparatorDTOS = utilService.compareImputationsAdvanced(appImputation, ppmcImputation.get());
+            return new Object[]{comparatorDTOS, ALL_GOOD_STATUS};
+        }
+        return new Object[]{Collections.EMPTY_LIST, INVALID_FILE_STATUS};
     }
 }

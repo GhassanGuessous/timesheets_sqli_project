@@ -5,13 +5,13 @@ import { JhiPaginationUtil, JhiResolvePagingParams } from 'ng-jhipster';
 import { UserRouteAccessService } from 'app/core';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { ComparatorAppPpmcService } from './comparator-app-ppmc.service';
-import { ComparatorAppPpmcComponent } from './comparator-app-ppmc.component';
+import { ComparatorAppPpmcAdvancedService } from './comparator-app-ppmc-advanced.service';
+import { ComparatorAppPpmcAdvancedComponent } from './comparator-app-ppmc-advanced.component';
 import { ITimesheetApp, TimesheetApp } from 'app/shared/model/timesheet-app.model';
 
 @Injectable({ providedIn: 'root' })
-export class ComparatorAppPpmcResolve implements Resolve<ITimesheetApp> {
-    constructor(private service: ComparatorAppPpmcService) {}
+export class ComparatorAppPpmcAdvancedResolve implements Resolve<ITimesheetApp> {
+    constructor(private service: ComparatorAppPpmcAdvancedService) {}
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ITimesheetApp> {
         const id = route.params['id'] ? route.params['id'] : null;
@@ -25,17 +25,17 @@ export class ComparatorAppPpmcResolve implements Resolve<ITimesheetApp> {
     }
 }
 
-export const comparatorAppPpmcRoute: Routes = [
+export const comparatorAppPpmcAdvancedRoute: Routes = [
     {
         path: '',
-        component: ComparatorAppPpmcComponent,
+        component: ComparatorAppPpmcAdvancedComponent,
         resolve: {
             pagingParams: JhiResolvePagingParams
         },
         data: {
             authorities: ['ROLE_ADMIN', 'ROLE_DELCO'],
             defaultSort: 'id,asc',
-            pageTitle: 'imputationSqliApp.imputation.home.comparatorAppPpmcTitle'
+            pageTitle: 'imputationSqliApp.imputation.home.comparatorAppPpmcAdvancedTitle'
         },
         canActivate: [UserRouteAccessService]
     }

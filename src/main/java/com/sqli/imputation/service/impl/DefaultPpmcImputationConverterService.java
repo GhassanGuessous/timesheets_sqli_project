@@ -228,7 +228,7 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
             Row row = sheet.getRow(i);
             for (int j = row.getFirstCellNum(); j <= row.getLastCellNum(); j++) {
                 Cell cell = row.getCell(j);
-                if (j == headerColumns.get(RESOURCE_USER_NAME)) {
+                if (j == headerColumns.get(RESOURCE_USER_NAME) && !cell.getStringCellValue().isEmpty()) {
                     collaborators.add(cell.getStringCellValue());
                 }
             }

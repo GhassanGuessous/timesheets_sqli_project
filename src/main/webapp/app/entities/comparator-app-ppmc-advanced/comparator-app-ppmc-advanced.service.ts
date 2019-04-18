@@ -6,12 +6,12 @@ import { SERVER_API_URL } from 'app/app.constants';
 import { AppRequestBody } from 'app/shared/model/app-request-body';
 
 @Injectable({ providedIn: 'root' })
-export class ComparatorAppPpmcService {
-    public resourceAppPpmcUrl = SERVER_API_URL + 'api/imputations/compare-app-ppmc';
+export class ComparatorAppPpmcAdvancedService {
+    public resourceAppPpmcUrl = SERVER_API_URL + 'api/imputations/compare-app-ppmc-advanced';
 
     constructor(protected http: HttpClient) {}
 
-    getComparison(file: File, appRequestBody: AppRequestBody): Observable<HttpEvent<{}>> {
+    getAdvancedComparison(file: File, appRequestBody: AppRequestBody): Observable<HttpEvent<{}>> {
         const formdata: FormData = new FormData();
 
         formdata.append('file', file);

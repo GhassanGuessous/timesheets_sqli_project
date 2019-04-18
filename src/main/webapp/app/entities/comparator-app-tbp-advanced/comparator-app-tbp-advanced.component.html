@@ -51,30 +51,34 @@
             <table class="table table-bordered ">
                 <thead>
                 <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
-                    <th colspan="2"><span jhiTranslate="imputationSqliApp.imputation.collaborator">Collaborator</span>
+                    <th><span jhiTranslate="imputationSqliApp.imputation.collaborator">Collaborator</span>
                     </th>
+                    <th>Imputation Type</th>
                     <th *ngFor="let day of imputationDays"
                         [id]="day">{{day}}</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr *ngFor="let element of comparator">
-                    <td rowspan="2"><a
+                <tbody *ngFor="let element of comparator">
+                <tr>
+                    <th rowspan="2"><a
                         [routerLink]="['/collaborator', element.collaborator.id, 'view' ]">{{element.collaborator.lastname + ' ' + element.collaborator.firstname}}</a>
-                    </td>
-                    <td>APP</td>
-                    <td class="text-center" *ngFor="let day of imputationDays" [id]="day">
+                    </th>
+                    <th>App</th>
+                    <td *ngFor="let day of imputationDays" [id]="day">
                         <span
-                            *ngFor="let daily of element.appMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}</span>
+                            *ngFor="let daily of element.appMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}
+                        </span>
                     </td>
                 </tr>
-                <tr *ngFor="let element of comparator">
-                    <td>TBP</td>
-                    <td class="text-center" *ngFor="let day of imputationDays" [id]="day">
+                <tr>
+                    <th>TBP</th>
+                    <td *ngFor="let day of imputationDays" [id]="day">
                         <span
-                            *ngFor="let daily of element.tbpMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}</span>
+                            *ngFor="let daily of element.comparedMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}
+                        </span>
                     </td>
                 </tr>
+                <tr>
                 </tbody>
             </table>
         </div>

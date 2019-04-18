@@ -2,6 +2,7 @@ package com.sqli.imputation.service.impl;
 
 import com.sqli.imputation.domain.*;
 import com.sqli.imputation.repository.ImputationTypeRepository;
+import com.sqli.imputation.service.dto.ImputationComparatorAdvancedDTO;
 import com.sqli.imputation.service.dto.ImputationComparatorDTO;
 import com.sqli.imputation.service.factory.ImputationFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class ImputationConverterUtilService {
-
 
     @Autowired
     private ImputationFactory imputationFactory;
@@ -97,15 +97,15 @@ public class ImputationConverterUtilService {
 
     public List<ImputationComparatorDTO> compareImputations(Imputation appImputation, Imputation comparedImputation) {
         List<ImputationComparatorDTO> comparatorDTOS = new ArrayList<>();
-        fillWithAppImputation(comparatorDTOS, appImputation);
-        fillWithComparedImputation(comparatorDTOS, comparedImputation);
+        fillDTOsWithAppImputation(comparatorDTOS, appImputation);
+        fillDTOsWithComparedImputation(comparatorDTOS, comparedImputation);
         setDifference(comparatorDTOS);
         return comparatorDTOS;
     }
 
-    private void fillWithComparedImputation(List<ImputationComparatorDTO> comparatorDTOS, Imputation comparedImputation) {
+    private void fillDTOsWithComparedImputation(List<ImputationComparatorDTO> comparatorDTOS, Imputation comparedImputation) {
         comparedImputation.getMonthlyImputations().forEach(monthly -> {
-            if(isAlreadyExist(comparatorDTOS, monthly.getCollaborator())){
+            if(isExistWithTheSameCollab(comparatorDTOS, monthly.getCollaborator())){
                 setComparedTotal(comparatorDTOS, monthly);
             }else{
                 comparatorDTOS.add(new ImputationComparatorDTO(monthly.getCollaborator(), 0D, monthly.getTotal()));
@@ -113,7 +113,7 @@ public class ImputationConverterUtilService {
         });
     }
 
-    private void fillWithAppImputation(List<ImputationComparatorDTO> comparatorDTOS, Imputation appImputation) {
+    private void fillDTOsWithAppImputation(List<ImputationComparatorDTO> comparatorDTOS, Imputation appImputation) {
         appImputation.getMonthlyImputations().forEach(
             monthly -> comparatorDTOS.add(new ImputationComparatorDTO(monthly.getCollaborator(), monthly.getTotal(), 0D))
         );
@@ -129,7 +129,40 @@ public class ImputationConverterUtilService {
         ).findFirst().get().setTotalCompared(monthly.getTotal());
     }
 
-    private boolean isAlreadyExist(List<ImputationComparatorDTO> comparatorDTOS, Collaborator collaborator) {
+    private boolean isExistWithTheSameCollab(List<ImputationComparatorDTO> comparatorDTOS, Collaborator collaborator) {
         return comparatorDTOS.stream().anyMatch(dto -> dto.getCollaborator().getId().equals(collaborator.getId()));
+    }
+
+    public List<ImputationComparatorAdvancedDTO> compareImputationsAdvanced(Imputation appImputation, Imputation comparedImputation) {
+        List<ImputationComparatorAdvancedDTO> comparatorDTOS = new ArrayList<>();
+        fillAdvancedDTOsWithAppImputation(comparatorDTOS, appImputation);
+        fillAdvancedDTOsWithComparedImputation(comparatorDTOS, comparedImputation);
+        return comparatorDTOS;
+    }
+
+    private void fillAdvancedDTOsWithComparedImputation(List<ImputationComparatorAdvancedDTO> comparatorDTOS, Imputation comparedImputation) {
+        comparedImputation.getMonthlyImputations().forEach(monthly -> {
+            if(isAdvancedExistWithTheSameCollab(comparatorDTOS, monthly.getCollaborator())){
+                setComparedList(comparatorDTOS, monthly);
+            }else{
+                comparatorDTOS.add(new ImputationComparatorAdvancedDTO(monthly.getCollaborator(), new CollaboratorMonthlyImputation(), monthly));
+            }
+        });
+    }
+
+    private void fillAdvancedDTOsWithAppImputation(List<ImputationComparatorAdvancedDTO> comparatorDTOS, Imputation appImputation) {
+        appImputation.getMonthlyImputations().forEach(
+            monthly -> comparatorDTOS.add(new ImputationComparatorAdvancedDTO(monthly.getCollaborator(), monthly, new CollaboratorMonthlyImputation()))
+        );
+    }
+
+    private boolean isAdvancedExistWithTheSameCollab(List<ImputationComparatorAdvancedDTO> comparatorDTOS, Collaborator collaborator) {
+        return comparatorDTOS.stream().anyMatch(dto -> dto.getCollaborator().getId().equals(collaborator.getId()));
+    }
+
+    private void setComparedList(List<ImputationComparatorAdvancedDTO> comparatorDTOS, CollaboratorMonthlyImputation monthly) {
+        comparatorDTOS.stream().filter(
+            dto -> dto.getCollaborator().getId().equals(monthly.getCollaborator().getId())
+        ).findFirst().get().setComparedMonthlyImputation(monthly);
     }
 }

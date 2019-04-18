@@ -2,10 +2,7 @@ package com.sqli.imputation.web.rest;
 
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.service.ImputationService;
-import com.sqli.imputation.service.dto.AppRequestDTO;
-import com.sqli.imputation.service.dto.AppTbpRequestBodyDTO;
-import com.sqli.imputation.service.dto.ImputationComparatorDTO;
-import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
+import com.sqli.imputation.service.dto.*;
 import com.sqli.imputation.service.impl.FilePPMCStorageService;
 import com.sqli.imputation.service.util.DateUtil;
 import com.sqli.imputation.service.util.FileExtensionUtil;
@@ -23,8 +20,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import sun.invoke.empty.Empty;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,9 +33,14 @@ import java.util.*;
 @RequestMapping("/api")
 public class ImputationResource {
 
-    public static final String AN_EMPTY_STRING = "";
     private final Logger log = LoggerFactory.getLogger(ImputationResource.class);
 
+    private static final int INCOMPATIBLE_MONTHS_STATUS = -1;
+    private static final int STATUS_POSITION = 1;
+    private static final int LIST_DTOS_POSITION = 0;
+    private static final String AN_EMPTY_STRING = "";
+    private static final String PROJECT_IS_REQUIRED = "Project is required";
+    private static final String PROJECT_IS_NULL = "projectnull";
     private static final String ENTITY_NAME = "imputation";
 
     private final ImputationService imputationService;
@@ -141,9 +141,9 @@ public class ImputationResource {
     @PostMapping("/imputations/app")
     public ResponseEntity<List<Imputation>> getAppImputation(@RequestBody AppRequestDTO appRequestDTO) {
         log.debug("REST request to get APP Imputation : {}", appRequestDTO);
-        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)){
-            throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
-        } else{
+        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
+            throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
+        } else {
             List<Imputation> imputations = imputationService.getAppImputation(appRequestDTO);
             return ResponseEntity.ok().body(imputations);
         }
@@ -157,7 +157,7 @@ public class ImputationResource {
         String endDate = tbpRequestBodyDTO.getEndDate();
 
         if (tbpRequestBodyDTO.getIdTbp() == null) {
-            throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
+            throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else if (startDate.equals(AN_EMPTY_STRING) || endDate.equals(AN_EMPTY_STRING)) {
             throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
         } else if (DateUtil.isDatesOrderNotValid(startDate, endDate)) {
@@ -183,7 +183,7 @@ public class ImputationResource {
     }
 
     /**
-     * POST  /imputations/compare-app-tbp : compare app and tbp imputation.
+     * POST  /imputations/compare-app-tbp : Basic comparison of APP and TBP imputations.
      *
      * @param appTbpRequest the comparison request
      * @return the ResponseEntity with compared imputations of type APP
@@ -192,29 +192,99 @@ public class ImputationResource {
     public ResponseEntity<List<ImputationComparatorDTO>> compareAppAndTbpImputations(@RequestBody AppTbpRequestBodyDTO appTbpRequest) {
         log.debug("REST request to get APP Imputation : {}", appTbpRequest);
         if (appTbpRequest.getTeam() == null) {
-            throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
+            throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else {
             List<ImputationComparatorDTO> comparatorDTOS = imputationService.compareAppAndTbp(appTbpRequest);
              return ResponseEntity.ok().body(comparatorDTOS);
         }
     }
 
+    /**
+     * POST  /imputations/compare-app-tbp-advanced : Advanced comparison of APP and TBP imputations.
+     *
+     * @param appTbpRequest the comparison request
+     * @return the ResponseEntity with compared imputations of type APP
+     */
+    @PostMapping("/imputations/compare-app-tbp-advanced")
+    public ResponseEntity<List<ImputationComparatorAdvancedDTO>> compareAppAndTbpImputationsAdvanced(@RequestBody AppTbpRequestBodyDTO appTbpRequest) {
+        log.debug("REST request to get APP Imputation : {}", appTbpRequest);
+        if (appTbpRequest.getTeam() == null) {
+            throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
+        } else {
+            List<ImputationComparatorAdvancedDTO> comparatorDTOS = imputationService.compareAppAndTbpAdvanced(appTbpRequest);
+             return ResponseEntity.ok().body(comparatorDTOS);
+        }
+    }
+
+    /**
+     * POST  /imputations/compare-app-ppmc : Basic comparison of APP and PPMC imputations.
+     *
+     * @param file
+     * @param requestDTO
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/imputations/compare-app-ppmc")
-    public ResponseEntity<List<ImputationComparatorDTO>> handleFileUpload(
+    public ResponseEntity<List<ImputationComparatorDTO>> getAppPpmcComparison(
         @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO
     ) throws IOException {
         AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
         String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
-        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)){
-            throw new BadRequestAlertException("Project is required", ENTITY_NAME, "projectnull");
+        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
+            throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
         } else {
-            List<ImputationComparatorDTO> comparatorDTOS = imputationService.compare_app_ppmc(file, appRequestDTO);
-            if(comparatorDTOS.isEmpty()) {
-                throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
-            }
-            return ResponseEntity.ok().body(comparatorDTOS);
+            return getAppPpmcComparison(file, appRequestDTO);
         }
+    }
+
+    private ResponseEntity<List<ImputationComparatorDTO>> getAppPpmcComparison(MultipartFile file, AppRequestDTO appRequestDTO) {
+        Object[] result = imputationService.compare_app_ppmc(file, appRequestDTO);
+        List<ImputationComparatorDTO> comparatorDTOS = (List<ImputationComparatorDTO>) result[LIST_DTOS_POSITION];
+        int status = (int) result[STATUS_POSITION];
+        if(comparatorDTOS.isEmpty()) {
+            if(status == INCOMPATIBLE_MONTHS_STATUS) {
+                throw new BadRequestAlertException("Different months", ENTITY_NAME, "differentMonths");
+            }
+            throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
+        }
+        return ResponseEntity.ok().body(comparatorDTOS);
+    }
+
+    /**
+     * POST  /imputations/compare-app-ppmc-advanced : Advanced comparison of APP and PPMC imputations.
+     *
+     * @param file
+     * @param requestDTO
+     * @return
+     * @throws IOException
+     */
+    @PostMapping("/imputations/compare-app-ppmc-advanced")
+    public ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedAppPpmcComparison(
+        @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO
+    ) throws IOException {
+        AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
+        String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
+        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
+            throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
+        } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
+            throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
+        } else {
+            return getAppPpmcAdvancedComparison(file, appRequestDTO);
+        }
+    }
+
+    private ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAppPpmcAdvancedComparison(MultipartFile file, AppRequestDTO appRequestDTO) {
+        Object[] result = imputationService.compare_app_ppmc_advanced(file, appRequestDTO);
+        List<ImputationComparatorAdvancedDTO> advancedComparatorDTOS = (List<ImputationComparatorAdvancedDTO>) result[LIST_DTOS_POSITION];
+        int status = (int) result[STATUS_POSITION];
+        if(advancedComparatorDTOS.isEmpty()) {
+            if(status == INCOMPATIBLE_MONTHS_STATUS) {
+                throw new BadRequestAlertException("Different months", ENTITY_NAME, "differentMonths");
+            }
+            throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
+        }
+        return ResponseEntity.ok().body(advancedComparatorDTOS);
     }
 }
