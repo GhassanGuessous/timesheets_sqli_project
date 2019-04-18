@@ -22,6 +22,7 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     private currentMonth: number = new Date().getMonth() + 1;
     private years: Array<number> = [];
     private months: Array<number> = [];
+    private imputationDays: Array<number>;
     private numberOfDaysOfCurrentMonth: number = new Date(this.currentYear, this.currentMonth, 0).getDate();
     private appRequestBody: IAppRequestBody = new AppRequestBody(
         '',
@@ -72,8 +73,8 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
             this.comparatorAppPpmcAdvancedService.getAdvancedComparison(this.currentFileUpload, this.appRequestBody).subscribe(
                 event => {
                     if (event instanceof HttpResponse) {
-                        console.log(event.body);
                         this.comparator = event.body;
+                        this.initializeDays();
                     }
                 },
                 error => {
@@ -118,5 +119,28 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         for (let i = 1; i <= lastYear; i++) {
             this.months.push(i);
         }
+    }
+
+    private initializeDays() {
+        this.imputationDays = [];
+        this.addDaysFromMonthlyImputation();
+        this.removeDuplecates();
+    }
+
+    private addDaysFromMonthlyImputation() {
+        this.comparator.forEach(element => {
+            if (element.appMonthlyImputation) {
+                element.appMonthlyImputation.dailyImputations.forEach(daily => {
+                    this.imputationDays.push(daily.day);
+                });
+                element.comparedMonthlyImputation.dailyImputations.forEach(daily => {
+                    this.imputationDays.push(daily.day);
+                });
+            }
+        });
+    }
+
+    private removeDuplecates() {
+        this.imputationDays = Array.from(new Set(this.imputationDays)).sort((a, b) => a - b);
     }
 }

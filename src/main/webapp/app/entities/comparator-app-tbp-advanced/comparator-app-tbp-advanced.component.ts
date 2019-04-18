@@ -107,7 +107,6 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
                 });
             }
         });
-        console.log(this.imputationDays);
     }
 
     private removeDuplecates() {

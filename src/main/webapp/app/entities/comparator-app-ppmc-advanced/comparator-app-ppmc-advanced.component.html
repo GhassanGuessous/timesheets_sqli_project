@@ -45,36 +45,41 @@
         </div>
     </div>
     <br/>
-    <!--<div class=" table table-responsive" *ngIf="comparator">-->
-        <!--<table class="table table-bordered table-striped">-->
-            <!--<thead>-->
-            <!--<tr>-->
-                <!--<th><span jhiTranslate="global.field.id">ID</span>-->
-                <!--</th>-->
-                <!--<th><span jhiTranslate="imputationSqliApp.imputation.collaborator">Collaborator</span>-->
-                <!--</th>-->
-                <!--<th class="text-center"><span>APP</span>-->
-                <!--</th>-->
-                <!--<th class="text-center"><span>PPMC</span>-->
-                <!--</th>-->
-                <!--<th class="text-center"><span jhiTranslate="imputationSqliApp.imputation.difference">Difference</span>-->
-                <!--</th>-->
-            <!--</tr>-->
-            <!--</thead>-->
-            <!--<tbody>-->
-            <!--<tr *ngFor="let element of comparator">-->
-                <!--<td class="text-center">{{element.collaborator.id}}-->
-                <!--</td>-->
-                <!--<td><a [routerLink]="['/collaborator', element.collaborator.id, 'view' ]">{{element.collaborator.firstname + ' ' + element.collaborator.lastname}}</a>-->
-                <!--</td>-->
-                <!--<td class="text-center">{{element.totalApp}}-->
-                <!--</td>-->
-                <!--<td class="text-center">{{element.totalCompared}}-->
-                <!--</td>-->
-                <!--<td class="text-center" [ngStyle]="{color: getColor(element.difference)}"><b>{{element.difference}}</b>-->
-                <!--</td>-->
-            <!--</tr>-->
-            <!--</tbody>-->
-        <!--</table>-->
-    <!--</div>-->
+    <div>
+        <div class="table-responsive">
+            <table class="table table-bordered ">
+                <thead>
+                <tr>
+                    <th><span jhiTranslate="imputationSqliApp.imputation.collaborator">Collaborator</span>
+                    </th>
+                    <th><span jhiTranslate="imputationSqliApp.imputationType.detail.title">Imputation type</span>
+                    </th>
+                    <th *ngFor="let day of imputationDays" [id]="day">{{day}}</th>
+                </tr>
+                </thead>
+                <tbody *ngFor="let element of comparator">
+                <tr>
+                    <th rowspan="2"><a
+                        [routerLink]="['/collaborator', element.collaborator.id, 'view' ]">{{element.collaborator.lastname + ' ' + element.collaborator.firstname}}</a>
+                    </th>
+                    <th>App</th>
+                    <td *ngFor="let day of imputationDays" [id]="day">
+                        <span
+                            *ngFor="let daily of element.appMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>TBP</th>
+                    <td *ngFor="let day of imputationDays" [id]="day">
+                        <span
+                            *ngFor="let daily of element.comparedMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
