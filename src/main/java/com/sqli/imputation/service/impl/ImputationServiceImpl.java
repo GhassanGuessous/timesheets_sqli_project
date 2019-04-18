@@ -103,7 +103,7 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     /**
-     * Get the App imputation.
+     * Get the App imputations.
      *
      * @param appRequestDTO the app imputation request
      * @return the entity
@@ -120,6 +120,12 @@ public class ImputationServiceImpl implements ImputationService {
         return imputations;
     }
 
+    /**
+     * Get TPB imputations.
+     *
+     * @param tbpRequestBodyDTO
+     * @return
+     */
     @Override
     public List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
         List<Imputation> imputations = new ArrayList<>();
@@ -132,6 +138,12 @@ public class ImputationServiceImpl implements ImputationService {
         return imputations;
     }
 
+    /**
+     * Get PPMC imputations from Excel file.
+     *
+     * @param file
+     * @return
+     */
     @Override
     public Optional<Imputation> getPpmcImputation(MultipartFile file) {
         return ppmcImputationConverterService.getPpmcImputationFromExcelFile(file);
@@ -151,6 +163,23 @@ public class ImputationServiceImpl implements ImputationService {
         appImputation = appConverterService.convert(appRequestDTO, appChargeDTOS);
         tbpImputation = tbpImputationConverterService.convert(chargeTeamDTOS, tbpRequestBodyDTO);
         comparatorDTOS = utilService.compareImputations(appImputation, tbpImputation);
+        return comparatorDTOS;
+    }
+
+    /**
+     * Get advanced comparison of APP & TBP imputataions
+     *
+     * @param appTbpRequest
+     * @return
+     */
+    @Override
+    public List<ImputationComparatorAdvancedDTO> compareAppAndTbpAdvanced(AppTbpRequestBodyDTO appTbpRequest) {
+        AppRequestDTO appRequestDTO = requestBodyFactory.createAppRequestDTO(appTbpRequest.getTeam().getAgresso(), appTbpRequest.getYear(), appTbpRequest.getMonth());
+        TbpRequestBodyDTO tbpRequestBodyDTO = requestBodyFactory.createTbpRequestBodyDTO(appTbpRequest.getTeam().getIdTbp(), appTbpRequest.getYear(), appTbpRequest.getMonth());
+
+        Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
+        Imputation tbpImputation = getTbpImputation(tbpRequestBodyDTO).get(FIRST_ELEMENT_INDEX);
+        List<ImputationComparatorAdvancedDTO> comparatorDTOS = utilService.compareImputationsAdvanced(appImputation, tbpImputation);
         return comparatorDTOS;
     }
 
@@ -185,7 +214,7 @@ public class ImputationServiceImpl implements ImputationService {
      * @param file
      * @param appRequestDTO
      * @return an array contains :
-     * first element : a list of DTOs of imputation comparison (full or empty)
+     * first element : a list of DTOs of advanced imputation comparison (full or empty)
      * second element : a status that describe what happened ;
      *  # -1 : comparison of two different months
      *  # 0 : something wrong happened while reading excel file

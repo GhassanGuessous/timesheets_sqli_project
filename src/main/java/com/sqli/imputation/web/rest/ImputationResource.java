@@ -183,7 +183,7 @@ public class ImputationResource {
     }
 
     /**
-     * POST  /imputations/compare-app-tbp : compare app and tbp imputation.
+     * POST  /imputations/compare-app-tbp : Basic comparison of APP and TBP imputations.
      *
      * @param appTbpRequest the comparison request
      * @return the ResponseEntity with compared imputations of type APP
@@ -199,6 +199,31 @@ public class ImputationResource {
         }
     }
 
+    /**
+     * POST  /imputations/compare-app-tbp-advanced : Advanced comparison of APP and TBP imputations.
+     *
+     * @param appTbpRequest the comparison request
+     * @return the ResponseEntity with compared imputations of type APP
+     */
+    @PostMapping("/imputations/compare-app-tbp-advanced")
+    public ResponseEntity<List<ImputationComparatorAdvancedDTO>> compareAppAndTbpImputationsAdvanced(@RequestBody AppTbpRequestBodyDTO appTbpRequest) {
+        log.debug("REST request to get APP Imputation : {}", appTbpRequest);
+        if (appTbpRequest.getTeam() == null) {
+            throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
+        } else {
+            List<ImputationComparatorAdvancedDTO> comparatorDTOS = imputationService.compareAppAndTbpAdvanced(appTbpRequest);
+             return ResponseEntity.ok().body(comparatorDTOS);
+        }
+    }
+
+    /**
+     * POST  /imputations/compare-app-ppmc : Basic comparison of APP and PPMC imputations.
+     *
+     * @param file
+     * @param requestDTO
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/imputations/compare-app-ppmc")
     public ResponseEntity<List<ImputationComparatorDTO>> getAppPpmcComparison(
         @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO
@@ -210,11 +235,11 @@ public class ImputationResource {
         } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
         } else {
-            return getComparison(file, appRequestDTO);
+            return getAppPpmcComparison(file, appRequestDTO);
         }
     }
 
-    private ResponseEntity<List<ImputationComparatorDTO>> getComparison(MultipartFile file, AppRequestDTO appRequestDTO) {
+    private ResponseEntity<List<ImputationComparatorDTO>> getAppPpmcComparison(MultipartFile file, AppRequestDTO appRequestDTO) {
         Object[] result = imputationService.compare_app_ppmc(file, appRequestDTO);
         List<ImputationComparatorDTO> comparatorDTOS = (List<ImputationComparatorDTO>) result[LIST_DTOS_POSITION];
         int status = (int) result[STATUS_POSITION];
@@ -227,6 +252,14 @@ public class ImputationResource {
         return ResponseEntity.ok().body(comparatorDTOS);
     }
 
+    /**
+     * POST  /imputations/compare-app-ppmc-advanced : Advanced comparison of APP and PPMC imputations.
+     *
+     * @param file
+     * @param requestDTO
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/imputations/compare-app-ppmc-advanced")
     public ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedAppPpmcComparison(
         @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO
@@ -238,11 +271,11 @@ public class ImputationResource {
         } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
         } else {
-            return getAdvancedComparison(file, appRequestDTO);
+            return getAppPpmcAdvancedComparison(file, appRequestDTO);
         }
     }
 
-    private ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedComparison(MultipartFile file, AppRequestDTO appRequestDTO) {
+    private ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAppPpmcAdvancedComparison(MultipartFile file, AppRequestDTO appRequestDTO) {
         Object[] result = imputationService.compare_app_ppmc_advanced(file, appRequestDTO);
         List<ImputationComparatorAdvancedDTO> advancedComparatorDTOS = (List<ImputationComparatorAdvancedDTO>) result[LIST_DTOS_POSITION];
         int status = (int) result[STATUS_POSITION];
