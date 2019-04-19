@@ -33,7 +33,8 @@
             "start_date": "Start Date",
             "end_date": "End date",
             "difference": "Difference",
-            "collaborator": "Collaborator"
+            "collaborator": "Collaborator",
+            "total": "Total"
         }
     }
 }

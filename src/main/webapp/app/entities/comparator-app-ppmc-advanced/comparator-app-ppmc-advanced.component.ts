@@ -85,14 +85,29 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         this.selectedFiles = undefined;
     }
 
-    getColor(difference: number): string {
-        if (difference < 0) {
-            return 'red';
-        } else if (difference > 0) {
-            return 'orange';
-        } else {
-            return 'green';
+    getColor(element: any, day: number): string {
+        if (element.appMonthlyImputation && element.comparedMonthlyImputation) {
+            let appDaily = element.appMonthlyImputation.dailyImputations.find(daily => daily.day === day);
+            let comparedDaily = element.comparedMonthlyImputation.dailyImputations.find(daily => daily.day === day);
+            if (appDaily && comparedDaily) {
+                if (appDaily.charge !== comparedDaily.charge) {
+                    return '#feabab';
+                }
+            } else {
+                if (this.isOneUndefined(appDaily, comparedDaily)) {
+                    return this.getDefinedOne(appDaily, comparedDaily).charge == 0 ? '' : '#feabab';
+                }
+            }
+            return '';
         }
+    }
+
+    isOneUndefined(appDaily, ppmcDaily): boolean {
+        return (!appDaily && ppmcDaily) || (appDaily && !ppmcDaily);
+    }
+
+    getDefinedOne(appDaily, comparedDaily) {
+        return appDaily ? appDaily : comparedDaily;
     }
 
     isAdmin() {
