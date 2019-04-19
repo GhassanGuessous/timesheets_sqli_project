@@ -15,12 +15,12 @@ export class TimesheetTbpResolve implements Resolve<ITimesheetTbp> {
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ITimesheetTbp> {
         const id = route.params['id'] ? route.params['id'] : null;
-        if (id) {
-            return this.service.find(id).pipe(
-                filter((response: HttpResponse<TimesheetTbp>) => response.ok),
-                map((timesheetTbp: HttpResponse<TimesheetTbp>) => timesheetTbp.body)
-            );
-        }
+        // if (id) {
+        //     return this.service.find(id).pipe(
+        //         filter((response: HttpResponse<TimesheetTbp>) => response.ok),
+        //         map((timesheetTbp: HttpResponse<TimesheetTbp>) => timesheetTbp.body)
+        //     );
+        // }
         return of(new TimesheetTbp());
     }
 }
