@@ -47,15 +47,17 @@
     <jhi-alert></jhi-alert>
     <br/>
     <div>
-        <div class="table-responsive">
+        <div class="table-responsive" *ngIf="comparator">
             <table class="table table-bordered ">
                 <thead>
                 <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
-                    <th><span jhiTranslate="imputationSqliApp.imputation.collaborator">Collaborator</span>
+                    <th colspan="2"><span jhiTranslate="imputationSqliApp.imputation.collaborator">Collaborator</span>
                     </th>
-                    <th><span jhiTranslate="imputationSqliApp.imputationType.detail.title">Imputation type</span>
+                    <!--<th><span jhiTranslate="imputationSqliApp.imputationType.detail.title">Imputation type</span>-->
+                    <!--</th>-->
+                    <th class="text-center" *ngFor="let day of imputationDays" [id]="day">{{day}}</th>
+                    <th><span jhiTranslate="imputationSqliApp.imputation.total">Total</span>
                     </th>
-                    <th *ngFor="let day of imputationDays" [id]="day">{{day}}</th>
                 </tr>
                 </thead>
                 <tbody *ngFor="let element of comparator">
@@ -63,22 +65,23 @@
                     <th rowspan="2"><a
                         [routerLink]="['/collaborator', element.collaborator.id, 'view' ]">{{element.collaborator.lastname + ' ' + element.collaborator.firstname}}</a>
                     </th>
-                    <th>App</th>
-                    <td *ngFor="let day of imputationDays" [id]="day">
+                    <th class="text-center">App</th>
+                    <td class="text-center" *ngFor="let day of imputationDays" [id]="day" [ngStyle]="{backgroundColor:getColor(element,day)}">
                         <span
                             *ngFor="let daily of element.appMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}
                         </span>
                     </td>
+                    <td class="text-center"><b>{{element.appMonthlyImputation.total}}</b></td>
                 </tr>
                 <tr>
-                    <th>TBP</th>
-                    <td *ngFor="let day of imputationDays" [id]="day">
+                    <th class="text-center">TBP</th>
+                    <td class="text-center" *ngFor="let day of imputationDays" [id]="day" [ngStyle]="{backgroundColor:getColor(element,day)}">
                         <span
                             *ngFor="let daily of element.comparedMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}
                         </span>
                     </td>
+                    <td class="text-center"><b>{{element.comparedMonthlyImputation.total}}</b></td>
                 </tr>
-                <tr>
                 </tbody>
             </table>
         </div>
