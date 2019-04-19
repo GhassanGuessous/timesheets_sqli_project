@@ -42,20 +42,20 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
         });
     }
 
-    loadAll() {
+    private loadAll() {
         this.teamService.findAllTeamsWithoutPagination().subscribe(res => {
             this.allTeams = res.body;
         });
     }
 
-    loadDelcoTeam(id: bigint) {
+    private loadDelcoTeam(id: bigint) {
         this.teamService.findByDelco(id).subscribe(data => {
             this.myTeam = data.body;
             this.appTbpRequestBody.team = this.myTeam;
         });
     }
 
-    isAdmin() {
+    private isAdmin() {
         return this.currentAccount.authorities.includes('ROLE_ADMIN');
     }
 
@@ -81,7 +81,7 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
         }
     }
 
-    compare() {
+    private compare() {
         console.log(this.appTbpRequestBody);
         this.service.compare(this.appTbpRequestBody).subscribe(res => {
             this.comparator = res.body;
@@ -111,5 +111,25 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
 
     private removeDuplecates() {
         this.imputationDays = Array.from(new Set(this.imputationDays)).sort((a, b) => a - b);
+    }
+
+    private getColor(element: any, day: number): string {
+        if (element.appMonthlyImputation && element.comparedMonthlyImputation) {
+            const appDailyImputation = this.findDailyImputation(element.appMonthlyImputation, day);
+            const comparedDailyImputation = this.findDailyImputation(element.comparedMonthlyImputation, day);
+            if (appDailyImputation && comparedDailyImputation) {
+                if (appDailyImputation.charge != comparedDailyImputation.charge) {
+                    return '#feabab';
+                }
+            } else if (this.isOneUndefined(appDailyImputation, comparedDailyImputation)) return '#feabab';
+        }
+    }
+
+    private findDailyImputation(appMonthlyImputation: any, day: number) {
+        return appMonthlyImputation.dailyImputations.find(daily => daily.day === day);
+    }
+
+    private isOneUndefined(appDailyImputation, comparedDailyImputation) {
+        return (!appDailyImputation && comparedDailyImputation) || (appDailyImputation && !comparedDailyImputation);
     }
 }

@@ -48,24 +48,24 @@ export class TimesheetAppComponent implements OnInit {
         });
     }
 
-    loadAll() {
+    private loadAll() {
         this.teamService.findAllTeamsWithoutPagination().subscribe(res => {
             this.allTeams = res.body;
         });
     }
 
-    loadDelcoTeam(id: bigint) {
+    private loadDelcoTeam(id: bigint) {
         this.teamService.findByDelco(id).subscribe(data => {
             this.myTeam = data.body;
             this.appRequestBody.agresso = this.myTeam.agresso;
         });
     }
 
-    isAdmin() {
+    private isAdmin() {
         return this.currentAccount.authorities.includes('ROLE_ADMIN');
     }
 
-    getTimesheet() {
+    private getTimesheet() {
         this.service.findAppChargeByTeam(this.appRequestBody).subscribe(res => {
             this.imputations = res.body;
             for (let i = 0; i < this.imputations.length; i++) {
@@ -121,7 +121,7 @@ export class TimesheetAppComponent implements OnInit {
         }
     }
 
-    getDaysOfMonth(year, month) {
+    private getDaysOfMonth(year, month) {
         return new Date(year, month, 0).getDate();
     }
 }
