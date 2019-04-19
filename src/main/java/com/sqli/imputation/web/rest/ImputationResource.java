@@ -235,11 +235,11 @@ public class ImputationResource {
         } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
         } else {
-            return getAppPpmcComparison(file, appRequestDTO);
+            return getComparison(file, appRequestDTO);
         }
     }
 
-    private ResponseEntity<List<ImputationComparatorDTO>> getAppPpmcComparison(MultipartFile file, AppRequestDTO appRequestDTO) {
+    private ResponseEntity<List<ImputationComparatorDTO>> getComparison(MultipartFile file, AppRequestDTO appRequestDTO) {
         Object[] result = imputationService.compare_app_ppmc(file, appRequestDTO);
         List<ImputationComparatorDTO> comparatorDTOS = (List<ImputationComparatorDTO>) result[LIST_DTOS_POSITION];
         int status = (int) result[STATUS_POSITION];
@@ -271,11 +271,11 @@ public class ImputationResource {
         } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
         } else {
-            return getAppPpmcAdvancedComparison(file, appRequestDTO);
+            return getAdvancedComparison(file, appRequestDTO);
         }
     }
 
-    private ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAppPpmcAdvancedComparison(MultipartFile file, AppRequestDTO appRequestDTO) {
+    private ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedComparison(MultipartFile file, AppRequestDTO appRequestDTO) {
         Object[] result = imputationService.compare_app_ppmc_advanced(file, appRequestDTO);
         List<ImputationComparatorAdvancedDTO> advancedComparatorDTOS = (List<ImputationComparatorAdvancedDTO>) result[LIST_DTOS_POSITION];
         int status = (int) result[STATUS_POSITION];

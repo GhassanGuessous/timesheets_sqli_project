@@ -55,6 +55,7 @@
                     <th><span jhiTranslate="imputationSqliApp.imputationType.detail.title">Imputation type</span>
                     </th>
                     <th *ngFor="let day of imputationDays" [id]="day">{{day}}</th>
+                    <th><span jhiTranslate="imputationSqliApp.imputation.total">Total</span></th>
                 </tr>
                 </thead>
                 <tbody *ngFor="let element of comparator">
@@ -63,18 +64,24 @@
                         [routerLink]="['/collaborator', element.collaborator.id, 'view' ]">{{element.collaborator.lastname + ' ' + element.collaborator.firstname}}</a>
                     </th>
                     <th>App</th>
-                    <td *ngFor="let day of imputationDays" [id]="day">
+                    <td *ngFor="let day of imputationDays" [id]="day" [ngStyle]="{backgroundColor: getColor(element, day)}">
                         <span
                             *ngFor="let daily of element.appMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}
                         </span>
                     </td>
+                    <td>
+                        {{element.appMonthlyImputation.total}}
+                    </td>
                 </tr>
                 <tr>
-                    <th>TBP</th>
-                    <td *ngFor="let day of imputationDays" [id]="day">
+                    <th>PPMC</th>
+                    <td *ngFor="let day of imputationDays" [id]="day" [ngStyle]="{backgroundColor: getColor(element, day)}">
                         <span
                             *ngFor="let daily of element.comparedMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}
                         </span>
+                    </td>
+                    <td>
+                        {{element.comparedMonthlyImputation.total}}
                     </td>
                 </tr>
                 <tr>

@@ -162,5 +162,5 @@
         "invalidPPMC": "Sorry, this File is not a valid PPMC file!",
         "differentMonths": "Sorry, the selected month and the month of the file must be the same!"
     },
-    "footer": "This is your footer"
+    "footer": "©SQLI Group 2017 - All rights reserved"
 }

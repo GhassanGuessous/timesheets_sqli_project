@@ -50,24 +50,24 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         });
     }
 
-    selectFile(event) {
+    private selectFile(event) {
         this.selectedFiles = event.target.files;
     }
 
-    loadAll() {
+    private loadAll() {
         this.teamService.findAllTeamsWithoutPagination().subscribe(res => {
             this.allTeams = res.body;
         });
     }
 
-    loadDelcoTeam(id: bigint) {
+    private loadDelcoTeam(id: bigint) {
         this.teamService.findByDelco(id).subscribe(data => {
             this.myTeam = data.body;
             this.appRequestBody.agresso = this.myTeam.agresso;
         });
     }
 
-    compare() {
+    private compare() {
         if (this.selectedFiles !== undefined) {
             this.currentFileUpload = this.selectedFiles.item(0);
             this.comparatorAppPpmcAdvancedService.getAdvancedComparison(this.currentFileUpload, this.appRequestBody).subscribe(
@@ -85,17 +85,41 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         this.selectedFiles = undefined;
     }
 
-    getColor(difference: number): string {
-        if (difference < 0) {
-            return 'red';
-        } else if (difference > 0) {
-            return 'orange';
-        } else {
-            return 'green';
+    private getColor(element: any, day: number): string {
+        if (element.appMonthlyImputation && element.comparedMonthlyImputation) {
+            let appDaily = this.findDailyImputation(element.appMonthlyImputation, day);
+            let comparedDaily = this.findDailyImputation(element.comparedMonthlyImputation, day);
+            if (appDaily && comparedDaily) {
+                return this.getColorWhenDifferentCharge(appDaily, comparedDaily);
+            } else {
+                if (this.isOneUndefined(appDaily, comparedDaily)) {
+                    return this.getDefinedOne(appDaily, comparedDaily).charge == 0 ? '' : '#feabab';
+                }
+            }
+            return '';
         }
     }
 
-    isAdmin() {
+    private findDailyImputation(monthlyImputation: any, day: number): any {
+        let appDaily = monthlyImputation.dailyImputations.find(daily => daily.day === day);
+        return appDaily;
+    }
+
+    private getColorWhenDifferentCharge(appDaily, comparedDaily): string {
+        if (appDaily.charge !== comparedDaily.charge) {
+            return '#feabab';
+        }
+    }
+
+    private isOneUndefined(appDaily, ppmcDaily): boolean {
+        return (!appDaily && ppmcDaily) || (appDaily && !ppmcDaily);
+    }
+
+    private getDefinedOne(appDaily, comparedDaily) {
+        return appDaily ? appDaily : comparedDaily;
+    }
+
+    private isAdmin() {
         return this.currentAccount.authorities.includes('ROLE_ADMIN');
     }
 
