@@ -46,6 +46,12 @@
     </div>
     <br/>
     <div class=" table table-responsive" *ngIf="comparator">
+        <button class="btn btn-info btn-sm float-right" type="submit">
+            <fa-icon [icon]="'envelope'"></fa-icon>
+            <span  jhiTranslate="imputationSqliApp.imputation.notifyAll">
+            Notify All
+            </span>
+        </button>
         <table class="table table-bordered table-striped">
             <thead>
             <tr>
@@ -58,6 +64,8 @@
                 <th class="text-center"><span>PPMC</span>
                 </th>
                 <th class="text-center"><span jhiTranslate="imputationSqliApp.imputation.difference">Difference</span>
+                </th>
+                <th class="text-center"><span jhiTranslate="imputationSqliApp.imputation.action">Action</span>
                 </th>
             </tr>
             </thead>
@@ -72,6 +80,16 @@
                 <td class="text-center">{{element.totalCompared}}
                 </td>
                 <td class="text-center" [ngStyle]="{color: getColor(element.difference)}"><b>{{element.difference}}</b>
+                </td>
+                <td>
+                    <div class="btn-group flex-btn-group-container">
+                        <button class="btn btn-info btn-sm" type="submit" *ngIf="element.difference !== 0">
+                            <fa-icon [icon]="'envelope'"></fa-icon>
+                            <span  jhiTranslate="imputationSqliApp.imputation.notify">
+                            Notify
+                            </span>
+                        </button>
+                    </div>
                 </td>
             </tr>
             </tbody>

@@ -47,6 +47,12 @@
     <br/>
     <div>
         <div class="table-responsive">
+            <button class="btn btn-info btn-sm float-right" type="submit">
+                <fa-icon [icon]="'envelope'"></fa-icon>
+                <span  jhiTranslate="imputationSqliApp.imputation.notifyAll">
+            Notify All
+            </span>
+            </button>
             <table class="table table-bordered ">
                 <thead>
                 <tr>
@@ -56,6 +62,7 @@
                     </th>
                     <th *ngFor="let day of imputationDays" [id]="day">{{day}}</th>
                     <th><span jhiTranslate="imputationSqliApp.imputation.total">Total</span></th>
+                    <th><span jhiTranslate="imputationSqliApp.imputation.action">Action</span></th>
                 </tr>
                 </thead>
                 <tbody *ngFor="let element of comparator">
@@ -71,6 +78,16 @@
                     </td>
                     <td>
                         {{element.appMonthlyImputation.total}}
+                    </td>
+                    <td rowspan="2">
+                        <div class="btn-group flex-btn-group-container">
+                            <button class="btn btn-info btn-sm" type="submit">
+                                <fa-icon [icon]="'envelope'"></fa-icon>
+                                <span  jhiTranslate="imputationSqliApp.imputation.notify">
+                                Notify
+                                </span>
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 <tr>

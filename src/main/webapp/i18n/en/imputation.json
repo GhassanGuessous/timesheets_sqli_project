@@ -34,7 +34,10 @@
             "end_date": "End date",
             "difference": "Difference",
             "collaborator": "Collaborator",
-            "total": "Total"
+            "total": "Total",
+            "notifyAll": "Notify All",
+            "notify": "Notify",
+            "action": "Action"
         }
     }
 }

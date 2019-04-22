@@ -33,7 +33,10 @@
             "end_date": "Date fin",
             "difference": "Différence",
             "collaborator": "Collaborateur",
-            "total": "Totale"
+            "total": "Totale",
+            "notifyAll": "Notifier tous",
+            "notify": "Notifier",
+            "action": "Action"
         }
     }
 }
