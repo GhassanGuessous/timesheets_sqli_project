@@ -15,12 +15,12 @@ export class TimesheetPpmcResolve implements Resolve<ITimesheetPpmc> {
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ITimesheetPpmc> {
         const id = route.params['id'] ? route.params['id'] : null;
-        if (id) {
-            return this.service.find(id).pipe(
-                filter((response: HttpResponse<TimesheetPpmc>) => response.ok),
-                map((timesheetTbp: HttpResponse<TimesheetPpmc>) => timesheetTbp.body)
-            );
-        }
+        // if (id) {
+        //     return this.service.find(id).pipe(
+        //         filter((response: HttpResponse<TimesheetPpmc>) => response.ok),
+        //         map((timesheetTbp: HttpResponse<TimesheetPpmc>) => timesheetTbp.body)
+        //     );
+        // }
         return of(new TimesheetPpmc());
     }
 }

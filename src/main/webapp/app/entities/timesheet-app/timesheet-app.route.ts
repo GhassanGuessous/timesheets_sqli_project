@@ -15,12 +15,12 @@ export class TimesheetAppResolve implements Resolve<ITimesheetApp> {
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ITimesheetApp> {
         const id = route.params['id'] ? route.params['id'] : null;
-        if (id) {
-            return this.service.find(id).pipe(
-                filter((response: HttpResponse<TimesheetApp>) => response.ok),
-                map((timesheetApp: HttpResponse<TimesheetApp>) => timesheetApp.body)
-            );
-        }
+        // if (id) {
+        //     return this.service.find(id).pipe(
+        //         filter((response: HttpResponse<TimesheetApp>) => response.ok),
+        //         map((timesheetApp: HttpResponse<TimesheetApp>) => timesheetApp.body)
+        //     );
+        // }
         return of(new TimesheetApp());
     }
 }

@@ -5,6 +5,11 @@ import { AppRequestBody, IAppRequestBody } from 'app/shared/model/app-request-bo
 import { ComparatorAppPpmcAdvancedService } from 'app/entities/comparator-app-ppmc-advanced/comparator-app-ppmc-advanced.service';
 import { AccountService } from 'app/core';
 import { TeamService } from 'app/entities/team';
+import { IImputationComparatorAdvancedDTO } from 'app/shared/model/imputation-comparator-advanced-dto.model';
+import { INotificationModel, NotificationModel } from 'app/shared/model/notification.model';
+import { ICollaboratorMonthlyImputation } from 'app/shared/model/collaborator-monthly-imputation.model';
+import { ICollaboratorDailyImputation } from 'app/shared/model/collaborator-daily-imputation.model';
+import { ICollaborator } from 'app/shared/model/collaborator.model';
 
 @Component({
     selector: 'jhi-comparator-app-ppmc-advanced',
@@ -14,7 +19,9 @@ import { TeamService } from 'app/entities/team';
 export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     private selectedFiles: FileList;
     private currentFileUpload: File;
-    private comparator?: any;
+    private resultBody?: any;
+    private comparator?: IImputationComparatorAdvancedDTO[];
+    private notifications?: INotificationModel[];
     private currentAccount: any;
     private myTeam: ITeam;
     private allTeams: ITeam[];
@@ -73,7 +80,11 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
             this.comparatorAppPpmcAdvancedService.getAdvancedComparison(this.currentFileUpload, this.appRequestBody).subscribe(
                 event => {
                     if (event instanceof HttpResponse) {
-                        this.comparator = event.body;
+                        this.resultBody = event.body;
+                        this.comparator = this.resultBody;
+                        console.log(this.comparator);
+                        this.initializeNotification();
+                        console.log(this.notifications);
                         this.initializeDays();
                     }
                 },
@@ -85,38 +96,85 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         this.selectedFiles = undefined;
     }
 
-    private getColor(element: any, day: number): string {
+    private getColor(element: IImputationComparatorAdvancedDTO, day: number): string {
         if (element.appMonthlyImputation && element.comparedMonthlyImputation) {
-            let appDaily = this.findDailyImputation(element.appMonthlyImputation, day);
-            let comparedDaily = this.findDailyImputation(element.comparedMonthlyImputation, day);
+            const appDaily = this.findDailyImputation(element.appMonthlyImputation, day);
+            const comparedDaily = this.findDailyImputation(element.comparedMonthlyImputation, day);
             if (appDaily && comparedDaily) {
                 return this.getColorWhenDifferentCharge(appDaily, comparedDaily);
             } else {
                 if (this.isOneUndefined(appDaily, comparedDaily)) {
-                    return this.getDefinedOne(appDaily, comparedDaily).charge == 0 ? '' : '#feabab';
+                    return this.getDefinedOne(appDaily, comparedDaily).charge === 0 ? '' : '#feabab';
                 }
             }
             return '';
         }
     }
 
-    private findDailyImputation(monthlyImputation: any, day: number): any {
-        let appDaily = monthlyImputation.dailyImputations.find(daily => daily.day === day);
+    private findDailyImputation(monthlyImputation: ICollaboratorMonthlyImputation, day: number): any {
+        const appDaily = monthlyImputation.dailyImputations.find(daily => daily.day === day);
         return appDaily;
     }
 
-    private getColorWhenDifferentCharge(appDaily, comparedDaily): string {
+    private getColorWhenDifferentCharge(appDaily: ICollaboratorDailyImputation, comparedDaily: ICollaboratorDailyImputation): string {
         if (appDaily.charge !== comparedDaily.charge) {
             return '#feabab';
         }
     }
 
-    private isOneUndefined(appDaily, ppmcDaily): boolean {
-        return (!appDaily && ppmcDaily) || (appDaily && !ppmcDaily);
+    private isOneUndefined(appDaily, comparedDaily): boolean {
+        return (!appDaily && comparedDaily) || (appDaily && !comparedDaily);
     }
 
     private getDefinedOne(appDaily, comparedDaily) {
         return appDaily ? appDaily : comparedDaily;
+    }
+
+    private notifyCollabsWithGap() {
+        this.imputationDays.forEach(day => {
+            this.comparator.forEach(element => {
+                this.notifySingleCollab(element, day);
+            });
+        });
+        console.log(this.notifications);
+    }
+
+    private notifySingleCollab(element, day) {
+        if (element.appMonthlyImputation && element.comparedMonthlyImputation) {
+            const appDaily = this.findDailyImputation(element.appMonthlyImputation, day);
+            const comparedDaily = this.findDailyImputation(element.comparedMonthlyImputation, day);
+            if (appDaily && comparedDaily) {
+                if (appDaily.charge !== comparedDaily.charge) {
+                    this.updateNotification(element.collaborator, appDaily, comparedDaily);
+                }
+            } else {
+                if (this.isOneUndefined(appDaily, comparedDaily)) {
+                    let definedDaily = this.getDefinedOne(appDaily, comparedDaily);
+                    if (definedDaily.charge !== 0) {
+                        definedDaily.collaboratorMonthlyImputation.imputation.imputationType.name.toUpperCase() === 'APP'
+                            ? this.updateNotification(element.collaborator, definedDaily, null)
+                            : this.updateNotification(element.collaborator, null, definedDaily);
+                    }
+                }
+            }
+        }
+    }
+
+    private updateNotification(
+        collaborator: ICollaborator,
+        appDaily: ICollaboratorDailyImputation,
+        comparedDaily: ICollaboratorDailyImputation
+    ) {
+        let notification = this.findNotificationByCollab(collaborator);
+        notification.gapMap.get('app').push(appDaily);
+        notification.gapMap.get('ppmc').push(comparedDaily);
+
+        const index = this.notifications.indexOf(notification);
+        this.notifications[index] = notification;
+    }
+
+    private findNotificationByCollab(collaborator: ICollaborator): INotificationModel {
+        return this.notifications.find(notif => notif.collaborator.id == collaborator.id);
     }
 
     private isAdmin() {
@@ -148,11 +206,11 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     private initializeDays() {
         this.imputationDays = [];
         this.addDaysFromMonthlyImputation();
-        this.removeDuplecates();
+        this.removeDuplicates();
     }
 
     private addDaysFromMonthlyImputation() {
-        this.comparator.forEach(element => {
+        this.resultBody.forEach(element => {
             if (element.appMonthlyImputation) {
                 element.appMonthlyImputation.dailyImputations.forEach(daily => {
                     this.imputationDays.push(daily.day);
@@ -164,7 +222,19 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         });
     }
 
-    private removeDuplecates() {
+    private removeDuplicates() {
         this.imputationDays = Array.from(new Set(this.imputationDays)).sort((a, b) => a - b);
+    }
+
+    private initializeNotification() {
+        this.notifications = [];
+        this.comparator.forEach(element => {
+            let gapMap = new Map<string, ICollaboratorDailyImputation[]>();
+            let appDailies: ICollaboratorDailyImputation[] = [];
+            let comparedDailies: ICollaboratorDailyImputation[] = [];
+            gapMap.set('app', appDailies);
+            gapMap.set('ppmc', comparedDailies);
+            this.notifications.push(new NotificationModel(element.collaborator, gapMap));
+        });
     }
 }
