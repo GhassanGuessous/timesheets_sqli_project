@@ -16,20 +16,21 @@ import { TeamService } from './team.service';
     templateUrl: './team.component.html'
 })
 export class TeamComponent implements OnInit, OnDestroy {
-    currentAccount: any;
-    teams: ITeam[];
-    myTeam: any;
+    private currentAccount: any;
+    private teams: ITeam[];
+    private myTeam: any;
     error: any;
     success: any;
-    eventSubscriber: Subscription;
-    routeData: any;
-    links: any;
-    totalItems: any;
+    private eventSubscriber: Subscription;
+    private routeData: any;
+    private links: any;
+    private totalItems: any;
     itemsPerPage: any;
-    page: any;
-    predicate: any;
-    previousPage: any;
-    reverse: any;
+    private page: any;
+    private predicate: any;
+    private previousPage: any;
+    private reverse: any;
+    private searchedKey: string;
 
     constructor(
         protected teamService: TeamService,
@@ -83,7 +84,7 @@ export class TeamComponent implements OnInit, OnDestroy {
                 sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
             }
         });
-        this.loadAll();
+        this.searchedKey !== undefined ? this.findBySearchedKey() : this.loadAll();
     }
 
     clear() {
@@ -137,10 +138,10 @@ export class TeamComponent implements OnInit, OnDestroy {
         this.jhiAlertService.error(errorMessage, null, null);
     }
 
-    findBySearchedKey(key) {
-        if (key !== '') {
+    findBySearchedKey() {
+        if (this.searchedKey !== '') {
             this.teamService
-                .searchedQuery(key, {
+                .searchedQuery(this.searchedKey, {
                     page: this.page - 1,
                     size: this.itemsPerPage,
                     sort: this.sort()

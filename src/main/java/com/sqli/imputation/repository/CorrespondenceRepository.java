@@ -25,4 +25,6 @@ public interface CorrespondenceRepository extends JpaRepository<Correspondence, 
         "where c.idAPP like %:key% or c.idPPMC like %:key% or c.idTBP like %:key%" +
         " or collab.firstname like %:key% or collab.lastname like %:key%")
     Page<Correspondence> findBykey(@Param("key") String key, Pageable pageable);
+
+    Correspondence findByCollaboratorId(Long id);
 }

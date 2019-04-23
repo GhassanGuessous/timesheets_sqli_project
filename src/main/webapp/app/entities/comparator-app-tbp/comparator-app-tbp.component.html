@@ -11,7 +11,7 @@
                     <label class="form-control-label"
                            for="field_code_project_admin">Code project</label>
                     <select class="form-control" id="field_code_project_admin" name="code_project"
-                           [(ngModel)]="appTbpRequestBody.team">
+                            [(ngModel)]="appTbpRequestBody.team">
                         <option *ngFor="let team of allTeams" [ngValue]="team">{{team.name}}</option>
                     </select>
                 </div>
@@ -48,6 +48,13 @@
     <br/>
 
     <div *ngIf="comparator">
+        <button id="NotifyAll"
+                class="btn btn-info btn-sm float-right">
+            <fa-icon [icon]="'envelope'"></fa-icon>
+            <span  jhiTranslate="imputationSqliApp.imputation.notifyAll">
+                Notify All
+            </span>
+        </button>
         <div class="table-responsive">
             <table class="table table-bordered table-striped">
                 <thead>
@@ -60,9 +67,12 @@
                     </th>
                     <th class="text-center"><span>TBP</span>
                     </th>
-                    <th class="text-center"><span jhiTranslate="imputationSqliApp.imputation.difference">Difference</span>
+                    <th class="text-center"><span
+                        jhiTranslate="imputationSqliApp.imputation.difference">Difference</span>
                     </th>
-                    <!--<th *ngFor="let day of imputationDays.get(imputation)" [id]="day">{{day + '/' + imputation.month}}</th>-->
+                    <th class="text-center"><span
+                        jhiTranslate="imputationSqliApp.imputation.action">Action</span>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
@@ -73,10 +83,17 @@
                     </td>
                     <td class="text-center"><b>{{element.totalApp}}</b></td>
                     <td class="text-center"><b>{{element.totalCompared}}</b></td>
-                    <td class="text-center"[ngStyle]="{color:getcolor(element.difference)}"><b>{{element.difference}}</b></td>
-                    <!--<td class="text-center" *ngFor="let day of imputationDays.get(imputation)" [id]="day">-->
-                    <!--<span *ngFor="let dailyImputation of monthlyImputation.dailyImputations">{{day == dailyImputation.day ? dailyImputation.charge : ''}}</span>-->
-                    <!--</td>-->
+                    <td class="text-center" [ngStyle]="{color:getcolor(element.difference)}">
+                        <b>{{element.difference}}</b></td>
+                    <td class="text-right">
+                        <div class="btn-group flex-btn-group-container">
+                            <button id="notify" *ngIf="element.difference!=0"
+                                    class="btn btn-info btn-sm">
+                                <fa-icon [icon]="'envelope'"></fa-icon>
+                                <span class="d-none d-md-inline"  jhiTranslate="imputationSqliApp.imputation.notify" >Notify</span>
+                            </button>
+                        </div>
+                    </td>
                 </tr>
                 </tbody>
             </table>

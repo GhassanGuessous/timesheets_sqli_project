@@ -3,6 +3,12 @@ package com.sqli.imputation;
 import com.sqli.imputation.config.ApplicationProperties;
 import com.sqli.imputation.config.DefaultProfileUtil;
 
+import com.sqli.imputation.domain.Collaborator;
+import com.sqli.imputation.domain.Correspondence;
+import com.sqli.imputation.domain.Team;
+import com.sqli.imputation.repository.CollaboratorRepository;
+import com.sqli.imputation.repository.CorrespondenceRepository;
+import com.sqli.imputation.repository.TeamRepository;
 import com.sqli.imputation.service.impl.DefaultDbPopulatorService;
 import io.github.jhipster.config.JHipsterConstants;
 
@@ -25,6 +31,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @SpringBootApplication
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
@@ -32,6 +39,12 @@ public class ImputationSqliApp {
 
     @Autowired
     DefaultDbPopulatorService defaultDbPopulator;
+    @Autowired
+    CollaboratorRepository collaboratorRepository;
+    @Autowired
+    CorrespondenceRepository correspondenceRepository;
+    @Autowired
+    TeamRepository teamRepository;
 
     private static final Logger log = LoggerFactory.getLogger(ImputationSqliApp.class);
 
@@ -111,10 +124,40 @@ public class ImputationSqliApp {
     public CommandLineRunner run() throws Exception {
         return args -> {
             defaultDbPopulator.populate();
+
+            // delete collabs with team is not nespresso
+//            List<Collaborator> collaborators = collaboratorRepository.findAll();
+//            collaborators.forEach(collaborator -> {
+//                    if (collaborator.getTeam() == null || !collaborator.getTeam().getName().toLowerCase().contains("nes")) {
+//                        deleteCorrespondence(collaborator);
+//                        collaboratorRepository.delete(collaborator);
+//                }
+//            });
+            //delete teams
+//            List<Team>  teams =teamRepository.findAll();
+//            teams.forEach(team -> {
+//                if (!team.getName().toLowerCase().contains("nes")) {
+//                    teamRepository.delete(team);
+//                }
+//            });
+
+//             collabs with team is not nespresso
+//            List<Collaborator> collaborators = collaboratorRepository.findAll();
+//            collaborators.forEach(collaborator -> {
+//                if (collaborator.getTeam() != null) {
+//                    if (!collaborator.getTeam().getName().contains("NES")) {
+//                        collaborator.setTeam(null);
+//                        collaboratorRepository.save(collaborator);
+//                    }
+//                }
+//            });
         };
     }
 
-
+    private void deleteCorrespondence(Collaborator collaborator) {
+        Correspondence correspondence= correspondenceRepository.findByCollaboratorId(collaborator.getId());
+        correspondenceRepository.delete(correspondence);
+    }
 
 
 }

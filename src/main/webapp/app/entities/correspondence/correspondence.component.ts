@@ -16,19 +16,20 @@ import { CorrespondenceService } from './correspondence.service';
     templateUrl: './correspondence.component.html'
 })
 export class CorrespondenceComponent implements OnInit, OnDestroy {
-    currentAccount: any;
-    correspondences: ICorrespondence[];
+    private currentAccount: any;
+    private correspondences: ICorrespondence[];
     error: any;
     success: any;
-    eventSubscriber: Subscription;
-    routeData: any;
-    links: any;
-    totalItems: any;
+    private eventSubscriber: Subscription;
+    private routeData: any;
+    private links: any;
+    private totalItems: any;
     itemsPerPage: any;
-    page: any;
-    predicate: any;
-    previousPage: any;
-    reverse: any;
+    private page: any;
+    private predicate: any;
+    private previousPage: any;
+    private reverse: any;
+    private searchedKey: string;
 
     constructor(
         protected correspondenceService: CorrespondenceService,
@@ -76,7 +77,7 @@ export class CorrespondenceComponent implements OnInit, OnDestroy {
                 sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
             }
         });
-        this.loadAll();
+        this.searchedKey !== undefined ? this.findBySearchedKey() : this.loadAll();
     }
 
     clear() {
@@ -129,10 +130,10 @@ export class CorrespondenceComponent implements OnInit, OnDestroy {
         this.jhiAlertService.error(errorMessage, null, null);
     }
 
-    findBySearchedKey(key) {
-        if (key !== '') {
+    findBySearchedKey() {
+        if (this.searchedKey !== '') {
             this.correspondenceService
-                .searchedQuery(key, {
+                .searchedQuery(this.searchedKey, {
                     page: this.page - 1,
                     size: this.itemsPerPage,
                     sort: this.sort()

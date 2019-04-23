@@ -4,6 +4,7 @@ import { AccountService } from 'app/core';
 import { TeamService } from 'app/entities/team';
 import { ComparatorAppTbpAdvancedService } from 'app/entities/comparator-app-tbp-advanced/comparator-app-tbp-advanced.service';
 import { AppTbpRequestBody } from 'app/shared/model/app-tbp-request-body';
+import { ICollaborator } from 'app/shared/model/collaborator.model';
 
 @Component({
     selector: 'jhi-comparator-app-tbp-advanced',
@@ -22,6 +23,7 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
     private reverse: any;
     private comparator: any;
     private imputationDays: Array<number>;
+    private isCollabNotifiable: Map<ICollaborator, Array<number>> = new Map<ICollaborator, Array<number>>();
     private appTbpRequestBody: AppTbpRequestBody = new AppTbpRequestBody(null, this.currentYear, this.currentMonth);
 
     constructor(
@@ -85,8 +87,22 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
         console.log(this.appTbpRequestBody);
         this.service.compare(this.appTbpRequestBody).subscribe(res => {
             this.comparator = res.body;
-            console.log(res.body);
             this.initializeDays();
+            this.initNotifiableCollabs();
+        });
+    }
+
+    private initNotifiableCollabs() {
+        this.comparator.forEach(element => {
+            this.imputationDays.forEach(day => {
+                if (this.isWillBeColored(element, day)) {
+                    if (this.isCollabNotifiable.has(element.collaborator)) {
+                        this.isCollabNotifiable.get(element.collaborator).push(day);
+                    } else {
+                        this.isCollabNotifiable.set(element.collaborator, [day]);
+                    }
+                }
+            });
         });
     }
 
@@ -113,15 +129,17 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
         this.imputationDays = Array.from(new Set(this.imputationDays)).sort((a, b) => a - b);
     }
 
-    private getColor(element: any, day: number): string {
+    private isWillBeColored(element: any, day: number): boolean {
         if (element.appMonthlyImputation && element.comparedMonthlyImputation) {
             const appDailyImputation = this.findDailyImputation(element.appMonthlyImputation, day);
             const comparedDailyImputation = this.findDailyImputation(element.comparedMonthlyImputation, day);
             if (appDailyImputation && comparedDailyImputation) {
                 if (appDailyImputation.charge != comparedDailyImputation.charge) {
-                    return '#feabab';
+                    return true;
                 }
-            } else if (this.isOneUndefined(appDailyImputation, comparedDailyImputation)) return '#feabab';
+            } else if (this.isOneUndefined(appDailyImputation, comparedDailyImputation)) {
+                return true;
+            }
         }
     }
 
@@ -131,5 +149,13 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
 
     private isOneUndefined(appDailyImputation, comparedDailyImputation) {
         return (!appDailyImputation && comparedDailyImputation) || (appDailyImputation && !comparedDailyImputation);
+    }
+
+    getColor(element: any, day: number): string {
+        if (this.isCollabNotifiable.get(element.collaborator)) {
+            if (this.isCollabNotifiable.get(element.collaborator).find(item => item == day) !== undefined) {
+                return '#feabab';
+            }
+        }
     }
 }
