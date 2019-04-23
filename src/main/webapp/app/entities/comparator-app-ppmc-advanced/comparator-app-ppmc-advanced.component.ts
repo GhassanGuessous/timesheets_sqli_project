@@ -31,6 +31,7 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     private months: Array<number> = [];
     private imputationDays: Array<number>;
     private numberOfDaysOfCurrentMonth: number = new Date(this.currentYear, this.currentMonth, 0).getDate();
+    private isCollabNotifiable: Map<ICollaborator, Array<number>> = new Map<ICollaborator, Array<number>>();
     private appRequestBody: IAppRequestBody = new AppRequestBody(
         '',
         this.currentYear,
@@ -86,6 +87,7 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
                         this.initializeNotification();
                         console.log(this.notifications);
                         this.initializeDays();
+                        this.initNotifiableCollabs();
                     }
                 },
                 error => {
@@ -96,7 +98,21 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         this.selectedFiles = undefined;
     }
 
-    private getColor(element: IImputationComparatorAdvancedDTO, day: number): string {
+    private initNotifiableCollabs() {
+        this.comparator.forEach(element => {
+            this.imputationDays.forEach(day => {
+                if (this.isWillBeColored(element, day)) {
+                    if (this.isCollabNotifiable.has(element.collaborator)) {
+                        this.isCollabNotifiable.get(element.collaborator).push(day);
+                    } else {
+                        this.isCollabNotifiable.set(element.collaborator, [day]);
+                    }
+                }
+            });
+        });
+    }
+
+    private isWillBeColored(element: any, day: number): boolean {
         if (element.appMonthlyImputation && element.comparedMonthlyImputation) {
             const appDaily = this.findDailyImputation(element.appMonthlyImputation, day);
             const comparedDaily = this.findDailyImputation(element.comparedMonthlyImputation, day);
@@ -104,10 +120,18 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
                 return this.getColorWhenDifferentCharge(appDaily, comparedDaily);
             } else {
                 if (this.isOneUndefined(appDaily, comparedDaily)) {
-                    return this.getDefinedOne(appDaily, comparedDaily).charge === 0 ? '' : '#feabab';
+                    return this.getDefinedOne(appDaily, comparedDaily).charge !== 0;
                 }
             }
-            return '';
+            return false;
+        }
+    }
+
+    private getColor(element: IImputationComparatorAdvancedDTO, day: number): string {
+        if (this.isCollabNotifiable.get(element.collaborator)) {
+            if (this.isCollabNotifiable.get(element.collaborator).find(item => item == day) !== undefined) {
+                return '#feabab';
+            }
         }
     }
 
@@ -116,9 +140,9 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         return appDaily;
     }
 
-    private getColorWhenDifferentCharge(appDaily: ICollaboratorDailyImputation, comparedDaily: ICollaboratorDailyImputation): string {
+    private getColorWhenDifferentCharge(appDaily: ICollaboratorDailyImputation, comparedDaily: ICollaboratorDailyImputation): boolean {
         if (appDaily.charge !== comparedDaily.charge) {
-            return '#feabab';
+            return true;
         }
     }
 

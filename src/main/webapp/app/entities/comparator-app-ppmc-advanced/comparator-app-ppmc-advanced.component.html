@@ -81,7 +81,7 @@
                     </td>
                     <td rowspan="2">
                         <div class="btn-group flex-btn-group-container">
-                            <button class="btn btn-info btn-sm" type="submit">
+                            <button class="btn btn-info btn-sm" type="submit" *ngIf="isCollabNotifiable.has(element.collaborator)">
                                 <fa-icon [icon]="'envelope'"></fa-icon>
                                 <span  jhiTranslate="imputationSqliApp.imputation.notify">
                                 Notify
