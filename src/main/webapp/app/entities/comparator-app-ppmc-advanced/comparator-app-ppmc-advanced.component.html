@@ -46,8 +46,8 @@
     </div>
     <br/>
     <div>
-        <div class="table-responsive">
-            <button class="btn btn-info btn-sm float-right" type="submit">
+        <div class="table-responsive" *ngIf="comparator">
+            <button class="btn btn-info btn-sm float-right" type="submit" (click)="notifyCollabsWithGap()">
                 <fa-icon [icon]="'envelope'"></fa-icon>
                 <span  jhiTranslate="imputationSqliApp.imputation.notifyAll">
             Notify All
