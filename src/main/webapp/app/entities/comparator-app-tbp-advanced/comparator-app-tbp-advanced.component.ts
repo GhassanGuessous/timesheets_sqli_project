@@ -26,7 +26,7 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
     private reverse: any;
     private comparator: any;
     private imputationDays: Array<number>;
-    private isCollabNotifiable: Map<ICollaborator, Array<number>> = new Map<ICollaborator, Array<number>>();
+    private notifiableCollabs: Map<ICollaborator, Array<number>> = new Map<ICollaborator, Array<number>>();
     private notifications?: INotificationModel[];
     private appTbpRequestBody: AppTbpRequestBody = new AppTbpRequestBody(null, this.currentYear, this.currentMonth);
 
@@ -88,38 +88,10 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
     }
 
     private compare() {
-        console.log(this.appTbpRequestBody);
         this.service.compare(this.appTbpRequestBody).subscribe(res => {
             this.comparator = res.body;
             this.initializeDays();
             this.initNotifiableCollabs();
-            this.initializeNotification();
-        });
-    }
-
-    private initNotifiableCollabs() {
-        this.comparator.forEach(element => {
-            this.imputationDays.forEach(day => {
-                if (this.isWillBeColored(element, day)) {
-                    if (this.isCollabNotifiable.has(element.collaborator)) {
-                        this.isCollabNotifiable.get(element.collaborator).push(day);
-                    } else {
-                        this.isCollabNotifiable.set(element.collaborator, [day]);
-                    }
-                }
-            });
-        });
-    }
-
-    private initializeNotification() {
-        this.notifications = [];
-        this.comparator.forEach(element => {
-            let gapMap = new Map<string, ICollaboratorDailyImputation[]>();
-            let appDailies: ICollaboratorDailyImputation[] = [];
-            let comparedDailies: ICollaboratorDailyImputation[] = [];
-            gapMap.set('app', appDailies);
-            gapMap.set('ppmc', comparedDailies);
-            this.notifications.push(new NotificationModel(element.collaborator, gapMap));
         });
     }
 
@@ -146,12 +118,26 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
         this.imputationDays = Array.from(new Set(this.imputationDays)).sort((a, b) => a - b);
     }
 
+    private initNotifiableCollabs() {
+        this.comparator.forEach(element => {
+            this.imputationDays.forEach(day => {
+                if (this.isWillBeColored(element, day)) {
+                    if (this.notifiableCollabs.has(element.collaborator)) {
+                        this.notifiableCollabs.get(element.collaborator).push(day);
+                    } else {
+                        this.notifiableCollabs.set(element.collaborator, [day]);
+                    }
+                }
+            });
+        });
+    }
+
     private isWillBeColored(element: any, day: number): boolean {
         if (element.appMonthlyImputation && element.comparedMonthlyImputation) {
             const appDailyImputation = this.findDailyImputation(element.appMonthlyImputation, day);
             const comparedDailyImputation = this.findDailyImputation(element.comparedMonthlyImputation, day);
             if (appDailyImputation && comparedDailyImputation) {
-                if (appDailyImputation.charge != comparedDailyImputation.charge) {
+                if (appDailyImputation.charge !== comparedDailyImputation.charge) {
                     return true;
                 }
             } else if (this.isOneUndefined(appDailyImputation, comparedDailyImputation)) {
@@ -169,45 +155,56 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
     }
 
     private getColor(element: IImputationComparatorAdvancedDTO, day: number): string {
-        if (this.isCollabNotifiable.get(element.collaborator)) {
-            if (this.isCollabNotifiable.get(element.collaborator).find(item => item == day) !== undefined) {
+        if (this.notifiableCollabs.get(element.collaborator)) {
+            if (this.notifiableCollabs.get(element.collaborator).find(item => item === day) !== undefined) {
                 return '#feabab';
             }
         }
     }
 
-    private notifyCollabsWithGap() {
-        this.imputationDays.forEach(day => {
+    private initializeNotification(collabElement?: any) {
+        this.notifications = [];
+        if (collabElement) {
+            this.initNotificationForCollab(collabElement);
+        } else {
             this.comparator.forEach(element => {
-                this.notifySingleCollab(element, day);
+                if (this.notifiableCollabs.has(element.collaborator)) {
+                    this.initNotificationForCollab(element);
+                }
             });
-        });
-        console.log(this.notifications);
-    }
-
-    private notifySingleCollab(element, day) {
-        if (element.appMonthlyImputation && element.comparedMonthlyImputation) {
-            const appDaily = this.findDailyImputation(element.appMonthlyImputation, day);
-            const comparedDaily = this.findDailyImputation(element.comparedMonthlyImputation, day);
-            if (appDaily && comparedDaily) {
-                if (appDaily.charge !== comparedDaily.charge) {
-                    this.updateNotification(element.collaborator, appDaily, comparedDaily);
-                }
-            } else {
-                if (this.isOneUndefined(appDaily, comparedDaily)) {
-                    let definedDaily = this.getDefinedOne(appDaily, comparedDaily);
-                    if (definedDaily.charge !== 0) {
-                        definedDaily.collaboratorMonthlyImputation.imputation.imputationType.name.toUpperCase() === 'APP'
-                            ? this.updateNotification(element.collaborator, definedDaily, null)
-                            : this.updateNotification(element.collaborator, null, definedDaily);
-                    }
-                }
-            }
         }
     }
 
-    private getDefinedOne(appDaily, comparedDaily) {
-        return appDaily ? appDaily : comparedDaily;
+    private initNotificationForCollab(element) {
+        const gapMap = new Map<string, ICollaboratorDailyImputation[]>();
+        const appDailies: ICollaboratorDailyImputation[] = [];
+        const comparedDailies: ICollaboratorDailyImputation[] = [];
+        gapMap.set('app', appDailies);
+        gapMap.set('ppmc', comparedDailies);
+        this.notifications.push(new NotificationModel(element.collaborator, gapMap));
+    }
+
+    private notifyCollabsWithGap(collabElement?: any) {
+        if (collabElement) {
+            this.initializeNotification(collabElement);
+            this.notifySingleCollab(collabElement);
+        } else {
+            this.initializeNotification();
+            this.comparator.forEach(element => {
+                this.notifySingleCollab(element);
+            });
+        }
+        console.log(this.notifications);
+    }
+
+    private notifySingleCollab(element) {
+        if (this.notifiableCollabs.has(element.collaborator)) {
+            this.notifiableCollabs.get(element.collaborator).forEach(day => {
+                const appDaily = this.findDailyImputation(element.appMonthlyImputation, day);
+                const comparedDaily = this.findDailyImputation(element.comparedMonthlyImputation, day);
+                this.updateNotification(element.collaborator, appDaily, comparedDaily);
+            });
+        }
     }
 
     private updateNotification(
@@ -215,7 +212,7 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
         appDaily: ICollaboratorDailyImputation,
         comparedDaily: ICollaboratorDailyImputation
     ) {
-        let notification = this.findNotificationByCollab(collaborator);
+        const notification = this.findNotificationByCollab(collaborator);
         notification.gapMap.get('app').push(appDaily);
         notification.gapMap.get('ppmc').push(comparedDaily);
 
@@ -224,6 +221,6 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
     }
 
     private findNotificationByCollab(collaborator: ICollaborator): INotificationModel {
-        return this.notifications.find(notif => notif.collaborator.id == collaborator.id);
+        return this.notifications.find(notif => notif.collaborator.id === collaborator.id);
     }
 }

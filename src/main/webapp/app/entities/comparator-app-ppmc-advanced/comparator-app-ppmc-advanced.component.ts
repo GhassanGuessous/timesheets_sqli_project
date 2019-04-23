@@ -31,7 +31,7 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     private months: Array<number> = [];
     private imputationDays: Array<number>;
     private numberOfDaysOfCurrentMonth: number = new Date(this.currentYear, this.currentMonth, 0).getDate();
-    private isCollabNotifiable: Map<ICollaborator, Array<number>> = new Map<ICollaborator, Array<number>>();
+    private notifiableCollabs: Map<ICollaborator, Array<number>> = new Map<ICollaborator, Array<number>>();
     private appRequestBody: IAppRequestBody = new AppRequestBody(
         '',
         this.currentYear,
@@ -83,9 +83,6 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
                     if (event instanceof HttpResponse) {
                         this.resultBody = event.body;
                         this.comparator = this.resultBody;
-                        console.log(this.comparator);
-                        this.initializeNotification();
-                        console.log(this.notifications);
                         this.initializeDays();
                         this.initNotifiableCollabs();
                     }
@@ -102,10 +99,10 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         this.comparator.forEach(element => {
             this.imputationDays.forEach(day => {
                 if (this.isWillBeColored(element, day)) {
-                    if (this.isCollabNotifiable.has(element.collaborator)) {
-                        this.isCollabNotifiable.get(element.collaborator).push(day);
+                    if (this.notifiableCollabs.has(element.collaborator)) {
+                        this.notifiableCollabs.get(element.collaborator).push(day);
                     } else {
-                        this.isCollabNotifiable.set(element.collaborator, [day]);
+                        this.notifiableCollabs.set(element.collaborator, [day]);
                     }
                 }
             });
@@ -124,14 +121,6 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
                 }
             }
             return false;
-        }
-    }
-
-    private getColor(element: IImputationComparatorAdvancedDTO, day: number): string {
-        if (this.isCollabNotifiable.get(element.collaborator)) {
-            if (this.isCollabNotifiable.get(element.collaborator).find(item => item == day) !== undefined) {
-                return '#feabab';
-            }
         }
     }
 
@@ -154,33 +143,56 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         return appDaily ? appDaily : comparedDaily;
     }
 
-    private notifyCollabsWithGap() {
-        this.imputationDays.forEach(day => {
+    private getColor(element: IImputationComparatorAdvancedDTO, day: number): string {
+        if (this.notifiableCollabs.get(element.collaborator)) {
+            if (this.notifiableCollabs.get(element.collaborator).find(item => item === day) !== undefined) {
+                return '#feabab';
+            }
+        }
+    }
+
+    private initializeNotification(collabElement?: any) {
+        this.notifications = [];
+        if (collabElement) {
+            this.initNotificationForCollab(collabElement);
+        } else {
             this.comparator.forEach(element => {
-                this.notifySingleCollab(element, day);
+                if (this.notifiableCollabs.has(element.collaborator)) {
+                    this.initNotificationForCollab(element);
+                }
             });
-        });
+        }
+    }
+
+    private initNotificationForCollab(element) {
+        const gapMap = new Map<string, ICollaboratorDailyImputation[]>();
+        const appDailies: ICollaboratorDailyImputation[] = [];
+        const comparedDailies: ICollaboratorDailyImputation[] = [];
+        gapMap.set('app', appDailies);
+        gapMap.set('ppmc', comparedDailies);
+        this.notifications.push(new NotificationModel(element.collaborator, gapMap));
+    }
+
+    private notifyCollabsWithGap(collabElement?: any) {
+        if (collabElement) {
+            this.initializeNotification(collabElement);
+            this.notifySingleCollab(collabElement);
+        } else {
+            this.initializeNotification();
+            this.comparator.forEach(element => {
+                this.notifySingleCollab(element);
+            });
+        }
         console.log(this.notifications);
     }
 
-    private notifySingleCollab(element, day) {
-        if (element.appMonthlyImputation && element.comparedMonthlyImputation) {
-            const appDaily = this.findDailyImputation(element.appMonthlyImputation, day);
-            const comparedDaily = this.findDailyImputation(element.comparedMonthlyImputation, day);
-            if (appDaily && comparedDaily) {
-                if (appDaily.charge !== comparedDaily.charge) {
-                    this.updateNotification(element.collaborator, appDaily, comparedDaily);
-                }
-            } else {
-                if (this.isOneUndefined(appDaily, comparedDaily)) {
-                    let definedDaily = this.getDefinedOne(appDaily, comparedDaily);
-                    if (definedDaily.charge !== 0) {
-                        definedDaily.collaboratorMonthlyImputation.imputation.imputationType.name.toUpperCase() === 'APP'
-                            ? this.updateNotification(element.collaborator, definedDaily, null)
-                            : this.updateNotification(element.collaborator, null, definedDaily);
-                    }
-                }
-            }
+    private notifySingleCollab(element) {
+        if (this.notifiableCollabs.has(element.collaborator)) {
+            this.notifiableCollabs.get(element.collaborator).forEach(day => {
+                const appDaily = this.findDailyImputation(element.appMonthlyImputation, day);
+                const comparedDaily = this.findDailyImputation(element.comparedMonthlyImputation, day);
+                this.updateNotification(element.collaborator, appDaily, comparedDaily);
+            });
         }
     }
 
@@ -189,7 +201,7 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         appDaily: ICollaboratorDailyImputation,
         comparedDaily: ICollaboratorDailyImputation
     ) {
-        let notification = this.findNotificationByCollab(collaborator);
+        const notification = this.findNotificationByCollab(collaborator);
         notification.gapMap.get('app').push(appDaily);
         notification.gapMap.get('ppmc').push(comparedDaily);
 
@@ -198,7 +210,7 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     }
 
     private findNotificationByCollab(collaborator: ICollaborator): INotificationModel {
-        return this.notifications.find(notif => notif.collaborator.id == collaborator.id);
+        return this.notifications.find(notif => notif.collaborator.id === collaborator.id);
     }
 
     private isAdmin() {
@@ -248,17 +260,5 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
 
     private removeDuplicates() {
         this.imputationDays = Array.from(new Set(this.imputationDays)).sort((a, b) => a - b);
-    }
-
-    private initializeNotification() {
-        this.notifications = [];
-        this.comparator.forEach(element => {
-            let gapMap = new Map<string, ICollaboratorDailyImputation[]>();
-            let appDailies: ICollaboratorDailyImputation[] = [];
-            let comparedDailies: ICollaboratorDailyImputation[] = [];
-            gapMap.set('app', appDailies);
-            gapMap.set('ppmc', comparedDailies);
-            this.notifications.push(new NotificationModel(element.collaborator, gapMap));
-        });
     }
 }

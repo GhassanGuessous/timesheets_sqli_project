@@ -51,7 +51,7 @@
             <button id="NotifyAll" (click)="notifyCollabsWithGap()"
                     class="btn btn-info btn-sm float-right">
                 <fa-icon [icon]="'envelope'"></fa-icon>
-                <span  jhiTranslate="imputationSqliApp.imputation.notifyAll">
+                <span jhiTranslate="imputationSqliApp.imputation.notifyAll">
                 Notify All
             </span>
             </button>
@@ -76,7 +76,8 @@
                         [routerLink]="['/collaborator', element.collaborator.id, 'view' ]">{{element.collaborator.lastname + ' ' + element.collaborator.firstname}}</a>
                     </th>
                     <th class="text-center">App</th>
-                    <td class="text-center" *ngFor="let day of imputationDays" [id]="day" [ngStyle]="{backgroundColor:getColor(element,day)}">
+                    <td class="text-center" *ngFor="let day of imputationDays" [id]="day"
+                        [ngStyle]="{backgroundColor:getColor(element,day)}">
                         <span
                             *ngFor="let daily of element.appMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}
                         </span>
@@ -84,17 +85,19 @@
                     <td class="text-center"><b>{{element.appMonthlyImputation.total}}</b></td>
                     <td class="text-right" rowspan="2">
                         <div class="btn-group flex-btn-group-container">
-                            <button id="notify" *ngIf="isCollabNotifiable.has(element.collaborator)"
+                            <button id="notify" *ngIf="notifiableCollabs.has(element.collaborator)"
+                                    (click)="notifyCollabsWithGap(element)"
                                     class="btn btn-info btn-sm">
                                 <fa-icon [icon]="'envelope'"></fa-icon>
-                                <span class="d-none d-md-inline"  jhiTranslate="imputationSqliApp.imputation.notify" >Notify</span>
+                                <span class="d-none d-md-inline" jhiTranslate="imputationSqliApp.imputation.notify">Notify</span>
                             </button>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <th class="text-center">TBP</th>
-                    <td class="text-center" *ngFor="let day of imputationDays" [id]="day" [ngStyle]="{backgroundColor:getColor(element,day)}">
+                    <td class="text-center" *ngFor="let day of imputationDays" [id]="day"
+                        [ngStyle]="{backgroundColor:getColor(element,day)}">
                         <span
                             *ngFor="let daily of element.comparedMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}
                         </span>
