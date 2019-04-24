@@ -6,6 +6,7 @@
     <div class="row justify-content-center" *ngIf="allTeams || myTeam">
         <div>
             <jhi-alert-error></jhi-alert-error>
+            <jhi-alert></jhi-alert>
             <form class="form-inline" name="comparatorForm" role="form" novalidate
                   [ngSwitch]="isAdmin()" (ngSubmit)="compare()">
                 <div class="form-group tbp-import-form" *ngSwitchCase="true">

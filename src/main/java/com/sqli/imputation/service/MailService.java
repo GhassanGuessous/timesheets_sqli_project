@@ -89,12 +89,13 @@ public class MailService {
 
     @Async
     public void sendNotificationEmailFromTemplate(NotificationDTO dto, String templateName, String titleKey) {
-        Locale locale = Locale.forLanguageTag("en");
+        Locale locale = Locale.forLanguageTag("fr");
         Context context = new Context(locale);
         context.setVariable("notification", dto);
+        context.setVariable("signature", "SQLI Maroc.");
         String content = templateEngine.process(templateName, context);
         String subject = messageSource.getMessage(titleKey, null, locale);
-        sendEmail(dto.getCollaborator().getEmail(), subject, content, false, true);
+        sendEmail("devfor17@gmail.com", subject, content, false, true);
 
     }
 

@@ -14,6 +14,7 @@
             "created": "Un nouveau Imputation a été créé avec l'identifiant {{ param }}",
             "updated": "Le Imputation avec l'identifiant {{ param }} a été mis à jour",
             "deleted": "Le Imputation avec l'identifiant {{ param }} a été supprimé",
+            "emailSent": "Un email de notification a été envoyé.",
             "delete": {
                 "question": "Etes-vous certain de vouloir supprimer le Imputation {{ id }} ?"
             },
