@@ -4,10 +4,12 @@ import { Observable } from 'rxjs';
 
 import { SERVER_API_URL } from 'app/app.constants';
 import { AppRequestBody } from 'app/shared/model/app-request-body';
+import { INotificationModel } from 'app/shared/model/notification.model';
 
 @Injectable({ providedIn: 'root' })
 export class ComparatorAppPpmcAdvancedService {
     public resourceAppPpmcUrl = SERVER_API_URL + 'api/imputations/compare-app-ppmc-advanced';
+    public resourceNotificationUrl = SERVER_API_URL + 'api/imputations/notify';
 
     constructor(protected http: HttpClient) {}
 
@@ -22,5 +24,9 @@ export class ComparatorAppPpmcAdvancedService {
         });
 
         return this.http.request(req);
+    }
+
+    sendNotifications(notifications: INotificationModel[]): Observable<HttpResponse<any>> {
+        return this.http.post<any>(this.resourceNotificationUrl, notifications, { observe: 'response' });
     }
 }

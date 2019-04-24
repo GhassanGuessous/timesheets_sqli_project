@@ -136,7 +136,6 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
                 this.notifySingleCollab(element, day);
             });
         });
-        console.log(this.notifications);
     }
 
     private notifySingleCollab(element, day) {
@@ -234,7 +233,7 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
             let comparedDailies: ICollaboratorDailyImputation[] = [];
             gapMap.set('app', appDailies);
             gapMap.set('ppmc', comparedDailies);
-            this.notifications.push(new NotificationModel(element.collaborator, gapMap));
+            this.notifications.push(new NotificationModel(element.collaborator, 0, 0, gapMap));
         });
     }
 }

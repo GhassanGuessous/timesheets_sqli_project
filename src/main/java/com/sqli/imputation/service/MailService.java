@@ -1,7 +1,9 @@
 package com.sqli.imputation.service;
 
+import com.sqli.imputation.domain.Collaborator;
 import com.sqli.imputation.domain.User;
 
+import com.sqli.imputation.service.dto.NotificationDTO;
 import io.github.jhipster.config.JHipsterProperties;
 
 import java.nio.charset.StandardCharsets;
@@ -86,6 +88,17 @@ public class MailService {
     }
 
     @Async
+    public void sendNotificationEmailFromTemplate(NotificationDTO dto, String templateName, String titleKey) {
+        Locale locale = Locale.forLanguageTag("en");
+        Context context = new Context(locale);
+        context.setVariable("notification", dto);
+        String content = templateEngine.process(templateName, context);
+        String subject = messageSource.getMessage(titleKey, null, locale);
+        sendEmail(dto.getCollaborator().getEmail(), subject, content, false, true);
+
+    }
+
+    @Async
     public void sendActivationEmail(User user) {
         log.debug("Sending activation email to '{}'", user.getEmail());
         sendEmailFromTemplate(user, "mail/activationEmail", "email.activation.title");
@@ -101,5 +114,11 @@ public class MailService {
     public void sendPasswordResetMail(User user) {
         log.debug("Sending password reset email to '{}'", user.getEmail());
         sendEmailFromTemplate(user, "mail/passwordResetEmail", "email.reset.title");
+    }
+
+    @Async
+    public void sendNotificationMail(NotificationDTO dto) {
+        log.debug("Sending notification email to '{}'", dto.getCollaborator().getEmail());
+        sendNotificationEmailFromTemplate(dto, "mail/notificationEmail", "email.notification.title");
     }
 }

@@ -287,4 +287,13 @@ public class ImputationResource {
         }
         return ResponseEntity.ok().body(advancedComparatorDTOS);
     }
+
+    @PostMapping("/imputations/notify")
+    public ResponseEntity<Void> sendNotificationsToCollabs(@RequestBody List<NotificationDTO> notifications){
+        notifications.forEach(notif -> {
+            log.error("{}", notif.toString());
+        });
+//        imputationService.sendNotifications(notifications);
+        return ResponseEntity.ok().headers(HeaderUtil.createAlert("Emails sent", "Param")).build();
+    }
 }

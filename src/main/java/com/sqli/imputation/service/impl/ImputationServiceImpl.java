@@ -47,6 +47,8 @@ public class ImputationServiceImpl implements ImputationService {
     private RequestBodyFactory requestBodyFactory;
     @Autowired
     private ImputationConverterUtilService utilService;
+    @Autowired
+    private MailService mailService;
 
     public ImputationServiceImpl(ImputationRepository imputationRepository) {
         this.imputationRepository = imputationRepository;
@@ -227,5 +229,10 @@ public class ImputationServiceImpl implements ImputationService {
             return new Object[]{comparatorDTOS, ALL_GOOD_STATUS};
         }
         return new Object[]{Collections.EMPTY_LIST, INVALID_FILE_STATUS};
+    }
+
+    @Override
+    public void sendNotifications(List<NotificationDTO> notifications) {
+        notifications.forEach(notification -> mailService.sendNotificationMail(notification));
     }
 }
