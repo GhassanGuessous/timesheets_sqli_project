@@ -8,6 +8,7 @@ import { ICollaborator } from 'app/shared/model/collaborator.model';
 import { ICollaboratorDailyImputation } from 'app/shared/model/collaborator-daily-imputation.model';
 import { INotificationModel, NotificationModel } from 'app/shared/model/notification.model';
 import { IImputationComparatorAdvancedDTO } from 'app/shared/model/imputation-comparator-advanced-dto.model';
+import { GapModel } from 'app/shared/model/gap.model';
 
 @Component({
     selector: 'jhi-comparator-app-tbp-advanced',
@@ -176,12 +177,13 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
     }
 
     private initNotificationForCollab(element) {
-        const gapMap = new Map<string, ICollaboratorDailyImputation[]>();
+        const appGap = new GapModel('APP', []);
+        const comparedGap = new GapModel('TBP', []);
         const appDailies: ICollaboratorDailyImputation[] = [];
         const comparedDailies: ICollaboratorDailyImputation[] = [];
-        gapMap.set('app', appDailies);
-        gapMap.set('ppmc', comparedDailies);
-        this.notifications.push(new NotificationModel(element.collaborator, gapMap));
+        appGap.dailyImputations = appDailies;
+        comparedGap.dailyImputations = comparedDailies;
+        this.notifications.push(new NotificationModel(element.collaborator, 0, 0, appGap, comparedGap));
     }
 
     private notifyCollabsWithGap(collabElement?: any) {
@@ -195,6 +197,9 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
             });
         }
         console.log(this.notifications);
+        this.service.sendNotifications(this.notifications).subscribe(res => {
+            console.log(res.body);
+        });
     }
 
     private notifySingleCollab(element) {
@@ -213,8 +218,8 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
         comparedDaily: ICollaboratorDailyImputation
     ) {
         const notification = this.findNotificationByCollab(collaborator);
-        notification.gapMap.get('app').push(appDaily);
-        notification.gapMap.get('ppmc').push(comparedDaily);
+        notification.appGap.dailyImputations.push(appDaily);
+        notification.comparedGap.dailyImputations.push(comparedDaily);
 
         const index = this.notifications.indexOf(notification);
         this.notifications[index] = notification;

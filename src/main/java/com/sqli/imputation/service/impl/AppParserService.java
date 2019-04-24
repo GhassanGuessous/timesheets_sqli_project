@@ -25,6 +25,11 @@ public class AppParserService {
         try {
             xml = FileUtils.readFileToString(new File("C:/Users/gguessous/Desktop/data.xml"), "UTF-8");
         } catch (IOException e) {
+            try {
+                xml = FileUtils.readFileToString(new File("C:/Users/aaitbassou/Desktop/data.xml"), "UTF-8");
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
             e.printStackTrace();
         }
         Parsing parsing = ParsingFactory.getInstance().create();
