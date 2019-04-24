@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title th:text="#{email.notification.title}"></title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 48px;
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0;">
+
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;">
+    <tr>
+        <td align="center" bgcolor="#c0a06d" style="padding: 40px 0 30px 0;">
+            <p th:text="${notification.getAppGap().getImputationType()} + ' VS. ' + ${notification.getComparedGap().getImputationType()}"></p>
+            Période : <span th:text="${notification.getMonth()} + '/' + ${notification.getYear()}"></span>
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="#eaeaea" style="padding: 40px 30px 40px 30px;">
+            <p th:text="'Bonjour ' + ${notification.getCollaborator().getFirstname()} + ' ' + ${notification.getCollaborator().getLastname()} + ','"></p>
+            <p>Je vous invite à revoir vos imputations afin de les corriger ou de justifier la différence,</p>
+            <p>Merci.</p>
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="#eaeaea" style="padding: 0px 30px 40px 30px;">
+            <table>
+                <thead>
+                <tr>
+                    <th>Imputation</th>
+                    <th th:each="daily: ${notification.getAppGap().getDailyImputations()}">
+                        <span th:text="${daily.getDay()}"></span>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${notification.getAppGap().getImputationType()} + ' : '"></td>
+                    <td class="text-center" th:each="daily: ${notification.getAppGap().getDailyImputations()}">
+                        <span th:text="${daily.getCharge()}"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td th:text="${notification.getComparedGap().getImputationType()} + ' : '"></td>
+                    <td class="text-center" th:each="daily: ${notification.getComparedGap().getDailyImputations()}">
+                        <span th:text="${daily.getCharge()}"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="#777777" style="padding: 30px 30px 30px 30px;">
+            <p th:text="${signature}"></p>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

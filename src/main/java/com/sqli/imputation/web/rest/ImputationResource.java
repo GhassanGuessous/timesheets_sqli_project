@@ -290,10 +290,7 @@ public class ImputationResource {
 
     @PostMapping("/imputations/notify")
     public ResponseEntity<Void> sendNotificationsToCollabs(@RequestBody List<NotificationDTO> notifications){
-        notifications.forEach(notif -> {
-            log.error("{}", notif.toString());
-        });
-//        imputationService.sendNotifications(notifications);
-        return ResponseEntity.ok().headers(HeaderUtil.createAlert("Emails sent", "Param")).build();
+        imputationService.sendNotifications(notifications);
+        return ResponseEntity.ok().headers(HeaderUtil.createEmailSendingAlert(ENTITY_NAME)).build();
     }
 }
