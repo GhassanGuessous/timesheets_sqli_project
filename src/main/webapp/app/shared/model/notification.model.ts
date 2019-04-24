@@ -1,11 +1,12 @@
 import { ICollaborator } from 'app/shared/model/collaborator.model';
-import { ICollaboratorDailyImputation } from 'app/shared/model/collaborator-daily-imputation.model';
+import { IGapModel } from 'app/shared/model/gap.model';
 
 export interface INotificationModel {
     collaborator?: ICollaborator;
     month?: number;
     year?: number;
-    gapMap?: Map<string, ICollaboratorDailyImputation[]>;
+    appGap?: IGapModel;
+    comparedGap?: IGapModel;
 }
 
 export class NotificationModel implements INotificationModel {
@@ -13,6 +14,7 @@ export class NotificationModel implements INotificationModel {
         public collaborator?: ICollaborator,
         public month?: number,
         public year?: number,
-        public gapMap?: Map<string, ICollaboratorDailyImputation[]>
+        public appGap?: IGapModel,
+        public comparedGap?: IGapModel
     ) {}
 }

@@ -29,6 +29,7 @@ export class CollaboratorComponent implements OnInit, OnDestroy {
     predicate: any;
     previousPage: any;
     reverse: any;
+    searchedKey: string;
 
     constructor(
         protected collaboratorService: CollaboratorService,
@@ -76,7 +77,7 @@ export class CollaboratorComponent implements OnInit, OnDestroy {
                 sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
             }
         });
-        this.loadAll();
+        this.searchedKey !== undefined ? this.findBySearchedKey() : this.loadAll();
     }
 
     clear() {
@@ -129,10 +130,10 @@ export class CollaboratorComponent implements OnInit, OnDestroy {
         this.jhiAlertService.error(errorMessage, null, null);
     }
 
-    findBySearchedKey(key) {
-        if (key !== '') {
+    findBySearchedKey() {
+        if (this.searchedKey !== '') {
             this.collaboratorService
-                .searchedQuery(key, {
+                .searchedQuery(this.searchedKey, {
                     page: this.page - 1,
                     size: this.itemsPerPage,
                     sort: this.sort()

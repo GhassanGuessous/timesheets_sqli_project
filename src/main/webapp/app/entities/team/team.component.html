@@ -55,7 +55,7 @@
 <div>
     <h2 id="page-heading">
         <span jhiTranslate="imputationSqliApp.team.home.title">Teams</span>
-        <input #searchedKey type="text" (keyup)="findBySearchedKey(searchedKey.value)" placeholder="Search">
+        <input type="text" [(ngModel)]="searchedKey" (keyup)="findBySearchedKey()" placeholder="Search">
         <button *jhiHasAnyAuthority="'ROLE_ADMIN'" id="jh-create-entity"
             class="btn btn-primary float-right jh-create-entity create-team" [routerLink]="['/team/new']">
             <fa-icon [icon]="'plus'"></fa-icon>

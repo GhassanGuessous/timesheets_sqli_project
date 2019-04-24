@@ -2,7 +2,7 @@
     <h2 id="page-heading">
         <span jhiTranslate="global.menu.entities.comparator-app-ppmc-advanced">APP VS PPMC - Advanced</span>
     </h2>
-    <br />
+    <br/>
     <div class="row justify-content-center" *ngIf="allTeams || myTeam">
         <div>
             <jhi-alert-error></jhi-alert-error>
@@ -11,7 +11,8 @@
                 <div class="form-group tbp-import-form" *ngSwitchCase="true">
                     <label class="form-control-label"
                            for="field_code_project_admin">Code project</label>
-                    <select class="form-control" id="field_code_project_admin" name="code_project" [(ngModel)]="appRequestBody.agresso">
+                    <select class="form-control" id="field_code_project_admin" name="code_project"
+                            [(ngModel)]="appRequestBody.agresso">
                         <option *ngFor="let team of allTeams" [value]="team.agresso">{{team.name}}</option>
                     </select>
                 </div>
@@ -49,7 +50,7 @@
         <div class="table-responsive" *ngIf="comparator">
             <button class="btn btn-info btn-sm float-right" type="submit" (click)="notifyCollabsWithGap()">
                 <fa-icon [icon]="'envelope'"></fa-icon>
-                <span  jhiTranslate="imputationSqliApp.imputation.notifyAll">
+                <span jhiTranslate="imputationSqliApp.imputation.notifyAll">
             Notify All
             </span>
             </button>
@@ -71,7 +72,8 @@
                         [routerLink]="['/collaborator', element.collaborator.id, 'view' ]">{{element.collaborator.lastname + ' ' + element.collaborator.firstname}}</a>
                     </th>
                     <th>App</th>
-                    <td *ngFor="let day of imputationDays" [id]="day" [ngStyle]="{backgroundColor: getColor(element, day)}">
+                    <td *ngFor="let day of imputationDays" [id]="day"
+                        [ngStyle]="{backgroundColor: getColor(element, day)}">
                         <span
                             *ngFor="let daily of element.appMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}
                         </span>
@@ -81,9 +83,11 @@
                     </td>
                     <td rowspan="2">
                         <div class="btn-group flex-btn-group-container">
-                            <button class="btn btn-info btn-sm" type="submit">
+                            <button class="btn btn-info btn-sm" type="submit"
+                                    *ngIf="notifiableCollabs.has(element.collaborator)"
+                                    (click)="notifyCollabsWithGap(element)">
                                 <fa-icon [icon]="'envelope'"></fa-icon>
-                                <span  jhiTranslate="imputationSqliApp.imputation.notify">
+                                <span jhiTranslate="imputationSqliApp.imputation.notify">
                                 Notify
                                 </span>
                             </button>
@@ -92,7 +96,8 @@
                 </tr>
                 <tr>
                     <th>PPMC</th>
-                    <td *ngFor="let day of imputationDays" [id]="day" [ngStyle]="{backgroundColor: getColor(element, day)}">
+                    <td *ngFor="let day of imputationDays" [id]="day"
+                        [ngStyle]="{backgroundColor: getColor(element, day)}">
                         <span
                             *ngFor="let daily of element.comparedMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}
                         </span>

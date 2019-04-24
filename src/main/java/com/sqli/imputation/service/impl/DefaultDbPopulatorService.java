@@ -95,9 +95,9 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
     }
 
     private void persist() {
-//        persistActivities();
-//        persistProjectTypes();
-//        persistTeams();
+        persistActivities();
+        persistProjectTypes();
+        persistTeams();
         persistCollaborators();
     }
 
@@ -161,7 +161,7 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
     }
 
     private void setChargeTeams(String idTeamTbp) {
-        chargeTeamRestResponse = tbpResourceService.getTeamCharges(new TbpRequestBodyDTO(idTeamTbp));
+        chargeTeamRestResponse = tbpResourceService.getTeamCharges(new TbpRequestBodyDTO(idTeamTbp, "2018-01-01", "2019-04-20"));
     }
 
     private void persistActivities() {
