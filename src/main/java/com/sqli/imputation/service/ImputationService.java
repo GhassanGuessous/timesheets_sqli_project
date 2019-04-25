@@ -71,5 +71,7 @@ public interface ImputationService {
 
     Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String ppmcImputationType);
 
+    List<ImputationComparatorDTO> getComparisonFromDB(AppRequestDTO appRequestDTO, String ppmcImputationType);
+
     List<ImputationComparatorAdvancedDTO> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO, String ppmcImputationType);
 }

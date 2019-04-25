@@ -1,5 +1,6 @@
 package com.sqli.imputation.service.impl;
 
+import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
 import com.sqli.imputation.service.*;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.repository.ImputationRepository;
@@ -121,7 +122,7 @@ public class ImputationServiceImpl implements ImputationService {
             List<AppChargeDTO> appChargeDTOS = appParserService.parse();
             Imputation imputation = appConverterService.convert(dto, appChargeDTOS);
             imputations.add(imputation);
-            save(imputation);
+//            save(imputation);
         });
         return imputations;
     }
@@ -203,13 +204,13 @@ public class ImputationServiceImpl implements ImputationService {
         Optional<Imputation> ppmcImputation = getPpmcImputation(file);
         if (ppmcImputation.isPresent()) {
             if (!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
-                return new Object[]{Collections.EMPTY_LIST, INCOMPATIBLE_MONTHS_STATUS};
+                return new Object[]{Collections.emptyList(), INCOMPATIBLE_MONTHS_STATUS};
             }
             Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
             List<ImputationComparatorDTO> comparatorDTOS = utilService.compareImputations(appImputation, ppmcImputation.get());
             return new Object[]{comparatorDTOS, ALL_GOOD_STATUS};
         }
-        return new Object[]{Collections.EMPTY_LIST, INVALID_FILE_STATUS};
+        return new Object[]{Collections.emptyList(), INVALID_FILE_STATUS};
     }
 
     /**
@@ -227,18 +228,28 @@ public class ImputationServiceImpl implements ImputationService {
         Optional<Imputation> ppmcImputation = getPpmcImputation(file);
         if (ppmcImputation.isPresent()) {
             if (!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
-                return new Object[]{Collections.EMPTY_LIST, INCOMPATIBLE_MONTHS_STATUS};
+                return new Object[]{Collections.emptyList(), INCOMPATIBLE_MONTHS_STATUS};
             }
             Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
             List<ImputationComparatorAdvancedDTO> comparatorDTOS = utilService.compareImputationsAdvanced(appImputation, ppmcImputation.get());
             return new Object[]{comparatorDTOS, ALL_GOOD_STATUS};
         }
-        return new Object[]{Collections.EMPTY_LIST, INVALID_FILE_STATUS};
+        return new Object[]{Collections.emptyList(), INVALID_FILE_STATUS};
     }
 
     @Override
     public void sendNotifications(List<NotificationDTO> notifications) {
         notifications.forEach(notification -> mailService.sendNotificationMail(notification));
+    }
+
+    @Override
+    public List<ImputationComparatorDTO> getComparisonFromDB(AppRequestDTO appRequestDTO, String ppmcImputationType) {
+        Optional<Imputation> ppmcImputation = findByRequestedParams(appRequestDTO, ppmcImputationType);
+        if(ppmcImputation.isPresent()){
+            Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
+            return utilService.compareImputations(appImputation, ppmcImputation.get());
+        }
+        return Collections.emptyList();
     }
 
     @Override
@@ -248,11 +259,25 @@ public class ImputationServiceImpl implements ImputationService {
             Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
             return utilService.compareImputationsAdvanced(appImputation, ppmcImputation.get());
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
     public Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String ppmcImputationType) {
-        return monthlyImputationService.findByRequestedParams(appRequestDTO, ppmcImputationType);
+        Optional<List<CollaboratorMonthlyImputation>> monthlyImputations = monthlyImputationService.findByRequestedParams(
+            appRequestDTO.getAgresso(), appRequestDTO.getMonth(), appRequestDTO.getYear(), ppmcImputationType
+        );
+        if(monthlyImputations.isPresent()){
+            return createImputation(appRequestDTO, ppmcImputationType, monthlyImputations.get());
+        }
+        return Optional.empty();
+    }
+
+    private Optional<Imputation> createImputation(AppRequestDTO appRequestDTO, String ppmcImputationType, List<CollaboratorMonthlyImputation> monthlyImputations) {
+        Imputation imputation = utilService.createImputation(
+            appRequestDTO.getYear(), appRequestDTO.getMonth(), utilService.findImputationTypeByNameLike(ppmcImputationType)
+        );
+        imputation.setMonthlyImputations(new HashSet<>(monthlyImputations));
+        return Optional.of(imputation);
     }
 }

@@ -15,6 +15,7 @@ export class ComparatorAppPpmcComponent implements OnInit {
     private selectedFiles: FileList;
     private currentFileUpload: File;
     private comparator?: any;
+    private isNewUpload? = true;
     private currentAccount: any;
     private myTeam: ITeam;
     private allTeams: ITeam[];
@@ -23,13 +24,7 @@ export class ComparatorAppPpmcComponent implements OnInit {
     private years: Array<number> = [];
     private months: Array<number> = [];
     private numberOfDaysOfCurrentMonth: number = new Date(this.currentYear, this.currentMonth, 0).getDate();
-    private appRequestBody: IAppRequestBody = new AppRequestBody(
-        '',
-        this.currentYear,
-        this.currentMonth,
-        1,
-        this.numberOfDaysOfCurrentMonth
-    );
+    private appRequestBody: IAppRequestBody = new AppRequestBody('', this.currentYear, this.currentMonth, 1, 0);
 
     constructor(
         protected accountService: AccountService,
@@ -67,6 +62,7 @@ export class ComparatorAppPpmcComponent implements OnInit {
     }
 
     compare() {
+        this.appRequestBody.manDay = new Date(this.appRequestBody.year, this.appRequestBody.month, 0).getDate();
         if (this.selectedFiles !== undefined) {
             this.currentFileUpload = this.selectedFiles.item(0);
             this.comparatorAppPpmcService.getComparison(this.currentFileUpload, this.appRequestBody).subscribe(
@@ -79,6 +75,11 @@ export class ComparatorAppPpmcComponent implements OnInit {
                     console.log(error);
                 }
             );
+        } else {
+            console.log(this.appRequestBody);
+            this.comparatorAppPpmcService.getComparisonFromDB(this.appRequestBody).subscribe(res => {
+                this.comparator = res.body;
+            });
         }
         this.selectedFiles = undefined;
     }
@@ -117,5 +118,9 @@ export class ComparatorAppPpmcComponent implements OnInit {
         for (let i = 1; i <= lastYear; i++) {
             this.months.push(i);
         }
+    }
+
+    private setIsNewUpload(predicate: string) {
+        this.isNewUpload = predicate === 'false' ? false : true;
     }
 }

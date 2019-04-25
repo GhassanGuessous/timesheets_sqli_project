@@ -90,18 +90,8 @@ public class CollaboratorMonthlyImputationServiceImpl implements CollaboratorMon
     }
 
     @Override
-    public Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String imputationType) {
-        Optional<List<CollaboratorMonthlyImputation>> monthlyImputations = collaboratorMonthlyImputationRepository.findByRequestedParams(
-            appRequestDTO.getAgresso(), appRequestDTO.getMonth(), appRequestDTO.getYear(), imputationType
-        );
-        if(monthlyImputations.isPresent()){
-            Imputation imputation = utilService.createImputation(
-                appRequestDTO.getYear(), appRequestDTO.getMonth(), utilService.findImputationTypeByNameLike(imputationType)
-            );
-            imputation.setMonthlyImputations(new HashSet<>(monthlyImputations.get()));
-            return Optional.of(imputation);
-        }
-        return Optional.empty();
+    public Optional<List<CollaboratorMonthlyImputation>> findByRequestedParams(String agresso, int month, int year, String imputationType) {
+        return collaboratorMonthlyImputationRepository.findByRequestedParams(agresso, month, year, imputationType);
     }
 
     /**
