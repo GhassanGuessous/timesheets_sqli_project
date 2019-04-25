@@ -5,10 +5,12 @@ import { Observable } from 'rxjs';
 import { SERVER_API_URL } from 'app/app.constants';
 import { AppRequestBody } from 'app/shared/model/app-request-body';
 import { INotificationModel } from 'app/shared/model/notification.model';
+import { IImputationComparatorAdvancedDTO } from 'app/shared/model/imputation-comparator-advanced-dto.model';
 
 @Injectable({ providedIn: 'root' })
 export class ComparatorAppPpmcAdvancedService {
     public resourceAppPpmcUrl = SERVER_API_URL + 'api/imputations/compare-app-ppmc-advanced';
+    public resourceAppPpmcDBUrl = SERVER_API_URL + 'api/imputations/comparison-app-ppmc-database';
     public resourceNotificationUrl = SERVER_API_URL + 'api/imputations/notify';
 
     constructor(protected http: HttpClient) {}
@@ -24,6 +26,10 @@ export class ComparatorAppPpmcAdvancedService {
         });
 
         return this.http.request(req);
+    }
+
+    getAdvancedComparisonFromDB(appRequestBody: AppRequestBody): Observable<HttpResponse<IImputationComparatorAdvancedDTO[]>> {
+        return this.http.post<any>(this.resourceAppPpmcDBUrl, appRequestBody, { observe: 'response' });
     }
 
     sendNotifications(notifications: INotificationModel[]): Observable<HttpResponse<any>> {

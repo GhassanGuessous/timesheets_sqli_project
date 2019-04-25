@@ -49,6 +49,8 @@ public class ImputationServiceImpl implements ImputationService {
     private ImputationConverterUtilService utilService;
     @Autowired
     private MailService mailService;
+    @Autowired
+    private CollaboratorMonthlyImputationService monthlyImputationService;
 
     public ImputationServiceImpl(ImputationRepository imputationRepository) {
         this.imputationRepository = imputationRepository;
@@ -148,7 +150,11 @@ public class ImputationServiceImpl implements ImputationService {
      */
     @Override
     public Optional<Imputation> getPpmcImputation(MultipartFile file) {
-        return ppmcImputationConverterService.getPpmcImputationFromExcelFile(file);
+        Optional<Imputation> ppmcImputation = ppmcImputationConverterService.getPpmcImputationFromExcelFile(file);
+        if(ppmcImputation.isPresent()){
+            save(ppmcImputation.get());
+        }
+        return ppmcImputation;
     }
 
     @Override
@@ -234,5 +240,20 @@ public class ImputationServiceImpl implements ImputationService {
     @Override
     public void sendNotifications(List<NotificationDTO> notifications) {
         notifications.forEach(notification -> mailService.sendNotificationMail(notification));
+    }
+
+    @Override
+    public Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String ppmcImputationType) {
+        return monthlyImputationService.findByRequestedParams(appRequestDTO, ppmcImputationType);
+    }
+
+    @Override
+    public List<ImputationComparatorAdvancedDTO> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO, String ppmcImputationType) {
+        Optional<Imputation> ppmcImputation = findByRequestedParams(appRequestDTO, ppmcImputationType);
+        if(ppmcImputation.isPresent()){
+            Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
+            return utilService.compareImputationsAdvanced(appImputation, ppmcImputation.get());
+        }
+        return Collections.EMPTY_LIST;
     }
 }

@@ -33,6 +33,7 @@ import java.util.*;
 @RequestMapping("/api")
 public class ImputationResource {
 
+    public static final String PPMC_IMPUTATION_TYPE = "PPMC";
     private final Logger log = LoggerFactory.getLogger(ImputationResource.class);
 
     private static final int INCOMPATIBLE_MONTHS_STATUS = -1;
@@ -286,6 +287,26 @@ public class ImputationResource {
             throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
         }
         return ResponseEntity.ok().body(advancedComparatorDTOS);
+    }
+
+    /**
+     * POST  /imputations/comparison-app-ppmc-history : Advanced comparison of APP and PPMC imputations from DB.
+     *
+     * @param requestDTO
+     * @return
+     * @throws IOException
+     */
+    @PostMapping("/imputations/comparison-app-ppmc-database")
+    public ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedAppPpmcComparisonFromDB(
+        @RequestParam("appRequestBody") String requestDTO
+    ) throws IOException {
+        AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
+        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
+            throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
+        }  else {
+            List<ImputationComparatorAdvancedDTO> advancedComparatorDTOS = imputationService.getAdvancedComparisonFromDB(appRequestDTO, PPMC_IMPUTATION_TYPE);
+            return ResponseEntity.ok().body(advancedComparatorDTOS);
+        }
     }
 
     @PostMapping("/imputations/notify")

@@ -68,4 +68,8 @@ public interface ImputationService {
     Object[] compare_app_ppmc_advanced(MultipartFile file, AppRequestDTO appRequestDTO);
 
     void sendNotifications(List<NotificationDTO> notifications);
+
+    Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String ppmcImputationType);
+
+    List<ImputationComparatorAdvancedDTO> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO, String ppmcImputationType);
 }

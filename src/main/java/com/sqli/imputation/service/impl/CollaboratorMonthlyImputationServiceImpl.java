@@ -1,8 +1,10 @@
 package com.sqli.imputation.service.impl;
 
+import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.service.CollaboratorMonthlyImputationService;
 import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
 import com.sqli.imputation.repository.CollaboratorMonthlyImputationRepository;
+import com.sqli.imputation.service.dto.AppRequestDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,5 +78,12 @@ public class CollaboratorMonthlyImputationServiceImpl implements CollaboratorMon
     public void delete(Long id) {
         log.debug("Request to delete CollaboratorMonthlyImputation : {}", id);
         collaboratorMonthlyImputationRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String imputationType) {
+        return collaboratorMonthlyImputationRepository.findByRequestedParams(
+            appRequestDTO.getAgresso(), appRequestDTO.getMonth(), appRequestDTO.getYear(), imputationType
+        );
     }
 }

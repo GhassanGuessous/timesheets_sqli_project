@@ -233,3 +233,7 @@ ui bootstrap tweaks
 #tbp-timesheet-import-button {
     margin-left: 20px;
 }
+
+#isNewUploadForm {
+    text-align: center;
+}

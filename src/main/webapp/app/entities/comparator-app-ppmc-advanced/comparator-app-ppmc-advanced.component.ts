@@ -23,6 +23,7 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     private resultBody?: any;
     private comparator?: IImputationComparatorAdvancedDTO[];
     private notifications?: INotificationModel[];
+    private isNewUpload? = true;
     private currentAccount: any;
     private myTeam: ITeam;
     private allTeams: ITeam[];
@@ -92,6 +93,12 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
                     console.log(error);
                 }
             );
+        } else {
+            this.comparatorAppPpmcAdvancedService.getAdvancedComparisonFromDB(this.appRequestBody).subscribe(res => {
+                this.comparator = res.body;
+                this.initializeDays();
+                this.initNotifiableCollabs();
+            });
         }
         this.selectedFiles = undefined;
     }
@@ -289,5 +296,9 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         dest.day = source.day;
         dest.charge = 0;
         return dest;
+    }
+
+    private setIsNewUpload(predicate: string) {
+        this.isNewUpload = predicate === 'false' ? false : true;
     }
 }
