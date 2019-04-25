@@ -5,9 +5,10 @@ import { TeamService } from 'app/entities/team';
 import { ComparatorAppTbpAdvancedService } from 'app/entities/comparator-app-tbp-advanced/comparator-app-tbp-advanced.service';
 import { AppTbpRequestBody } from 'app/shared/model/app-tbp-request-body';
 import { ICollaborator } from 'app/shared/model/collaborator.model';
-import { ICollaboratorDailyImputation } from 'app/shared/model/collaborator-daily-imputation.model';
+import { CollaboratorDailyImputation, ICollaboratorDailyImputation } from 'app/shared/model/collaborator-daily-imputation.model';
 import { INotificationModel, NotificationModel } from 'app/shared/model/notification.model';
 import { IImputationComparatorAdvancedDTO } from 'app/shared/model/imputation-comparator-advanced-dto.model';
+import { GapModel } from 'app/shared/model/gap.model';
 
 @Component({
     selector: 'jhi-comparator-app-tbp-advanced',
@@ -77,12 +78,12 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
     }
 
     private initializeMonth() {
-        let lastYear = 12;
+        let lastMonthInYear = 12;
         this.months = [];
         if (this.appTbpRequestBody.year == this.currentYear) {
-            lastYear = this.currentMonth;
+            lastMonthInYear = this.currentMonth;
         }
-        for (let i = 1; i <= lastYear; i++) {
+        for (let i = 1; i <= lastMonthInYear; i++) {
             this.months.push(i);
         }
     }
@@ -154,6 +155,10 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
         return (!appDailyImputation && comparedDailyImputation) || (appDailyImputation && !comparedDailyImputation);
     }
 
+    private isUndefined(daily): boolean {
+        return daily === undefined;
+    }
+
     private getColor(element: IImputationComparatorAdvancedDTO, day: number): string {
         if (this.notifiableCollabs.get(element.collaborator)) {
             if (this.notifiableCollabs.get(element.collaborator).find(item => item === day) !== undefined) {
@@ -176,12 +181,13 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
     }
 
     private initNotificationForCollab(element) {
-        const gapMap = new Map<string, ICollaboratorDailyImputation[]>();
+        const appGap = new GapModel('APP', []);
+        const comparedGap = new GapModel('TBP', []);
         const appDailies: ICollaboratorDailyImputation[] = [];
         const comparedDailies: ICollaboratorDailyImputation[] = [];
-        gapMap.set('app', appDailies);
-        gapMap.set('ppmc', comparedDailies);
-        this.notifications.push(new NotificationModel(element.collaborator, gapMap));
+        appGap.dailyImputations = appDailies;
+        comparedGap.dailyImputations = comparedDailies;
+        this.notifications.push(new NotificationModel(element.collaborator, 0, 0, appGap, comparedGap));
     }
 
     private notifyCollabsWithGap(collabElement?: any) {
@@ -195,16 +201,37 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
             });
         }
         console.log(this.notifications);
+        this.service.sendNotifications(this.notifications).subscribe(res => {
+            console.log(res.body);
+        });
     }
 
     private notifySingleCollab(element) {
         if (this.notifiableCollabs.has(element.collaborator)) {
             this.notifiableCollabs.get(element.collaborator).forEach(day => {
-                const appDaily = this.findDailyImputation(element.appMonthlyImputation, day);
-                const comparedDaily = this.findDailyImputation(element.comparedMonthlyImputation, day);
+                let appDaily = this.findDailyImputation(element.appMonthlyImputation, day);
+                let comparedDaily = this.findDailyImputation(element.comparedMonthlyImputation, day);
+                if (this.isOneUndefined(appDaily, comparedDaily)) {
+                    if (this.isUndefined(appDaily)) {
+                        appDaily = this.initUndefinedDaily(comparedDaily);
+                    } else {
+                        comparedDaily = this.initUndefinedDaily(appDaily);
+                    }
+                }
                 this.updateNotification(element.collaborator, appDaily, comparedDaily);
             });
         }
+    }
+
+    private initUndefinedDaily(source: ICollaboratorDailyImputation) {
+        return this.createDaily(source);
+    }
+
+    private createDaily(source: ICollaboratorDailyImputation): ICollaboratorDailyImputation {
+        const dest = new CollaboratorDailyImputation();
+        dest.day = source.day;
+        dest.charge = 0;
+        return dest;
     }
 
     private updateNotification(
@@ -213,8 +240,8 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
         comparedDaily: ICollaboratorDailyImputation
     ) {
         const notification = this.findNotificationByCollab(collaborator);
-        notification.gapMap.get('app').push(appDaily);
-        notification.gapMap.get('ppmc').push(comparedDaily);
+        notification.appGap.dailyImputations.push(appDaily);
+        notification.comparedGap.dailyImputations.push(comparedDaily);
 
         const index = this.notifications.indexOf(notification);
         this.notifications[index] = notification;

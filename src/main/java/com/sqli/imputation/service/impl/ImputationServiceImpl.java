@@ -32,6 +32,8 @@ public class ImputationServiceImpl implements ImputationService {
 
     private final ImputationRepository imputationRepository;
     @Autowired
+    private CollaboratorMonthlyImputationService monthlyImputationService;
+    @Autowired
     private AppParserService appParserService;
     @Autowired
     private AppImputationConverterService appConverterService;
@@ -49,8 +51,6 @@ public class ImputationServiceImpl implements ImputationService {
     private ImputationConverterUtilService utilService;
     @Autowired
     private MailService mailService;
-    @Autowired
-    private CollaboratorMonthlyImputationService monthlyImputationService;
 
     public ImputationServiceImpl(ImputationRepository imputationRepository) {
         this.imputationRepository = imputationRepository;
@@ -65,7 +65,9 @@ public class ImputationServiceImpl implements ImputationService {
     @Override
     public Imputation save(Imputation imputation) {
         log.debug("Request to save Imputation : {}", imputation);
-        return imputationRepository.save(imputation);
+        imputation= imputationRepository.save(imputation);
+        monthlyImputationService.saveAll(imputation);
+        return imputation;
     }
 
     /**
@@ -80,7 +82,6 @@ public class ImputationServiceImpl implements ImputationService {
         log.debug("Request to get all Imputations");
         return imputationRepository.findAll(pageable);
     }
-
 
     /**
      * Get one imputation by id.
@@ -120,6 +121,7 @@ public class ImputationServiceImpl implements ImputationService {
             List<AppChargeDTO> appChargeDTOS = appParserService.parse();
             Imputation imputation = appConverterService.convert(dto, appChargeDTOS);
             imputations.add(imputation);
+            save(imputation);
         });
         return imputations;
     }
@@ -138,6 +140,7 @@ public class ImputationServiceImpl implements ImputationService {
             List<ChargeTeamDTO> chargeTeamDTOS = tbpResourceService.getTeamCharges(requestBody).getBody().getData().getCharge();
             Imputation imputation = tbpImputationConverterService.convert(chargeTeamDTOS, requestBody);
             imputations.add(imputation);
+            save(imputation);
         });
         return imputations;
     }
@@ -186,22 +189,20 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     /**
-     *
      * @param file
      * @param appRequestDTO
      * @return an array contains :
      * first element : a list of DTOs of imputation comparison (full or empty)
      * second element : a status that describe what happened ;
-     *  # -1 : comparison of two different months
-     *  # 0 : something wrong happened while reading excel file
-     *  # 1 : all good
-     *
+     * # -1 : comparison of two different months
+     * # 0 : something wrong happened while reading excel file
+     * # 1 : all good
      */
     @Override
     public Object[] compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO) {
         Optional<Imputation> ppmcImputation = getPpmcImputation(file);
-        if(ppmcImputation.isPresent()) {
-            if(!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
+        if (ppmcImputation.isPresent()) {
+            if (!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
                 return new Object[]{Collections.EMPTY_LIST, INCOMPATIBLE_MONTHS_STATUS};
             }
             Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
@@ -212,22 +213,20 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     /**
-     *
      * @param file
      * @param appRequestDTO
      * @return an array contains :
      * first element : a list of DTOs of advanced imputation comparison (full or empty)
      * second element : a status that describe what happened ;
-     *  # -1 : comparison of two different months
-     *  # 0 : something wrong happened while reading excel file
-     *  # 1 : all good
-     *
+     * # -1 : comparison of two different months
+     * # 0 : something wrong happened while reading excel file
+     * # 1 : all good
      */
     @Override
     public Object[] compare_app_ppmc_advanced(MultipartFile file, AppRequestDTO appRequestDTO) {
         Optional<Imputation> ppmcImputation = getPpmcImputation(file);
-        if(ppmcImputation.isPresent()) {
-            if(!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
+        if (ppmcImputation.isPresent()) {
+            if (!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
                 return new Object[]{Collections.EMPTY_LIST, INCOMPATIBLE_MONTHS_STATUS};
             }
             Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
@@ -243,11 +242,6 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     @Override
-    public Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String ppmcImputationType) {
-        return monthlyImputationService.findByRequestedParams(appRequestDTO, ppmcImputationType);
-    }
-
-    @Override
     public List<ImputationComparatorAdvancedDTO> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO, String ppmcImputationType) {
         Optional<Imputation> ppmcImputation = findByRequestedParams(appRequestDTO, ppmcImputationType);
         if(ppmcImputation.isPresent()){
@@ -255,5 +249,10 @@ public class ImputationServiceImpl implements ImputationService {
             return utilService.compareImputationsAdvanced(appImputation, ppmcImputation.get());
         }
         return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String ppmcImputationType) {
+        return monthlyImputationService.findByRequestedParams(appRequestDTO, ppmcImputationType);
     }
 }

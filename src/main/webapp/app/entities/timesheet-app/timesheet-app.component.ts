@@ -16,7 +16,7 @@ export class TimesheetAppComponent implements OnInit {
     private myTeam: ITeam;
     private allTeams: ITeam[];
     private currentYear: number = new Date().getFullYear();
-    private currentMonth: number = new Date().getMonth();
+    private currentMonth: number = new Date().getMonth() + 1;
     private numberOfDaysOfCurrentMonth: number = new Date(this.currentYear, this.currentMonth, 0).getDate();
     private appRequestBody: IAppRequestBody = new AppRequestBody(
         '',
@@ -103,9 +103,15 @@ export class TimesheetAppComponent implements OnInit {
     }
 
     private initializeMonth() {
-        for (let i = 1; i <= 12; i++) {
+        let lastMonthInYear = 12;
+        this.months = [];
+        if (this.appRequestBody.year == this.currentYear) {
+            lastMonthInYear = this.currentMonth;
+        }
+        for (let i = 1; i <= lastMonthInYear; i++) {
             this.months.push(i);
         }
+        this.initializeDayOfCurrentMonth();
     }
 
     private initializeManDays() {

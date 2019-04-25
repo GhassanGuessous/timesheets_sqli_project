@@ -22,7 +22,7 @@
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.year"
                            for="field_year">Year</label>
                     <select class="form-control" id="field_year" name="year"
-                            [(ngModel)]="appRequestBody.year" (change)="initializeDayOfCurrentMonth()">
+                            [(ngModel)]="appRequestBody.year" (change)="initializeMonth()">
                         <option *ngFor="let year of years" [selected]="year == currentYear">{{year}}</option>
                     </select>
                 </div>

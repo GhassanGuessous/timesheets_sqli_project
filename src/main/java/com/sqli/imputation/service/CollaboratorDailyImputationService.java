@@ -2,6 +2,7 @@ package com.sqli.imputation.service;
 
 import com.sqli.imputation.domain.CollaboratorDailyImputation;
 
+import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -43,4 +44,11 @@ public interface CollaboratorDailyImputationService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+    /**
+     * save all the imputations.
+     *
+     * @param monthlyImputation the imputation that contains the list to save
+     */
+    void saveAll(CollaboratorMonthlyImputation monthlyImputation);
 }

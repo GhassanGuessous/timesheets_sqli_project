@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -24,5 +25,5 @@ public interface CollaboratorMonthlyImputationRepository extends JpaRepository<C
             "AND m.imputation.year = :year " +
             "AND m.imputation.month = :month"
     )
-    Optional<Imputation> findByRequestedParams(@Param("agresso") String agresso, @Param("month") int month, @Param("year") int year, @Param("type") String imputationType);
+    Optional<List<CollaboratorMonthlyImputation>> findByRequestedParams(@Param("agresso") String agresso, @Param("month") int month, @Param("year") int year, @Param("type") String imputationType);
 }

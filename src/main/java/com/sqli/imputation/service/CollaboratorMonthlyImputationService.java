@@ -4,6 +4,7 @@ import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
 
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.service.dto.AppRequestDTO;
+import com.sqli.imputation.domain.Imputation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -47,4 +48,11 @@ public interface CollaboratorMonthlyImputationService {
     void delete(Long id);
 
     Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String imputationType);
+
+    /**
+     * save all the imputations.
+     *
+     * @param imputation the imputation that contains the list to save
+     */
+    void saveAll(Imputation imputation);
 }
