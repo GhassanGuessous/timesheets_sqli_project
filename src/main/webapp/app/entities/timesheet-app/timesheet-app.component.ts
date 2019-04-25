@@ -103,12 +103,12 @@ export class TimesheetAppComponent implements OnInit {
     }
 
     private initializeMonth() {
-        let lastYear = 12;
+        let lastMonthInYear = 12;
         this.months = [];
         if (this.appRequestBody.year == this.currentYear) {
-            lastYear = this.currentMonth;
+            lastMonthInYear = this.currentMonth;
         }
-        for (let i = 1; i <= lastYear; i++) {
+        for (let i = 1; i <= lastMonthInYear; i++) {
             this.months.push(i);
         }
         this.initializeDayOfCurrentMonth();

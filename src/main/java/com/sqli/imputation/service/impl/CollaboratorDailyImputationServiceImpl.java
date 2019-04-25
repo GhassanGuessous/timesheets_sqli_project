@@ -1,5 +1,6 @@
 package com.sqli.imputation.service.impl;
 
+import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
 import com.sqli.imputation.service.CollaboratorDailyImputationService;
 import com.sqli.imputation.domain.CollaboratorDailyImputation;
 import com.sqli.imputation.repository.CollaboratorDailyImputationRepository;
@@ -76,5 +77,18 @@ public class CollaboratorDailyImputationServiceImpl implements CollaboratorDaily
     public void delete(Long id) {
         log.debug("Request to delete CollaboratorDailyImputation : {}", id);
         collaboratorDailyImputationRepository.deleteById(id);
+    }
+
+    /**
+     * save all the imputations.
+     *
+     * @param monthlyImputation the imputation that contains the list to save
+     */
+    @Override
+    public void saveAll(CollaboratorMonthlyImputation monthlyImputation) {
+        monthlyImputation.getDailyImputations().forEach(dailyImputation -> {
+            dailyImputation.setCollaboratorMonthlyImputation(monthlyImputation);
+            save(dailyImputation);
+        });
     }
 }
