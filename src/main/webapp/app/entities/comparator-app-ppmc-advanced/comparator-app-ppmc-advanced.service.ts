@@ -10,7 +10,7 @@ import { IImputationComparatorAdvancedDTO } from 'app/shared/model/imputation-co
 @Injectable({ providedIn: 'root' })
 export class ComparatorAppPpmcAdvancedService {
     public resourceAppPpmcUrl = SERVER_API_URL + 'api/imputations/compare-app-ppmc-advanced';
-    public resourceAppPpmcDBUrl = SERVER_API_URL + 'api/imputations/comparison-app-ppmc-database';
+    public resourceAppPpmcDBUrl = SERVER_API_URL + 'api/imputations/comparison-app-ppmc-advanced-database';
     public resourceNotificationUrl = SERVER_API_URL + 'api/imputations/notify';
 
     constructor(protected http: HttpClient) {}

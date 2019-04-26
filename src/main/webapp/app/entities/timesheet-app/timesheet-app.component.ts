@@ -68,6 +68,7 @@ export class TimesheetAppComponent implements OnInit {
     private getTimesheet() {
         this.service.findAppChargeByTeam(this.appRequestBody).subscribe(res => {
             this.imputations = res.body;
+            console.log(res.body);
             for (let i = 0; i < this.imputations.length; i++) {
                 this.initializeDays(this.imputations[i]);
             }

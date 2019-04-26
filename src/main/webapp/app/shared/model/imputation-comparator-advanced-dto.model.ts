@@ -7,7 +7,7 @@ export interface IImputationComparatorAdvancedDTO {
     comparedMonthlyImputation?: ICollaboratorMonthlyImputation;
 }
 
-export class ImputationComparatorDTO implements IImputationComparatorAdvancedDTO {
+export class ImputationComparatorAdvancedDTO implements IImputationComparatorAdvancedDTO {
     constructor(
         public collaborator?: ICollaborator,
         public appMonthlyImputation?: ICollaboratorMonthlyImputation,

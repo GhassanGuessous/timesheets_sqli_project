@@ -20,8 +20,7 @@ import { GapModel } from 'app/shared/model/gap.model';
 export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     private selectedFiles: FileList;
     private currentFileUpload: File;
-    private resultBody?: any;
-    private comparator?: IImputationComparatorAdvancedDTO[];
+    private comparator?: any;
     private notifications?: INotificationModel[];
     private isNewUpload? = true;
     private currentAccount: any;
@@ -32,15 +31,8 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     private years: Array<number> = [];
     private months: Array<number> = [];
     private imputationDays: Array<number>;
-    private numberOfDaysOfCurrentMonth: number = new Date(this.currentYear, this.currentMonth, 0).getDate();
     private notifiableCollabs: Map<ICollaborator, Array<number>> = new Map<ICollaborator, Array<number>>();
-    private appRequestBody: IAppRequestBody = new AppRequestBody(
-        '',
-        this.currentYear,
-        this.currentMonth,
-        1,
-        this.numberOfDaysOfCurrentMonth
-    );
+    private appRequestBody: IAppRequestBody = new AppRequestBody('', this.currentYear, this.currentMonth, 1, 0);
 
     constructor(
         protected accountService: AccountService,
@@ -78,13 +70,13 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     }
 
     private compare() {
+        this.appRequestBody.manDay = new Date(this.appRequestBody.year, this.appRequestBody.month, 0).getDate();
         if (this.selectedFiles !== undefined) {
             this.currentFileUpload = this.selectedFiles.item(0);
             this.comparatorAppPpmcAdvancedService.getAdvancedComparison(this.currentFileUpload, this.appRequestBody).subscribe(
                 event => {
                     if (event instanceof HttpResponse) {
-                        this.resultBody = event.body;
-                        this.comparator = this.resultBody;
+                        this.comparator = event.body;
                         this.initializeDays();
                         this.initNotifiableCollabs();
                     }
@@ -94,6 +86,7 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
                 }
             );
         } else {
+            console.log(this.appRequestBody);
             this.comparatorAppPpmcAdvancedService.getAdvancedComparisonFromDB(this.appRequestBody).subscribe(res => {
                 this.comparator = res.body;
                 this.initializeDays();
@@ -271,7 +264,7 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     }
 
     private addDaysFromMonthlyImputation() {
-        this.resultBody.forEach(element => {
+        this.comparator.forEach(element => {
             if (element.appMonthlyImputation) {
                 element.appMonthlyImputation.dailyImputations.forEach(daily => {
                     this.imputationDays.push(daily.day);

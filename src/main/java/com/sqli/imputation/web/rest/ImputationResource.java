@@ -34,6 +34,7 @@ import java.util.*;
 public class ImputationResource {
 
     public static final String PPMC_IMPUTATION_TYPE = "PPMC";
+    public static final String NEW_UPLOAD = "newUpload";
     private final Logger log = LoggerFactory.getLogger(ImputationResource.class);
 
     private static final int INCOMPATIBLE_MONTHS_STATUS = -1;
@@ -229,28 +230,7 @@ public class ImputationResource {
     public ResponseEntity<List<ImputationComparatorDTO>> getAppPpmcComparison(
         @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO
     ) throws IOException {
-        AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
-        String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
-        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
-            throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
-        } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
-            throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
-        } else {
-            return getComparison(file, appRequestDTO);
-        }
-    }
-
-    private ResponseEntity<List<ImputationComparatorDTO>> getComparison(MultipartFile file, AppRequestDTO appRequestDTO) {
-        Object[] result = imputationService.compare_app_ppmc(file, appRequestDTO);
-        List<ImputationComparatorDTO> comparatorDTOS = (List<ImputationComparatorDTO>) result[LIST_DTOS_POSITION];
-        int status = (int) result[STATUS_POSITION];
-        if(comparatorDTOS.isEmpty()) {
-            if(status == INCOMPATIBLE_MONTHS_STATUS) {
-                throw new BadRequestAlertException("Different months", ENTITY_NAME, "differentMonths");
-            }
-            throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
-        }
-        return ResponseEntity.ok().body(comparatorDTOS);
+        return getAppPpmcResponseEntity(file, requestDTO, false);
     }
 
     /**
@@ -265,6 +245,12 @@ public class ImputationResource {
     public ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedAppPpmcComparison(
         @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO
     ) throws IOException {
+        return getAppPpmcResponseEntity(file, requestDTO, true);
+    }
+
+    private <T> ResponseEntity<List<T>> getAppPpmcResponseEntity(
+        @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO, boolean isAdvanced
+    ) throws IOException {
         AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
         String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
         if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
@@ -272,41 +258,79 @@ public class ImputationResource {
         } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
         } else {
-            return getAdvancedComparison(file, appRequestDTO);
+            return compareAppPpmc(file, appRequestDTO, isAdvanced);
         }
     }
 
-    private ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedComparison(MultipartFile file, AppRequestDTO appRequestDTO) {
-        Object[] result = imputationService.compare_app_ppmc_advanced(file, appRequestDTO);
-        List<ImputationComparatorAdvancedDTO> advancedComparatorDTOS = (List<ImputationComparatorAdvancedDTO>) result[LIST_DTOS_POSITION];
+    private <T> ResponseEntity<List<T>> compareAppPpmc(MultipartFile file, AppRequestDTO appRequestDTO, boolean isAdvanced) {
+        Object[] result = isAdvanced ? imputationService.compareAppPpmcAdvanced(file, appRequestDTO) : imputationService.compareAppPpmc(file, appRequestDTO);
+        List<T> comparatorDTOS = (List<T>) result[LIST_DTOS_POSITION];
         int status = (int) result[STATUS_POSITION];
-        if(advancedComparatorDTOS.isEmpty()) {
-            if(status == INCOMPATIBLE_MONTHS_STATUS) {
+        if(comparatorDTOS.isEmpty()) {
+            if(isIncompatibleMonths(status)) {
                 throw new BadRequestAlertException("Different months", ENTITY_NAME, "differentMonths");
             }
             throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
         }
-        return ResponseEntity.ok().body(advancedComparatorDTOS);
+        return ResponseEntity.ok().body(comparatorDTOS);
+    }
+
+    private boolean isIncompatibleMonths(int status) {
+        return status == INCOMPATIBLE_MONTHS_STATUS;
     }
 
     /**
-     * POST  /imputations/comparison-app-ppmc-history : Advanced comparison of APP and PPMC imputations from DB.
+     * POST  /imputations/comparison-app-ppmc-database : comparison of APP and PPMC imputations from DB.
      *
      * @param requestDTO
      * @return
      * @throws IOException
      */
     @PostMapping("/imputations/comparison-app-ppmc-database")
-    public ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedAppPpmcComparisonFromDB(
-        @RequestParam("appRequestBody") String requestDTO
+    public ResponseEntity<List<ImputationComparatorDTO>> getAppPpmcComparisonFromDB(
+        @RequestBody String requestDTO
     ) throws IOException {
         AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
         if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         }  else {
-            List<ImputationComparatorAdvancedDTO> advancedComparatorDTOS = imputationService.getAdvancedComparisonFromDB(appRequestDTO, PPMC_IMPUTATION_TYPE);
-            return ResponseEntity.ok().body(advancedComparatorDTOS);
+            return getComparisonFromDB(appRequestDTO);
         }
+    }
+
+    private ResponseEntity<List<ImputationComparatorDTO>> getComparisonFromDB(AppRequestDTO appRequestDTO) {
+        List<ImputationComparatorDTO> comparatorDTOS = imputationService.getComparisonFromDB(appRequestDTO, PPMC_IMPUTATION_TYPE);
+        if(comparatorDTOS.isEmpty()){
+            throw new BadRequestAlertException("upload a ppmc file", ENTITY_NAME, NEW_UPLOAD);
+        }
+        return ResponseEntity.ok().body(comparatorDTOS);
+    }
+
+    /**
+     * POST  /imputations/comparison-app-ppmc-advanced-database : Advanced comparison of APP and PPMC imputations from DB.
+     *
+     * @param requestDTO
+     * @return
+     * @throws IOException
+     */
+    @PostMapping("/imputations/comparison-app-ppmc-advanced-database")
+    public ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedAppPpmcComparisonFromDB(
+        @RequestBody String requestDTO
+    ) throws IOException {
+        AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
+        if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
+            throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
+        }  else {
+            return getAdvancedComparisonFromDB(appRequestDTO);
+        }
+    }
+
+    private ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO) {
+        List<ImputationComparatorAdvancedDTO> advancedComparatorDTOS = imputationService.getAdvancedComparisonFromDB(appRequestDTO, PPMC_IMPUTATION_TYPE);
+        if(advancedComparatorDTOS.isEmpty()){
+            throw new BadRequestAlertException("upload a ppmc file", ENTITY_NAME, NEW_UPLOAD);
+        }
+        return ResponseEntity.ok().body(advancedComparatorDTOS);
     }
 
     @PostMapping("/imputations/notify")

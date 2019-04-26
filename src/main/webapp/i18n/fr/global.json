@@ -159,7 +159,8 @@
         "different_years": "Veuillez sélectionner les dates de la même année!",
         "extension_support": "Ce type de fichier n'est pas supporté, veuillez sélectionner une des extensions : 'xsl', 'xslx'",
         "invalidPPMC": "Désolé, ce fichier n'est pas un fichier PPMC valide!",
-        "differentMonths": "Désolé, le mois sélectionné et celui du ficher doivent être les mêmes!"
+        "differentMonths": "Désolé, le mois sélectionné et celui du ficher doivent être les mêmes!",
+        "newUpload": "Aucun historique ne correspond a ces paramétres, veuillez uploader un nouveau fichier PPMC."
     },
     "footer": "©SQLI Group 2017 - Tous droits réservés"
 }
