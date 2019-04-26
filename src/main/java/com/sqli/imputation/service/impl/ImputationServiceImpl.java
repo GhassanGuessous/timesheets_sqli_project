@@ -124,7 +124,9 @@ public class ImputationServiceImpl implements ImputationService {
      */
     private void update(Imputation imputation, Team team) {
         if (team == null) throw new RuntimeException("Team can not be null");
-        Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByRequestedParams(team.getAgresso(), imputation.getMonth(), imputation.getYear(), imputation.getImputationType().getName());
+        Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByRequestedParams(
+            team.getAgresso(), imputation.getMonth(), imputation.getYear(), imputation.getImputationType().getName()
+        );
         if (monthlyImputations.isEmpty()) {
             save(imputation);
         } else {
@@ -219,10 +221,11 @@ public class ImputationServiceImpl implements ImputationService {
      * @return
      */
     @Override
-    public Optional<Imputation> getPpmcImputation(MultipartFile file) {
-        Optional<Imputation> ppmcImputation = ppmcImputationConverterService.getPpmcImputationFromExcelFile(file);
+    public Optional<Imputation> getPpmcImputation(MultipartFile file, String agresso) {
+        Team team = teamRepository.findByAgressoLike(agresso);
+        Optional<Imputation> ppmcImputation = ppmcImputationConverterService.getPpmcImputationFromExcelFile(file, team);
         if(ppmcImputation.isPresent()){
-            save(ppmcImputation.get());
+            update(ppmcImputation.get(), team);
         }
         return ppmcImputation;
     }
@@ -272,7 +275,7 @@ public class ImputationServiceImpl implements ImputationService {
      */
     @Override
     public Object[] compareAppPpmc(MultipartFile file, AppRequestDTO appRequestDTO) {
-        Optional<Imputation> ppmcImputation = getPpmcImputation(file);
+        Optional<Imputation> ppmcImputation = getPpmcImputation(file, appRequestDTO.getAgresso());
         if (ppmcImputation.isPresent()) {
             if (!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
                 return new Object[]{Collections.emptyList(), INCOMPATIBLE_MONTHS_STATUS};
@@ -296,7 +299,7 @@ public class ImputationServiceImpl implements ImputationService {
      */
     @Override
     public Object[] compareAppPpmcAdvanced(MultipartFile file, AppRequestDTO appRequestDTO) {
-        Optional<Imputation> ppmcImputation = getPpmcImputation(file);
+        Optional<Imputation> ppmcImputation = getPpmcImputation(file, appRequestDTO.getAgresso());
         if (ppmcImputation.isPresent()) {
             if (!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
                 return new Object[]{Collections.emptyList(), INCOMPATIBLE_MONTHS_STATUS};
@@ -335,7 +338,9 @@ public class ImputationServiceImpl implements ImputationService {
 
     @Override
     public Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String ppmcImputationType) {
-        Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByRequestedParams(appRequestDTO.getAgresso(), appRequestDTO.getMonth(), appRequestDTO.getYear(), ppmcImputationType);
+        Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByRequestedParams(
+            appRequestDTO.getAgresso(), appRequestDTO.getMonth(), appRequestDTO.getYear(), ppmcImputationType
+        );
         if (!monthlyImputations.isEmpty()) {
             return createImputation(appRequestDTO, ppmcImputationType, monthlyImputations);
         }

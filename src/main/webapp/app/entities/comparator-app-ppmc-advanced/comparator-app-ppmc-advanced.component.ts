@@ -86,7 +86,6 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
                 }
             );
         } else {
-            console.log(this.appRequestBody);
             this.comparatorAppPpmcAdvancedService.getAdvancedComparisonFromDB(this.appRequestBody).subscribe(res => {
                 this.comparator = res.body;
                 this.initializeDays();

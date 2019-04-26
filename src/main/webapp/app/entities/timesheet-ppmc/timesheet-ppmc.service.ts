@@ -3,21 +3,20 @@ import { HttpClient, HttpResponse, HttpRequest, HttpEvent } from '@angular/commo
 import { Observable } from 'rxjs';
 
 import { SERVER_API_URL } from 'app/app.constants';
+import { AppRequestBody } from 'app/shared/model/app-request-body';
 
 @Injectable({ providedIn: 'root' })
 export class TimesheetPpmcService {
     public resourceUrl = SERVER_API_URL + 'api/imputations/ppmc';
+    public resourcePpmcDBUrl = SERVER_API_URL + 'api/imputations/ppmc-database';
 
     constructor(protected http: HttpClient) {}
 
-    // findTbpChargeByTeam(tbpRequestBody: ITbpRequestBody): Observable<EntityResponseType> {
-    //     return this.http.post<any>(this.resourceUrl, tbpRequestBody, { observe: 'response' });
-    // }
-
-    pushFileToStorage(file: File): Observable<HttpEvent<{}>> {
+    getPpmcTimeSheet(file: File, appRequestBody: AppRequestBody): Observable<HttpEvent<{}>> {
         const formdata: FormData = new FormData();
 
         formdata.append('file', file);
+        formdata.append('appRequestBody', JSON.stringify(appRequestBody));
         const req = new HttpRequest('POST', this.resourceUrl, formdata, {
             reportProgress: true,
             responseType: 'json'
@@ -26,7 +25,7 @@ export class TimesheetPpmcService {
         return this.http.request(req);
     }
 
-    // getFiles(): Observable<any> {
-    //     return this.http.get('/getallfiles');
-    // }
+    getPpmcTimeSheetFromDB(appRequestBody: AppRequestBody) {
+        return this.http.post<any>(this.resourcePpmcDBUrl, appRequestBody, { observe: 'response' });
+    }
 }
