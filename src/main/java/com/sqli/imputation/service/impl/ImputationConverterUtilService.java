@@ -20,8 +20,8 @@ public class ImputationConverterUtilService {
     private ImputationTypeRepository imputationTypeRepository;
 
     public CollaboratorMonthlyImputation getCollabMonthlyImputation(Imputation imputation, Collaborator collaborator) {
-        if (isMonthlyImputationExistForCurrentCollab(imputation, collaborator)) {
-            return findMonthlyImputationByCollab(imputation, collaborator);
+        if (isMonthlyImputationExistForCurrentCollab(imputation.getMonthlyImputations(), collaborator)) {
+            return findMonthlyImputationByCollab(imputation.getMonthlyImputations(), collaborator);
         }
         return createMonthlyImputation(imputation, collaborator);
     }
@@ -34,19 +34,29 @@ public class ImputationConverterUtilService {
         monthlyImputation.setTotal(monthlyImputation.getTotal() + charge);
     }
 
-    private CollaboratorMonthlyImputation findMonthlyImputationByCollab(Imputation imputation, Collaborator collaborator) {
-        return imputation.getMonthlyImputations().stream().filter(
+    public boolean isMonthlyImputationExistForCurrentCollab(Set<CollaboratorMonthlyImputation> monthlyImputations, Collaborator collaborator) {
+        return monthlyImputations.stream()
+            .anyMatch(collaboratorMonthlyImputation -> collaboratorMonthlyImputation.getCollaborator().equals(collaborator));
+    }
+
+    public CollaboratorMonthlyImputation findMonthlyImputationByCollab(Set<CollaboratorMonthlyImputation> monthlyImputations, Collaborator collaborator) {
+        return monthlyImputations.stream().filter(
             collaboratorMonthlyImputation -> collaboratorMonthlyImputation.getCollaborator().equals(collaborator)
         ).findFirst().get();
     }
 
-    public boolean isMonthlyImputationExistForCurrentCollab(Imputation imputation, Collaborator collaborator) {
-        return imputation.getMonthlyImputations().stream()
-            .anyMatch(collaboratorMonthlyImputation -> collaboratorMonthlyImputation.getCollaborator().equals(collaborator));
+    public boolean isDailyImputationExist(Set<CollaboratorDailyImputation> dailyImputations, int day) {
+        return dailyImputations.stream()
+            .anyMatch(collaboratorMonthlyImputation -> collaboratorMonthlyImputation.getDay().equals(day));
+    }
+    public CollaboratorDailyImputation findDailyImputationByCollab(Set<CollaboratorDailyImputation> dailyImputations, int day) {
+        return dailyImputations.stream().filter(
+            collaboratorMonthlyImputation -> collaboratorMonthlyImputation.getDay().equals(day)
+        ).findFirst().get();
     }
 
     public void addMonthlyImputationToImputation(Imputation imputation, CollaboratorMonthlyImputation monthlyImputation) {
-        if (isMonthlyImputationExistForCurrentCollab(imputation, monthlyImputation.getCollaborator())) {
+        if (isMonthlyImputationExistForCurrentCollab(imputation.getMonthlyImputations(), monthlyImputation.getCollaborator())) {
             replaceMonthlyImputation(imputation, monthlyImputation);
         } else {
             addMonthlyImputation(imputation, monthlyImputation);
@@ -59,9 +69,16 @@ public class ImputationConverterUtilService {
 
     private void replaceMonthlyImputation(Imputation imputation, CollaboratorMonthlyImputation monthlyImputation) {
         List<CollaboratorMonthlyImputation> monthlyImputationList = new ArrayList<>(imputation.getMonthlyImputations());
-        int index = monthlyImputationList.indexOf(findMonthlyImputationByCollab(imputation, monthlyImputation.getCollaborator()));
+        int index = monthlyImputationList.indexOf(findMonthlyImputationByCollab(imputation.getMonthlyImputations(), monthlyImputation.getCollaborator()));
         monthlyImputationList.set(index, monthlyImputation);
         imputation.setMonthlyImputations(new HashSet<>(monthlyImputationList));
+    }
+
+    public void replaceDailyImputation(CollaboratorMonthlyImputation monthlyImputation, CollaboratorDailyImputation dailyImputation) {
+        List<CollaboratorDailyImputation> dailyImputations = new ArrayList<>(monthlyImputation.getDailyImputations());
+        int index = dailyImputations.indexOf(findDailyImputationByCollab(monthlyImputation.getDailyImputations(), dailyImputation.getDay()));
+        dailyImputations.set(index, dailyImputation);
+        monthlyImputation.setDailyImputations(new HashSet<>(dailyImputations));
     }
 
     public void sortImputations(Imputation imputation) {

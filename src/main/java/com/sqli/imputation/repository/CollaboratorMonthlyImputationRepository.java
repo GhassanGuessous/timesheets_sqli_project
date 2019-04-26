@@ -1,13 +1,11 @@
 package com.sqli.imputation.repository;
 
 import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
-import com.sqli.imputation.domain.Imputation;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 
 /**
@@ -25,7 +23,5 @@ public interface CollaboratorMonthlyImputationRepository extends JpaRepository<C
             "AND m.imputation.year = :year " +
             "AND m.imputation.month = :month"
     )
-    Optional<List<CollaboratorMonthlyImputation>> findByRequestedParams(
-        @Param("agresso") String agresso, @Param("month") int month, @Param("year") int year, @Param("type") String imputationType
-    );
+    Set<CollaboratorMonthlyImputation> findByRequestedParams(@Param("agresso") String agresso, @Param("month") int month, @Param("year") int year, @Param("type") String imputationType);
 }

@@ -1,6 +1,9 @@
 package com.sqli.imputation.service.impl;
 
+import com.sqli.imputation.domain.Team;
+import com.sqli.imputation.repository.TeamRepository;
 import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
+import com.sqli.imputation.domain.CollaboratorDailyImputation;
 import com.sqli.imputation.service.*;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.repository.ImputationRepository;
@@ -28,12 +31,18 @@ public class ImputationServiceImpl implements ImputationService {
     public static final int INCOMPATIBLE_MONTHS_STATUS = -1;
     public static final int ALL_GOOD_STATUS = 1;
     public static final int INVALID_FILE_STATUS = 0;
+    public static final int APP_INDEX = 0;
+    public static final int TBP_INDEX = 1;
     private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
     public static final int FIRST_ELEMENT_INDEX = 0;
 
     private final ImputationRepository imputationRepository;
     @Autowired
     private CollaboratorMonthlyImputationService monthlyImputationService;
+    @Autowired
+    private CollaboratorDailyImputationService dailyImputationService;
+    @Autowired
+    private TeamRepository teamRepository;
     @Autowired
     private AppParserService appParserService;
     @Autowired
@@ -66,7 +75,7 @@ public class ImputationServiceImpl implements ImputationService {
     @Override
     public Imputation save(Imputation imputation) {
         log.debug("Request to save Imputation : {}", imputation);
-        imputation= imputationRepository.save(imputation);
+        imputation = imputationRepository.save(imputation);
         monthlyImputationService.saveAll(imputation);
         return imputation;
     }
@@ -109,6 +118,63 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     /**
+     * Update the imputation by team.
+     *
+     * @param imputation the id of the entity
+     */
+    private void update(Imputation imputation, Team team) {
+        if (team == null) throw new RuntimeException("Team can not be null");
+        Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByRequestedParams(team.getAgresso(), imputation.getMonth(), imputation.getYear(), imputation.getImputationType().getName());
+        if (monthlyImputations.isEmpty()) {
+            save(imputation);
+        } else {
+            updateImputation(imputation, monthlyImputations);
+        }
+    }
+
+    private void updateImputation(Imputation imputation, Set<CollaboratorMonthlyImputation> monthlyImputations) {
+        imputation.getMonthlyImputations().forEach(monthlyImputation -> {
+            if (utilService.isMonthlyImputationExistForCurrentCollab(monthlyImputations, monthlyImputation.getCollaborator())) {
+                updateMonthlyImputation(monthlyImputations, monthlyImputation);
+            } else {
+                addNewMonthlyImputation(monthlyImputations, monthlyImputation);
+            }
+        });
+    }
+
+    private void addNewMonthlyImputation(Set<CollaboratorMonthlyImputation> monthlyImputations, CollaboratorMonthlyImputation monthlyImputation) {
+        monthlyImputation.setImputation(monthlyImputations.iterator().next().getImputation());
+        monthlyImputationService.save(monthlyImputation);
+    }
+
+    private void updateMonthlyImputation(Set<CollaboratorMonthlyImputation> monthlyImputations, CollaboratorMonthlyImputation monthlyImputation) {
+        CollaboratorMonthlyImputation monthlyFromDB = utilService.findMonthlyImputationByCollab(monthlyImputations, monthlyImputation.getCollaborator());
+        monthlyImputation.getDailyImputations().forEach(dailyImputation -> {
+            if (utilService.isDailyImputationExist(monthlyFromDB.getDailyImputations(), dailyImputation.getDay())) {
+                updateDailyImputation(monthlyFromDB, dailyImputation);
+            } else {
+                addNewDailyImputation(monthlyFromDB, dailyImputation);
+            }
+        });
+        monthlyImputationService.save(monthlyFromDB);
+    }
+
+    private void addNewDailyImputation(CollaboratorMonthlyImputation monthlyFromDB, CollaboratorDailyImputation dailyImputation) {
+        dailyImputation.setCollaboratorMonthlyImputation(monthlyFromDB);
+        utilService.addDailyToMonthlyImputation(monthlyFromDB, dailyImputationService.save(dailyImputation));
+        utilService.setTotalImputationOfCollab(monthlyFromDB, dailyImputation.getCharge());
+    }
+
+    private void updateDailyImputation(CollaboratorMonthlyImputation monthlyFromDB, CollaboratorDailyImputation dailyImputation) {
+        CollaboratorDailyImputation dailyFromDB = utilService.findDailyImputationByCollab(monthlyFromDB.getDailyImputations(), dailyImputation.getDay());
+        if (!dailyFromDB.getCharge().equals(dailyImputation.getCharge())) {
+            utilService.setTotalImputationOfCollab(monthlyFromDB, dailyImputation.getCharge() - dailyFromDB.getCharge());
+            dailyFromDB.setCharge(dailyImputation.getCharge());
+            utilService.replaceDailyImputation(monthlyFromDB, dailyFromDB);
+        }
+    }
+
+    /**
      * Get the App imputations.
      *
      * @param appRequestDTO the app imputation request
@@ -122,7 +188,7 @@ public class ImputationServiceImpl implements ImputationService {
             List<AppChargeDTO> appChargeDTOS = appParserService.parse();
             Imputation imputation = appConverterService.convert(dto, appChargeDTOS);
             imputations.add(imputation);
-//            save(imputation);
+            update(imputation, teamRepository.findByAgressoLike(appRequestDTO.getAgresso()));
         });
         return imputations;
     }
@@ -141,7 +207,7 @@ public class ImputationServiceImpl implements ImputationService {
             List<ChargeTeamDTO> chargeTeamDTOS = tbpResourceService.getTeamCharges(requestBody).getBody().getData().getCharge();
             Imputation imputation = tbpImputationConverterService.convert(chargeTeamDTOS, requestBody);
             imputations.add(imputation);
-            save(imputation);
+            update(imputation, teamRepository.findByIdTbpLike(tbpRequestBodyDTO.getIdTbp()));
         });
         return imputations;
     }
@@ -161,15 +227,16 @@ public class ImputationServiceImpl implements ImputationService {
         return ppmcImputation;
     }
 
+    /**
+     * Get comparison of APP & TBP imputataions
+     *
+     * @param appTbpRequest
+     * @return
+     */
     @Override
     public List<ImputationComparatorDTO> compareAppAndTbp(AppTbpRequestBodyDTO appTbpRequest) {
-        AppRequestDTO appRequestDTO = requestBodyFactory.createAppRequestDTO(appTbpRequest.getTeam().getAgresso(), appTbpRequest.getYear(), appTbpRequest.getMonth());
-        TbpRequestBodyDTO tbpRequestBodyDTO = requestBodyFactory.createTbpRequestBodyDTO(appTbpRequest.getTeam().getIdTbp(), appTbpRequest.getYear(), appTbpRequest.getMonth());
-
-        Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
-        Imputation tbpImputation = getTbpImputation(tbpRequestBodyDTO).get(FIRST_ELEMENT_INDEX);
-        List<ImputationComparatorDTO> comparatorDTOS = utilService.compareImputations(appImputation, tbpImputation);
-        return comparatorDTOS;
+        Imputation[] imputations = getImputationToCompare(appTbpRequest);
+        return utilService.compareImputations(imputations[APP_INDEX], imputations[TBP_INDEX]);
     }
 
     /**
@@ -180,13 +247,17 @@ public class ImputationServiceImpl implements ImputationService {
      */
     @Override
     public List<ImputationComparatorAdvancedDTO> compareAppAndTbpAdvanced(AppTbpRequestBodyDTO appTbpRequest) {
+        Imputation[] imputations = getImputationToCompare(appTbpRequest);
+        return utilService.compareImputationsAdvanced(imputations[APP_INDEX], imputations[TBP_INDEX]);
+    }
+
+    private Imputation[] getImputationToCompare(AppTbpRequestBodyDTO appTbpRequest) {
         AppRequestDTO appRequestDTO = requestBodyFactory.createAppRequestDTO(appTbpRequest.getTeam().getAgresso(), appTbpRequest.getYear(), appTbpRequest.getMonth());
         TbpRequestBodyDTO tbpRequestBodyDTO = requestBodyFactory.createTbpRequestBodyDTO(appTbpRequest.getTeam().getIdTbp(), appTbpRequest.getYear(), appTbpRequest.getMonth());
 
         Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
         Imputation tbpImputation = getTbpImputation(tbpRequestBodyDTO).get(FIRST_ELEMENT_INDEX);
-        List<ImputationComparatorAdvancedDTO> comparatorDTOS = utilService.compareImputationsAdvanced(appImputation, tbpImputation);
-        return comparatorDTOS;
+        return new Imputation[]{appImputation, tbpImputation};
     }
 
     /**
@@ -264,20 +335,18 @@ public class ImputationServiceImpl implements ImputationService {
 
     @Override
     public Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String ppmcImputationType) {
-        Optional<List<CollaboratorMonthlyImputation>> monthlyImputations = monthlyImputationService.findByRequestedParams(
-            appRequestDTO.getAgresso(), appRequestDTO.getMonth(), appRequestDTO.getYear(), ppmcImputationType
-        );
-        if(monthlyImputations.isPresent()){
-            return createImputation(appRequestDTO, ppmcImputationType, monthlyImputations.get());
+        Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByRequestedParams(appRequestDTO.getAgresso(), appRequestDTO.getMonth(), appRequestDTO.getYear(), ppmcImputationType);
+        if (!monthlyImputations.isEmpty()) {
+            return createImputation(appRequestDTO, ppmcImputationType, monthlyImputations);
         }
         return Optional.empty();
     }
 
-    private Optional<Imputation> createImputation(AppRequestDTO appRequestDTO, String ppmcImputationType, List<CollaboratorMonthlyImputation> monthlyImputations) {
+    private Optional<Imputation> createImputation(AppRequestDTO appRequestDTO, String ppmcImputationType, Set<CollaboratorMonthlyImputation> monthlyImputations) {
         Imputation imputation = utilService.createImputation(
             appRequestDTO.getYear(), appRequestDTO.getMonth(), utilService.findImputationTypeByNameLike(ppmcImputationType)
         );
-        imputation.setMonthlyImputations(new HashSet<>(monthlyImputations));
+        imputation.setMonthlyImputations(monthlyImputations);
         return Optional.of(imputation);
     }
 }
