@@ -200,7 +200,7 @@ public class ImputationServiceImpl implements ImputationService {
      * # 1 : all good
      */
     @Override
-    public Object[] compare_app_ppmc(MultipartFile file, AppRequestDTO appRequestDTO) {
+    public Object[] compareAppPpmc(MultipartFile file, AppRequestDTO appRequestDTO) {
         Optional<Imputation> ppmcImputation = getPpmcImputation(file);
         if (ppmcImputation.isPresent()) {
             if (!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
@@ -224,7 +224,7 @@ public class ImputationServiceImpl implements ImputationService {
      * # 1 : all good
      */
     @Override
-    public Object[] compare_app_ppmc_advanced(MultipartFile file, AppRequestDTO appRequestDTO) {
+    public Object[] compareAppPpmcAdvanced(MultipartFile file, AppRequestDTO appRequestDTO) {
         Optional<Imputation> ppmcImputation = getPpmcImputation(file);
         if (ppmcImputation.isPresent()) {
             if (!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
