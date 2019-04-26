@@ -3,12 +3,12 @@ package com.sqli.imputation.service;
 import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
 
 import com.sqli.imputation.domain.Imputation;
-import com.sqli.imputation.service.dto.AppRequestDTO;
-import com.sqli.imputation.domain.Imputation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service Interface for managing CollaboratorMonthlyImputation.
@@ -47,7 +47,7 @@ public interface CollaboratorMonthlyImputationService {
      */
     void delete(Long id);
 
-    Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String imputationType);
+    Set<CollaboratorMonthlyImputation> findByRequestedParams(String agresso, int month, int year, String imputationType);
 
     /**
      * save all the imputations.

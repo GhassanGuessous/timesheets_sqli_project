@@ -23,4 +23,8 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     Page<Team> findByKey(@Param("key") String key, Pageable pageable);
 
     Optional<Team> findByDeliveryCoordinatorId(Long id);
+
+    Team findByIdTbpLike(String idTbp);
+
+    Team findByAgressoLike(String agresso);
 }

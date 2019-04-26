@@ -1,12 +1,10 @@
 package com.sqli.imputation.service.impl;
 
 import com.sqli.imputation.domain.Imputation;
-import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.service.CollaboratorDailyImputationService;
 import com.sqli.imputation.service.CollaboratorMonthlyImputationService;
 import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
 import com.sqli.imputation.repository.CollaboratorMonthlyImputationRepository;
-import com.sqli.imputation.service.dto.AppRequestDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service Implementation for managing CollaboratorMonthlyImputation.
@@ -48,7 +46,9 @@ public class CollaboratorMonthlyImputationServiceImpl implements CollaboratorMon
     @Override
     public CollaboratorMonthlyImputation save(CollaboratorMonthlyImputation collaboratorMonthlyImputation) {
         log.debug("Request to save CollaboratorMonthlyImputation : {}", collaboratorMonthlyImputation);
-        return collaboratorMonthlyImputationRepository.save(collaboratorMonthlyImputation);
+        CollaboratorMonthlyImputation monthlyImputation = collaboratorMonthlyImputationRepository.save(collaboratorMonthlyImputation);
+        dailyImputationService.saveAll(monthlyImputation);
+        return monthlyImputation;
     }
 
     /**
@@ -90,18 +90,8 @@ public class CollaboratorMonthlyImputationServiceImpl implements CollaboratorMon
     }
 
     @Override
-    public Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String imputationType) {
-        Optional<List<CollaboratorMonthlyImputation>> monthlyImputations = collaboratorMonthlyImputationRepository.findByRequestedParams(
-            appRequestDTO.getAgresso(), appRequestDTO.getMonth(), appRequestDTO.getYear(), imputationType
-        );
-        if(monthlyImputations.isPresent()){
-            Imputation imputation = utilService.createImputation(
-                appRequestDTO.getYear(), appRequestDTO.getMonth(), utilService.findImputationTypeByNameLike(imputationType)
-            );
-            imputation.setMonthlyImputations(new HashSet<>(monthlyImputations.get()));
-            return Optional.of(imputation);
-        }
-        return Optional.empty();
+    public Set<CollaboratorMonthlyImputation> findByRequestedParams(String agresso, int month, int year, String imputationType) {
+        return collaboratorMonthlyImputationRepository.findByRequestedParams(agresso, month, year, imputationType);
     }
 
     /**
@@ -113,8 +103,7 @@ public class CollaboratorMonthlyImputationServiceImpl implements CollaboratorMon
     public void saveAll(Imputation imputation) {
         imputation.getMonthlyImputations().forEach(monthlyImputation -> {
             monthlyImputation.setImputation(imputation);
-            monthlyImputation = save(monthlyImputation);
-            dailyImputationService.saveAll(monthlyImputation);
+            save(monthlyImputation);
         });
     }
 }
