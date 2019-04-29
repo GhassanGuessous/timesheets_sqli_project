@@ -30,7 +30,9 @@
                 "advanced-app-vs-tbp": "APP VS TBP - Advanced",
                 "comparator-app-ppmc": "APP vs PPMC",
                 "comparator-app-ppmc-advanced": "APP vs PPMC - Advanced",
-                "compare": "compare"
+                "compare": "compare",
+                "upload_getTimesheet": "Upload & get PPMC timesheet",
+                "getTimesheet": "Get PPMC timesheet"
             },
             "account": {
                 "main": "Account",

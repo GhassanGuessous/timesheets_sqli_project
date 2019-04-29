@@ -33,8 +33,8 @@ public class ImputationResource {
 
     private final Logger log = LoggerFactory.getLogger(ImputationResource.class);
     public static final String PPMC_IMPUTATION_TYPE = "PPMC";
-    public static final String NEW_UPLOAD = "newUpload";
-    public static final String UPLOAD_A_PPMC_FILE_MESSAGE = "upload a ppmc file";
+    private static final String NEW_UPLOAD = "newUpload";
+    private static final String UPLOAD_A_PPMC_FILE_MESSAGE = "upload a ppmc file";
     private static final int INCOMPATIBLE_MONTHS_STATUS = -1;
     private static final int STATUS_POSITION = 1;
     private static final int LIST_DTOS_POSITION = 0;
@@ -312,7 +312,7 @@ public class ImputationResource {
 
     private ResponseEntity<List<ImputationComparatorDTO>> getComparisonFromDB(AppRequestDTO appRequestDTO) {
         List<ImputationComparatorDTO> comparatorDTOS = imputationService.getComparisonFromDB(appRequestDTO, PPMC_IMPUTATION_TYPE);
-        if(comparatorDTOS.isEmpty()){
+        if(comparatorDTOS.isEmpty()) {
             throw new BadRequestAlertException(UPLOAD_A_PPMC_FILE_MESSAGE, ENTITY_NAME, NEW_UPLOAD);
         }
         return ResponseEntity.ok().body(comparatorDTOS);
@@ -328,14 +328,14 @@ public class ImputationResource {
     public ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedAppPpmcComparisonFromDB(@RequestBody AppRequestDTO appRequestDTO){
         if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
-        }  else {
+        } else {
             return getAdvancedComparisonFromDB(appRequestDTO);
         }
     }
 
     private ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO) {
         List<ImputationComparatorAdvancedDTO> advancedComparatorDTOS = imputationService.getAdvancedComparisonFromDB(appRequestDTO, PPMC_IMPUTATION_TYPE);
-        if(advancedComparatorDTOS.isEmpty()){
+        if(advancedComparatorDTOS.isEmpty()) {
             throw new BadRequestAlertException(UPLOAD_A_PPMC_FILE_MESSAGE, ENTITY_NAME, NEW_UPLOAD);
         }
         return ResponseEntity.ok().body(advancedComparatorDTOS);

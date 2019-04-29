@@ -30,7 +30,9 @@
                 "compare": "comparer",
                 "comparison": "Comparaison",
                 "comparator-app-ppmc": "APP vs PPMC",
-                "comparator-app-ppmc-advanced": "APP vs PPMC - Détaillé"
+                "comparator-app-ppmc-advanced": "APP vs PPMC - Détaillé",
+                "upload_getTimesheet": "Upload & get PPMC timesheet",
+                "getTimesheet": "Get PPMC timesheet"
             },
             "account": {
                 "main": "Compte",

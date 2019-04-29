@@ -52,15 +52,15 @@
                 <div class="form-group tbp-import-form" *ngIf="isNewUpload">
                     <input type="file" (change)="selectFile($event)">
                     <button class="btn btn-success" [disabled]="!selectedFiles">
-                        <span jhiTranslate="global.menu.entities.compare">
+                        <span jhiTranslate="global.menu.entities.upload_getTimesheet">
                             Upload & Get PPMC Timesheet
                         </span>
                     </button>
                 </div>
                 <div class="form-group tbp-import-form" *ngIf="!isNewUpload">
                     <button type="submit" class="btn btn-success">
-                        <span jhiTranslate="global.menu.entities.compare">
-                            Upload & Get PPMC Timesheet
+                        <span jhiTranslate="global.menu.entities.getTimesheet">
+                            Get PPMC Timesheet
                         </span>
                     </button>
                 </div>

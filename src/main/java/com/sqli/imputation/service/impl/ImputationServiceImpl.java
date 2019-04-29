@@ -4,6 +4,7 @@ import com.sqli.imputation.domain.Team;
 import com.sqli.imputation.repository.TeamRepository;
 import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
 import com.sqli.imputation.domain.CollaboratorDailyImputation;
+import com.sqli.imputation.security.SecurityUtils;
 import com.sqli.imputation.service.*;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.repository.ImputationRepository;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing Imputation.
@@ -28,13 +30,15 @@ import java.util.*;
 @Transactional
 public class ImputationServiceImpl implements ImputationService {
 
-    public static final int INCOMPATIBLE_MONTHS_STATUS = -1;
-    public static final int ALL_GOOD_STATUS = 1;
-    public static final int INVALID_FILE_STATUS = 0;
-    public static final int APP_INDEX = 0;
-    public static final int TBP_INDEX = 1;
     private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
-    public static final int FIRST_ELEMENT_INDEX = 0;
+
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
+    private static final int INCOMPATIBLE_MONTHS_STATUS = -1;
+    private static final int ALL_GOOD_STATUS = 1;
+    private static final int INVALID_FILE_STATUS = 0;
+    private static final int APP_INDEX = 0;
+    private static final int TBP_INDEX = 1;
+    private static final int FIRST_ELEMENT_INDEX = 0;
 
     private final ImputationRepository imputationRepository;
     @Autowired
@@ -225,9 +229,25 @@ public class ImputationServiceImpl implements ImputationService {
         Team team = teamRepository.findByAgressoLike(agresso);
         Optional<Imputation> ppmcImputation = ppmcImputationConverterService.getPpmcImputationFromExcelFile(file, team);
         if(ppmcImputation.isPresent()){
+            //if admin update all
             update(ppmcImputation.get(), team);
+            getOnlySelectedTeamWhenIsAdmin(ppmcImputation.get(), team);
         }
         return ppmcImputation;
+    }
+
+    private void getOnlySelectedTeamWhenIsAdmin(Imputation ppmcImputation, Team team) {
+        if(SecurityUtils.isCurrentUserInRole(ROLE_ADMIN)){
+            getOnlySelectedTeam(ppmcImputation, team);
+        }
+    }
+
+    private Imputation getOnlySelectedTeam(Imputation imputation, Team team) {
+        Set<CollaboratorMonthlyImputation> forSelectedTeam = imputation.getMonthlyImputations().stream().filter(
+            monthly -> monthly.getCollaborator().getTeam().getId().equals(team.getId())
+        ).collect(Collectors.toSet());
+        imputation.setMonthlyImputations(forSelectedTeam);
+        return imputation;
     }
 
     /**

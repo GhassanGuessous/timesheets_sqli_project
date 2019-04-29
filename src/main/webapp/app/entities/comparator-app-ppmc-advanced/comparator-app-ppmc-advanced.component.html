@@ -63,11 +63,11 @@
     <br/>
     <div>
         <div class="table-responsive" *ngIf="comparator">
-            <button class="btn btn-info btn-sm float-right" type="submit" (click)="notifyCollabsWithGap()">
+            <button class="btn btn-info btn-sm float-right" id="notify-all" type="submit" (click)="notifyCollabsWithGap()">
                 <fa-icon [icon]="'envelope'"></fa-icon>
                 <span jhiTranslate="imputationSqliApp.imputation.notifyAll">
-            Notify All
-            </span>
+                    Notify All
+                </span>
             </button>
             <table class="table table-bordered ">
                 <thead>

@@ -52,8 +52,8 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         });
     }
 
-    private selectFile(event) {
-        this.selectedFiles = event.target.files;
+    private isAdmin() {
+        return this.currentAccount.authorities.includes('ROLE_ADMIN');
     }
 
     private loadAll() {
@@ -69,30 +69,51 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         });
     }
 
+    private selectFile(event) {
+        this.selectedFiles = event.target.files;
+    }
+
     private compare() {
         this.appRequestBody.manDay = new Date(this.appRequestBody.year, this.appRequestBody.month, 0).getDate();
         if (this.selectedFiles !== undefined) {
             this.currentFileUpload = this.selectedFiles.item(0);
-            this.comparatorAppPpmcAdvancedService.getAdvancedComparison(this.currentFileUpload, this.appRequestBody).subscribe(
-                event => {
-                    if (event instanceof HttpResponse) {
-                        this.comparator = event.body;
-                        this.initializeDays();
-                        this.initNotifiableCollabs();
-                    }
-                },
-                error => {
-                    console.log(error);
-                }
-            );
+            this.getAdvancedComparison();
         } else {
-            this.comparatorAppPpmcAdvancedService.getAdvancedComparisonFromDB(this.appRequestBody).subscribe(res => {
-                this.comparator = res.body;
-                this.initializeDays();
-                this.initNotifiableCollabs();
-            });
+            this.getAdvancedComparisonFromDB();
         }
         this.selectedFiles = undefined;
+    }
+
+    private getAdvancedComparison() {
+        this.comparatorAppPpmcAdvancedService.getAdvancedComparison(this.currentFileUpload, this.appRequestBody).subscribe(
+            event => {
+                if (event instanceof HttpResponse) {
+                    this.comparator = event.body;
+                    this.initDaysAndNotifiableCollabs();
+                }
+            },
+            error => {
+                console.log(error);
+            }
+        );
+    }
+
+    private getAdvancedComparisonFromDB() {
+        this.comparatorAppPpmcAdvancedService.getAdvancedComparisonFromDB(this.appRequestBody).subscribe(res => {
+            this.comparator = res.body;
+            this.initDaysAndNotifiableCollabs();
+        });
+    }
+
+    private initDaysAndNotifiableCollabs() {
+        this.initializeDays();
+        this.initNotifiableCollabs();
+    }
+
+    private initializeDays() {
+        this.imputationDays = [];
+        this.addDaysFromMonthlyImputation();
+        this.removeDuplicates();
     }
 
     private initNotifiableCollabs() {
@@ -141,10 +162,6 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
 
     private getDefinedOne(appDaily, comparedDaily) {
         return appDaily ? appDaily : comparedDaily;
-    }
-
-    private isUndefined(daily): boolean {
-        return daily === undefined;
     }
 
     private getColor(element: IImputationComparatorAdvancedDTO, day: number): string {
@@ -213,6 +230,10 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         }
     }
 
+    private isUndefined(daily): boolean {
+        return daily === undefined;
+    }
+
     private updateNotification(
         collaborator: ICollaborator,
         appDaily: ICollaboratorDailyImputation,
@@ -228,10 +249,6 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
 
     private findNotificationByCollab(collaborator: ICollaborator): INotificationModel {
         return this.notifications.find(notif => notif.collaborator.id === collaborator.id);
-    }
-
-    private isAdmin() {
-        return this.currentAccount.authorities.includes('ROLE_ADMIN');
     }
 
     private initialize() {
@@ -254,12 +271,6 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         for (let i = 1; i <= lastMonthInYear; i++) {
             this.months.push(i);
         }
-    }
-
-    private initializeDays() {
-        this.imputationDays = [];
-        this.addDaysFromMonthlyImputation();
-        this.removeDuplicates();
     }
 
     private addDaysFromMonthlyImputation() {

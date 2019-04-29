@@ -237,3 +237,7 @@ ui bootstrap tweaks
 #isNewUploadForm {
     text-align: center;
 }
+
+#notify-all {
+    margin-bottom: 15px;
+}
