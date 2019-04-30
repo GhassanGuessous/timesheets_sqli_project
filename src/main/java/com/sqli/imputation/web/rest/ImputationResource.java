@@ -1,5 +1,6 @@
 package com.sqli.imputation.web.rest;
 
+import com.sqli.imputation.config.Constants;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.service.dto.*;
@@ -32,7 +33,7 @@ import java.util.*;
 public class ImputationResource {
 
     private final Logger log = LoggerFactory.getLogger(ImputationResource.class);
-    public static final String PPMC_IMPUTATION_TYPE = "PPMC";
+
     private static final String NEW_UPLOAD = "newUpload";
     private static final String UPLOAD_A_PPMC_FILE_MESSAGE = "upload a ppmc file";
     private static final int INCOMPATIBLE_MONTHS_STATUS = -1;
@@ -192,7 +193,7 @@ public class ImputationResource {
         if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else {
-            Optional<Imputation> ppmcImputation = imputationService.findByRequestedParams(appRequestDTO, PPMC_IMPUTATION_TYPE);
+            Optional<Imputation> ppmcImputation = imputationService.findByImputationAndTeam(appRequestDTO, Constants.PPMC_IMPUTATION_TYPE);
             if(!ppmcImputation.isPresent()){
                 throw new BadRequestAlertException(UPLOAD_A_PPMC_FILE_MESSAGE, ENTITY_NAME, NEW_UPLOAD);
             }
@@ -311,8 +312,8 @@ public class ImputationResource {
     }
 
     private ResponseEntity<List<ImputationComparatorDTO>> getComparisonFromDB(AppRequestDTO appRequestDTO) {
-        List<ImputationComparatorDTO> comparatorDTOS = imputationService.getComparisonFromDB(appRequestDTO, PPMC_IMPUTATION_TYPE);
-        if(comparatorDTOS.isEmpty()) {
+        List<ImputationComparatorDTO> comparatorDTOS = imputationService.getComparisonFromDB(appRequestDTO,Constants.PPMC_IMPUTATION_TYPE);
+        if(comparatorDTOS.isEmpty()){
             throw new BadRequestAlertException(UPLOAD_A_PPMC_FILE_MESSAGE, ENTITY_NAME, NEW_UPLOAD);
         }
         return ResponseEntity.ok().body(comparatorDTOS);
@@ -334,8 +335,8 @@ public class ImputationResource {
     }
 
     private ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO) {
-        List<ImputationComparatorAdvancedDTO> advancedComparatorDTOS = imputationService.getAdvancedComparisonFromDB(appRequestDTO, PPMC_IMPUTATION_TYPE);
-        if(advancedComparatorDTOS.isEmpty()) {
+        List<ImputationComparatorAdvancedDTO> advancedComparatorDTOS = imputationService.getAdvancedComparisonFromDB(appRequestDTO, Constants.PPMC_IMPUTATION_TYPE);
+        if(advancedComparatorDTOS.isEmpty()){
             throw new BadRequestAlertException(UPLOAD_A_PPMC_FILE_MESSAGE, ENTITY_NAME, NEW_UPLOAD);
         }
         return ResponseEntity.ok().body(advancedComparatorDTOS);

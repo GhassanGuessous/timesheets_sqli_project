@@ -69,9 +69,9 @@ public interface ImputationService {
 
     void sendNotifications(List<NotificationDTO> notifications);
 
-    Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String ppmcImputationType);
+    Optional<Imputation> findByImputationAndTeam(AppRequestDTO appRequestDTO, String ppmcImputationType);
 
-    List<ImputationComparatorDTO> getComparisonFromDB(AppRequestDTO appRequestDTO, String ppmcImputationType);
+    List<ImputationComparatorDTO> getComparisonFromDB(AppRequestDTO appRequestDTO, String imputationType);
 
-    List<ImputationComparatorAdvancedDTO> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO, String ppmcImputationType);
+    List<ImputationComparatorAdvancedDTO> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO, String imputationType);
 }

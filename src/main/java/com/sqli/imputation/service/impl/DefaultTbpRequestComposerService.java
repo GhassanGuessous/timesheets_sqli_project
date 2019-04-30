@@ -76,7 +76,7 @@ public class DefaultTbpRequestComposerService implements TbpRequestComposerServi
     private List<AppRequestDTO> getAppRequestDTOS(List<AppRequestDTO> appRequestDTOS, AppRequestDTO appRequestDTO) {
         appRequestDTOS.add(createFirstAppRequestDTO(appRequestDTO));
         setAppRequestForFirstMonth(appRequestDTO);
-        while (appRequestDTO.getManDay() > 1) {
+        while (appRequestDTO.getManDay() > 0) {
             appRequestDTOS.add(createAppRequestDTO(appRequestDTO));
             setAppRequest(appRequestDTO);
         }
@@ -129,7 +129,7 @@ public class DefaultTbpRequestComposerService implements TbpRequestComposerServi
     }
 
     private boolean isMultipleMonths(AppRequestDTO appRequestDTO) {
-        return remainingManDays(appRequestDTO) > 0;
+        return remainingManDays(appRequestDTO) > 1;
     }
 
     private int remainingManDays(AppRequestDTO appRequestDTO) {

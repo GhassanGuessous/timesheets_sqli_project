@@ -20,7 +20,6 @@
                 <label class="radio-inline"><input type="radio" name="newUpload" value="true" (click)="setIsNewUpload('true')" [checked]="true">Upload a new PPMC
                     file </label>
             </div>
-            <br/>
             <form class="form-inline" name="comparatorForm" role="form" novalidate
                   [ngSwitch]="isAdmin()" (ngSubmit)="upload()">
                 <div class="form-group tbp-import-form" *ngSwitchCase="true">
@@ -70,7 +69,7 @@
     <jhi-alert></jhi-alert>
     <br/>
     <div class=" table table-responsive" *ngIf="imputation">
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered table-hover table-sm">
             <thead>
             <tr>
                 <th><span>Collaborator</span>

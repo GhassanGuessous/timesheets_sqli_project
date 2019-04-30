@@ -2,7 +2,6 @@
     <h2 id="page-heading">
         <span jhiTranslate="global.menu.entities.comparator-app-ppmc-advanced">APP VS PPMC - Advanced</span>
     </h2>
-    <br/>
     <div class="row justify-content-center" *ngIf="allTeams || myTeam">
         <div>
             <jhi-alert-error></jhi-alert-error>
@@ -13,7 +12,6 @@
                 <label class="radio-inline"><input type="radio" name="newUpload" value="true" (click)="setIsNewUpload('true')" [checked]="true">Upload a new PPMC
                     file </label>
             </div>
-            <br/>
             <form class="form-inline" name="comparatorForm" role="form" novalidate
                   [ngSwitch]="isAdmin()" (ngSubmit)="compare()">
                 <div class="form-group tbp-import-form" *ngSwitchCase="true">
@@ -60,7 +58,6 @@
             </form>
         </div>
     </div>
-    <br/>
     <div>
         <div class="table-responsive" *ngIf="comparator">
             <button class="btn btn-info btn-sm float-right" id="notify-all" type="submit" (click)="notifyCollabsWithGap()">
@@ -69,16 +66,15 @@
                     Notify All
                 </span>
             </button>
-            <table class="table table-bordered ">
+            <table class="table table-bordered table-hover table-sm">
                 <thead>
                 <tr>
                     <th><span jhiTranslate="imputationSqliApp.imputation.collaborator">Collaborator</span>
                     </th>
-                    <th><span jhiTranslate="imputationSqliApp.imputationType.detail.title">Imputation type</span>
-                    </th>
-                    <th *ngFor="let day of imputationDays" [id]="day">{{day}}</th>
-                    <th><span jhiTranslate="imputationSqliApp.imputation.total">Total</span></th>
-                    <th><span jhiTranslate="imputationSqliApp.imputation.action">Action</span></th>
+                    <th><span jhiTranslate="imputationSqliApp.imputationType.detail.title">type</span></th>
+                    <th class="text-center" *ngFor="let day of imputationDays" [id]="day">{{day}}</th>
+                    <th class="text-center"><span jhiTranslate="imputationSqliApp.imputation.total">Total</span></th>
+                    <th class="text-center"><span jhiTranslate="imputationSqliApp.imputation.action">Action</span></th>
                 </tr>
                 </thead>
                 <tbody *ngFor="let element of comparator">
@@ -87,13 +83,13 @@
                         [routerLink]="['/collaborator', element.collaborator.id, 'view' ]">{{element.collaborator.lastname + ' ' + element.collaborator.firstname}}</a>
                     </th>
                     <th>App</th>
-                    <td *ngFor="let day of imputationDays" [id]="day"
+                    <td class="text-center" *ngFor="let day of imputationDays" [id]="day"
                         [ngStyle]="{backgroundColor: getColor(element, day)}">
                         <span
                             *ngFor="let daily of element.appMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}
                         </span>
                     </td>
-                    <td>
+                    <td class="text-center">
                         {{element.appMonthlyImputation.total}}
                     </td>
                     <td rowspan="2">
@@ -111,13 +107,13 @@
                 </tr>
                 <tr>
                     <th>PPMC</th>
-                    <td *ngFor="let day of imputationDays" [id]="day"
+                    <td class="text-center" *ngFor="let day of imputationDays" [id]="day"
                         [ngStyle]="{backgroundColor: getColor(element, day)}">
                         <span
                             *ngFor="let daily of element.comparedMonthlyImputation.dailyImputations">{{day == daily.day ? daily.charge : ''}}
                         </span>
                     </td>
-                    <td>
+                    <td class="text-center">
                         {{element.comparedMonthlyImputation.total}}
                     </td>
                 </tr>

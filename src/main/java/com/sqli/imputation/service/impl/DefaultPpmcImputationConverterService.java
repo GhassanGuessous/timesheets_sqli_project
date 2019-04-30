@@ -1,5 +1,6 @@
 package com.sqli.imputation.service.impl;
 
+import com.sqli.imputation.config.Constants;
 import com.sqli.imputation.domain.*;
 import com.sqli.imputation.repository.*;
 import com.sqli.imputation.security.SecurityUtils;
@@ -24,7 +25,6 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
 
     private static final int HEADER_INDEX = 0;
     private static final int FIRST_LINE_INDEX = 1;
-    private static final String PPMC_TYPE_NAME = "PPMC";
     private static final String OUT_OF_OFFICE = "Out of Office";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private static final String RESOURCE_USER_NAME = "Resource User Name";
@@ -157,7 +157,7 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
     }
 
     private Imputation createPpmcImputation(Sheet rows, Map<String, Integer> headerColumns) {
-        ImputationType imputationType = imputationConverterUtilService.findImputationTypeByNameLike(PPMC_TYPE_NAME);
+        ImputationType imputationType = imputationConverterUtilService.findImputationTypeByNameLike(Constants.PPMC_IMPUTATION_TYPE);
         Map<String, Integer> period = getPeriod(rows, headerColumns);
         return imputationConverterUtilService.createImputation(period.get(YEAR), period.get(MONTH), imputationType);
     }

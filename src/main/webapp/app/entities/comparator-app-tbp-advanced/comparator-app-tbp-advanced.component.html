@@ -46,24 +46,23 @@
     </div>
     <jhi-alert></jhi-alert>
     <br/>
-    <div>
+    <div class="container-fluid">
         <div class="table-responsive" *ngIf="comparator">
-            <button id="NotifyAll" (click)="notifyCollabsWithGap()"
+            <button id="notify-all" (click)="notifyCollabsWithGap()"
                     class="btn btn-info btn-sm float-right">
                 <fa-icon [icon]="'envelope'"></fa-icon>
                 <span jhiTranslate="imputationSqliApp.imputation.notifyAll">
                 Notify All
             </span>
             </button>
-            <table class="table table-bordered ">
+            <table class="table table-bordered table-hover table-sm">
                 <thead>
                 <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
-                    <th colspan="2"><span jhiTranslate="imputationSqliApp.imputation.collaborator">Collaborator</span>
+                    <th><span jhiTranslate="imputationSqliApp.imputation.collaborator">Collaborator</span>
                     </th>
-                    <!--<th><span jhiTranslate="imputationSqliApp.imputationType.detail.title">Imputation type</span>-->
-                    <!--</th>-->
+                    <th><span jhiTranslate="imputationSqliApp.imputationType.detail.title">type</span>
                     <th class="text-center" *ngFor="let day of imputationDays" [id]="day">{{day}}</th>
-                    <th><span jhiTranslate="imputationSqliApp.imputation.total">Total</span>
+                    <th class="text-center"><span jhiTranslate="imputationSqliApp.imputation.total">Total</span>
                     </th>
                     <th class="text-center"><span
                         jhiTranslate="imputationSqliApp.imputation.action">Action</span>
@@ -75,7 +74,7 @@
                     <th rowspan="2"><a
                         [routerLink]="['/collaborator', element.collaborator.id, 'view' ]">{{element.collaborator.lastname + ' ' + element.collaborator.firstname}}</a>
                     </th>
-                    <th class="text-center">App</th>
+                    <th>App</th>
                     <td class="text-center" *ngFor="let day of imputationDays" [id]="day"
                         [ngStyle]="{backgroundColor:getColor(element,day)}">
                         <span
@@ -95,7 +94,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th class="text-center">TBP</th>
+                    <th>TBP</th>
                     <td class="text-center" *ngFor="let day of imputationDays" [id]="day"
                         [ngStyle]="{backgroundColor:getColor(element,day)}">
                         <span

@@ -29,8 +29,6 @@ public class CollaboratorMonthlyImputationServiceImpl implements CollaboratorMon
     private final CollaboratorMonthlyImputationRepository collaboratorMonthlyImputationRepository;
     @Autowired
     private CollaboratorDailyImputationService dailyImputationService;
-    @Autowired
-    private ImputationConverterUtilService utilService;
 
     public CollaboratorMonthlyImputationServiceImpl(CollaboratorMonthlyImputationRepository collaboratorMonthlyImputationRepository) {
         this.collaboratorMonthlyImputationRepository = collaboratorMonthlyImputationRepository;
@@ -45,9 +43,9 @@ public class CollaboratorMonthlyImputationServiceImpl implements CollaboratorMon
     @Override
     public CollaboratorMonthlyImputation save(CollaboratorMonthlyImputation collaboratorMonthlyImputation) {
         log.debug("Request to save CollaboratorMonthlyImputation : {}", collaboratorMonthlyImputation);
-        CollaboratorMonthlyImputation monthlyImputation = collaboratorMonthlyImputationRepository.save(collaboratorMonthlyImputation);
-        dailyImputationService.saveAll(monthlyImputation);
-        return monthlyImputation;
+        collaboratorMonthlyImputation = collaboratorMonthlyImputationRepository.save(collaboratorMonthlyImputation);
+        dailyImputationService.saveAll(collaboratorMonthlyImputation);
+        return collaboratorMonthlyImputation;
     }
 
     /**
@@ -89,8 +87,13 @@ public class CollaboratorMonthlyImputationServiceImpl implements CollaboratorMon
     }
 
     @Override
-    public Set<CollaboratorMonthlyImputation> findByRequestedParams(String agresso, int month, int year, String imputationType) {
-        return collaboratorMonthlyImputationRepository.findByRequestedParams(agresso, month, year, imputationType);
+    public Set<CollaboratorMonthlyImputation> findByImputationAndTeam(String agresso, int month, int year, String imputationType) {
+        return collaboratorMonthlyImputationRepository.findByImputationAndTeam(agresso, month, year, imputationType);
+    }
+
+    @Override
+    public Set<CollaboratorMonthlyImputation> findByImputationParams(Imputation imputation) {
+        return collaboratorMonthlyImputationRepository.findByImputationParams(imputation.getMonth(),imputation.getYear(),imputation.getImputationType().getName());
     }
 
     /**
@@ -104,5 +107,17 @@ public class CollaboratorMonthlyImputationServiceImpl implements CollaboratorMon
             monthlyImputation.setImputation(imputation);
             save(monthlyImputation);
         });
+    }
+
+    /**
+     * Save a collaboratorMonthlyImputation.
+     *
+     * @param collaboratorMonthlyImputation the entity to update
+     * @return the updated entity
+     */
+    @Override
+    public CollaboratorMonthlyImputation update(CollaboratorMonthlyImputation collaboratorMonthlyImputation) {
+        log.debug("Request to update CollaboratorMonthlyImputation : {}", collaboratorMonthlyImputation);
+        return collaboratorMonthlyImputationRepository.save(collaboratorMonthlyImputation);
     }
 }

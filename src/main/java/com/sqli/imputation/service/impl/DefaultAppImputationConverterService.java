@@ -1,5 +1,6 @@
 package com.sqli.imputation.service.impl;
 
+import com.sqli.imputation.config.Constants;
 import com.sqli.imputation.domain.*;
 import com.sqli.imputation.repository.CorrespondenceRepository;
 import com.sqli.imputation.service.AppImputationConverterService;
@@ -12,8 +13,6 @@ import java.util.*;
 
 @Service
 public class DefaultAppImputationConverterService implements AppImputationConverterService {
-
-    private static final String APP_NAME = "APP";
 
     @Autowired
     private ImputationConverterUtilService imputationConverterUtilService;
@@ -29,7 +28,7 @@ public class DefaultAppImputationConverterService implements AppImputationConver
     }
 
     private Imputation createImputation(AppRequestDTO appRequestDTO) {
-        ImputationType imputationType = imputationConverterUtilService.findImputationTypeByNameLike(APP_NAME);
+        ImputationType imputationType = imputationConverterUtilService.findImputationTypeByNameLike(Constants.APP_IMPUTATION_TYPE);
         return imputationConverterUtilService.createImputation(appRequestDTO.getYear(), appRequestDTO.getMonth(), imputationType);
     }
 

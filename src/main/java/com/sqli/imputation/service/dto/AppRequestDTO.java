@@ -47,6 +47,12 @@ public class AppRequestDTO {
         this.manDay = manDay;
     }
 
+    public AppRequestDTO(String agresso, int year, int month) {
+        this.agresso = agresso;
+        this.year = year;
+        this.month = month;
+    }
+
     public void setManDay(int manDay) {
         this.manDay = manDay;
     }
