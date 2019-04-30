@@ -1,5 +1,6 @@
 package com.sqli.imputation.service.impl;
 
+import com.sqli.imputation.config.Constants;
 import com.sqli.imputation.domain.*;
 import com.sqli.imputation.repository.*;
 import com.sqli.imputation.security.SecurityUtils;
@@ -26,9 +27,8 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
 
     private static final int HEADER_INDEX = 0;
     private static final int FIRST_LINE_INDEX = 1;
-    private static final String PPMC_TYPE_NAME = "PPMC";
     private static final String OUT_OF_OFFICE = "Out of Office";
-    private static final String ROLE_DELCO = "ROLE_DELCO";
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private static final String RESOURCE_USER_NAME = "Resource User Name";
     private static final String PROJECT_REQUEST_MISC = "Project/Request/Misc";
     private static final String DAY = "Day";
@@ -51,10 +51,8 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
     private Map<String, Integer> headerColumns = new HashMap<>();
 
     @Override
-    public Optional<Imputation> getPpmcImputationFromExcelFile(MultipartFile file) {
+    public Optional<Imputation> getPpmcImputationFromExcelFile(MultipartFile file, Team team) {
         try {
-//            storageService.store(file);
-
             InputStream excelFile = file.getInputStream();
             Optional<Sheet> sheet = getWeeklyActualEffortSheet(file, excelFile);
             headerColumns = getHeaderCoumns(sheet.get());
@@ -65,7 +63,7 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
             Imputation imputation = createPpmcImputation(sheet.get(), headerColumns);
             createDailyImputationsForEachCollab(collaborators, excelImputationDTOS, imputation);
 
-            getImputationsOfConnectedDelcoTeamOnly(imputation);
+            getImputationsGivenConnectedUser(imputation, team);
             imputationConverterUtilService.sortImputations(imputation);
 
             excelFile.close();
@@ -85,11 +83,13 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
         return headerColumns;
     }
 
-    private void getImputationsOfConnectedDelcoTeamOnly(Imputation imputation) {
-        if(SecurityUtils.isCurrentUserInRole(ROLE_DELCO)){
+    private void getImputationsGivenConnectedUser(Imputation imputation, Team team) {
+        if(SecurityUtils.isCurrentUserInRole(ROLE_ADMIN)){
+            imputation.setMonthlyImputations(getTeamMembersOnly(imputation.getMonthlyImputations(), Optional.of(team)));
+        } else {
             Optional<User> user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());
-            Optional<Team> team = teamService.findOneByDelco(user.get().getId());
-            imputation.setMonthlyImputations(getTeamMembersOnly(imputation.getMonthlyImputations(), team));
+            Optional<Team> delcoTeam = teamService.findOneByDelco(user.get().getId());
+            imputation.setMonthlyImputations(getTeamMembersOnly(imputation.getMonthlyImputations(), delcoTeam));
         }
     }
 
@@ -167,7 +167,7 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
     }
 
     private Imputation createPpmcImputation(Sheet rows, Map<String, Integer> headerColumns) {
-        ImputationType imputationType = imputationConverterUtilService.findImputationTypeByNameLike(PPMC_TYPE_NAME);
+        ImputationType imputationType = imputationConverterUtilService.findImputationTypeByNameLike(Constants.PPMC_IMPUTATION_TYPE);
         Map<String, Integer> period = getPeriod(rows, headerColumns);
         return imputationConverterUtilService.createImputation(period.get(YEAR), period.get(MONTH), imputationType);
     }

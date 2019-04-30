@@ -79,6 +79,9 @@
                     <th jhiSortBy="agresso"><span jhiTranslate="imputationSqliApp.team.agresso">Agresso</span>
                         <fa-icon [icon]="'sort'"></fa-icon>
                     </th>
+                    <th jhiSortBy="idTbp"><span>TBP-ID</span>
+                        <fa-icon [icon]="'sort'"></fa-icon>
+                    </th>
                     <th jhiSortBy="projectType.name"><span jhiTranslate="imputationSqliApp.team.projectType">Project Type</span>
                         <fa-icon [icon]="'sort'"></fa-icon>
                     </th>
@@ -94,6 +97,7 @@
                     <td><a [routerLink]="['/team', team.id, 'view' ]">{{team.id}}</a></td>
                     <td>{{team.name}}</td>
                     <td>{{team.agresso}}</td>
+                    <td>{{team.idTbp}}</td>
                     <td>
                         <div *ngIf="team.projectType">
                             <a

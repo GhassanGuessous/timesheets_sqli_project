@@ -87,8 +87,13 @@ public class CollaboratorMonthlyImputationServiceImpl implements CollaboratorMon
     }
 
     @Override
-    public Set<CollaboratorMonthlyImputation> findByRequestedParams(String agresso, int month, int year, String imputationType) {
-        return collaboratorMonthlyImputationRepository.findByRequestedParams(agresso, month, year, imputationType);
+    public Set<CollaboratorMonthlyImputation> findByImputationAndTeam(String agresso, int month, int year, String imputationType) {
+        return collaboratorMonthlyImputationRepository.findByImputationAndTeam(agresso, month, year, imputationType);
+    }
+
+    @Override
+    public Set<CollaboratorMonthlyImputation> findByImputationParams(Imputation imputation) {
+        return collaboratorMonthlyImputationRepository.findByImputationParams(imputation.getMonth(),imputation.getYear(),imputation.getImputationType().getName());
     }
 
     /**

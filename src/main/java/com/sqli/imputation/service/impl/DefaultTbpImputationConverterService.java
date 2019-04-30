@@ -1,5 +1,6 @@
 package com.sqli.imputation.service.impl;
 
+import com.sqli.imputation.config.Constants;
 import com.sqli.imputation.domain.*;
 import com.sqli.imputation.repository.CorrespondenceRepository;
 import com.sqli.imputation.service.TbpImputationConverterService;
@@ -14,9 +15,6 @@ import java.util.*;
 
 @Service
 public class DefaultTbpImputationConverterService implements TbpImputationConverterService {
-
-
-    public static final String TBP_TYPE_NAME = "tbp";
 
     @Autowired
     private ImputationConverterUtilService imputationConverterUtilService;
@@ -52,7 +50,7 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
 
     private Imputation createImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
         return imputationConverterUtilService.createImputation(DateUtil.getYear(tbpRequestBodyDTO.getStartDate()),
-            DateUtil.getMonth(tbpRequestBodyDTO.getStartDate()), imputationConverterUtilService.findImputationTypeByNameLike(TBP_TYPE_NAME));
+            DateUtil.getMonth(tbpRequestBodyDTO.getStartDate()), imputationConverterUtilService.findImputationTypeByNameLike(Constants.TBP_IMPUTATION_TYPE));
     }
 
     private CollaboratorDailyImputation createCollaboratorDailyImputation(

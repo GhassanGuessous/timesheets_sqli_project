@@ -23,5 +23,13 @@ public interface CollaboratorMonthlyImputationRepository extends JpaRepository<C
             "AND m.imputation.year = :year " +
             "AND m.imputation.month = :month"
     )
-    Set<CollaboratorMonthlyImputation> findByRequestedParams(@Param("agresso") String agresso, @Param("month") int month, @Param("year") int year, @Param("type") String imputationType);
+    Set<CollaboratorMonthlyImputation> findByImputationAndTeam(@Param("agresso") String agresso, @Param("month") int month, @Param("year") int year, @Param("type") String imputationType);
+
+    @Query(value =
+        "SELECT m from CollaboratorMonthlyImputation m " +
+            "WHERE m.imputation.imputationType.name LIKE :type " +
+            "AND m.imputation.year = :year " +
+            "AND m.imputation.month = :month"
+    )
+    Set<CollaboratorMonthlyImputation> findByImputationParams( @Param("month") int month, @Param("year") int year, @Param("type") String imputationType);
 }

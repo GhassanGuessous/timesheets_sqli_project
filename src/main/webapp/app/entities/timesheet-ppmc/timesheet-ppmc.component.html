@@ -2,9 +2,10 @@
     <h2 id="page-heading">
         <span jhiTranslate="global.menu.entities.ppmc-timesheet">PPMC Timesheet</span>
     </h2>
-    <div class="row justify-content-center">
+    <div class="row justify-content-center" *ngIf="allTeams || myTeam">
         <div>
             <jhi-alert-error></jhi-alert-error>
+            <jhi-alert></jhi-alert>
             <div *ngIf="currentFileUpload" class="progress">
                 <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar"
                      attr.aria-valuenow="{{progress.percentage}}"
@@ -13,10 +14,57 @@
                 </div>
             </div>
             <br/>
-            <div>
-                <input type="file" (change)="selectFile($event)">
-                <button class="btn btn-success" [disabled]="!selectedFiles" (click)="upload()">Upload & Get PPMC Timesheet</button>
+            <div id="isNewUploadForm">
+                <label class="radio-inline"><input type="radio" name="newUpload" value="false" (click)="setIsNewUpload('false')">A PPMC file is
+                    already uploaded</label>
+                <label class="radio-inline"><input type="radio" name="newUpload" value="true" (click)="setIsNewUpload('true')" [checked]="true">Upload a new PPMC
+                    file </label>
             </div>
+            <br/>
+            <form class="form-inline" name="comparatorForm" role="form" novalidate
+                  [ngSwitch]="isAdmin()" (ngSubmit)="upload()">
+                <div class="form-group tbp-import-form" *ngSwitchCase="true">
+                    <label class="form-control-label"
+                           for="field_code_project_admin">Code project</label>
+                    <select class="form-control" id="field_code_project_admin" name="code_project"
+                            [(ngModel)]="appRequestBody.agresso">
+                        <option *ngFor="let team of allTeams" [value]="team.agresso">{{team.name}}</option>
+                    </select>
+                </div>
+                <div class="form-group tbp-import-form" *ngSwitchCase="false">
+                    <span id="field_code_project_delco"><b>{{myTeam.name}}</b></span>
+                </div>
+                <div class="form-group tbp-import-form">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.year"
+                           for="field_year">Year</label>
+                    <select class="form-control" id="field_year" name="year" [(ngModel)]="appRequestBody.year">
+                        <option *ngFor="let year of years" [selected]="year == currentYear">{{year}}</option>
+                    </select>
+                </div>
+                <div class="form-group tbp-import-form">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.month"
+                           for="field_month">Month</label>
+                    <select class="form-control" id="field_month" name="month"
+                            [(ngModel)]="appRequestBody.month">
+                        <option *ngFor="let month of months" [selected]="month == currentMonth">{{month}}</option>
+                    </select>
+                </div>
+                <div class="form-group tbp-import-form" *ngIf="isNewUpload">
+                    <input type="file" (change)="selectFile($event)">
+                    <button class="btn btn-success" [disabled]="!selectedFiles">
+                        <span jhiTranslate="global.menu.entities.compare">
+                            Upload & Get PPMC Timesheet
+                        </span>
+                    </button>
+                </div>
+                <div class="form-group tbp-import-form" *ngIf="!isNewUpload">
+                    <button type="submit" class="btn btn-success">
+                        <span jhiTranslate="global.menu.entities.compare">
+                            Upload & Get PPMC Timesheet
+                        </span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
     <jhi-alert></jhi-alert>

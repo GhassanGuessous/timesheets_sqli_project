@@ -1,5 +1,6 @@
 package com.sqli.imputation.service.impl;
 
+import com.sqli.imputation.config.Constants;
 import com.sqli.imputation.domain.Team;
 import com.sqli.imputation.repository.TeamRepository;
 import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
@@ -9,6 +10,7 @@ import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.repository.ImputationRepository;
 import com.sqli.imputation.service.dto.*;
 import com.sqli.imputation.service.factory.RequestBodyFactory;
+import com.sqli.imputation.service.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -122,9 +125,8 @@ public class ImputationServiceImpl implements ImputationService {
      *
      * @param imputation the id of the entity
      */
-    private void update(Imputation imputation, Team team) {
-        if (team == null) throw new RuntimeException("Team can not be null");
-        Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByRequestedParams(team.getAgresso(), imputation.getMonth(), imputation.getYear(), imputation.getImputationType().getName());
+    private void update(Imputation imputation) {
+        Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByImputationParams(imputation);
         if (monthlyImputations.isEmpty()) {
             save(imputation);
         } else {
@@ -186,12 +188,20 @@ public class ImputationServiceImpl implements ImputationService {
         List<Imputation> imputations = new ArrayList<>();
         List<AppRequestDTO> appRequestDTOS = composerService.appDividePeriod(appRequestDTO);
         appRequestDTOS.forEach(dto -> {
-            List<AppChargeDTO> appChargeDTOS = appParserService.parse();
-            Imputation imputation = appConverterService.convert(dto, appChargeDTOS);
-            imputations.add(imputation);
-            update(imputation, teamRepository.findByAgressoLike(appRequestDTO.getAgresso()));
+            try {
+                getAppImputationFromWS(imputations, dto);
+            } catch (HttpClientErrorException e) {
+                getImputationFromDB(imputations, dto, Constants.APP_IMPUTATION_TYPE);
+            }
         });
         return imputations;
+    }
+
+    private void getAppImputationFromWS(List<Imputation> imputations, AppRequestDTO dto) {
+        List<AppChargeDTO> appChargeDTOS = appParserService.parse();
+        Imputation imputation = appConverterService.convert(dto, appChargeDTOS);
+        imputations.add(imputation);
+        update(imputation);
     }
 
     /**
@@ -203,14 +213,30 @@ public class ImputationServiceImpl implements ImputationService {
     @Override
     public List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
         List<Imputation> imputations = new ArrayList<>();
+        Team team = teamRepository.findByIdTbpLike(tbpRequestBodyDTO.getIdTbp());
         List<TbpRequestBodyDTO> requestBodies = composerService.tbpDividePeriod(tbpRequestBodyDTO);
         requestBodies.forEach(requestBody -> {
-            List<ChargeTeamDTO> chargeTeamDTOS = tbpResourceService.getTeamCharges(requestBody).getBody().getData().getCharge();
-            Imputation imputation = tbpImputationConverterService.convert(chargeTeamDTOS, requestBody);
-            imputations.add(imputation);
-            update(imputation, teamRepository.findByIdTbpLike(tbpRequestBodyDTO.getIdTbp()));
+            try {
+                getTbpImputationFromWS(imputations, requestBody);
+            } catch (HttpClientErrorException e) {
+                AppRequestDTO appRequestDTO = new AppRequestDTO(team.getAgresso(), DateUtil.getMonth(requestBody.getStartDate()), DateUtil.getYear(requestBody.getStartDate()));
+                getImputationFromDB(imputations, appRequestDTO, Constants.TBP_IMPUTATION_TYPE);
+            }
         });
         return imputations;
+    }
+
+    private void getTbpImputationFromWS(List<Imputation> imputations, TbpRequestBodyDTO requestBody) {
+        Imputation imputation;
+        List<ChargeTeamDTO> chargeTeamDTOS = tbpResourceService.getTeamCharges(requestBody).getBody().getData().getCharge();
+        imputation = tbpImputationConverterService.convert(chargeTeamDTOS, requestBody);
+        imputations.add(imputation);
+        update(imputation);
+    }
+
+    private void getImputationFromDB(List<Imputation> imputations, AppRequestDTO appRequestDTO, String imputationType) {
+        Optional<Imputation> imputationOptional = findByImputationAndTeam(appRequestDTO, imputationType);
+        imputationOptional.ifPresent(imputations::add);
     }
 
     /**
@@ -220,10 +246,11 @@ public class ImputationServiceImpl implements ImputationService {
      * @return
      */
     @Override
-    public Optional<Imputation> getPpmcImputation(MultipartFile file) {
-        Optional<Imputation> ppmcImputation = ppmcImputationConverterService.getPpmcImputationFromExcelFile(file);
-        if(ppmcImputation.isPresent()){
-            save(ppmcImputation.get());
+    public Optional<Imputation> getPpmcImputation(MultipartFile file, String agresso) {
+        Team team = teamRepository.findByAgressoLike(agresso);
+        Optional<Imputation> ppmcImputation = ppmcImputationConverterService.getPpmcImputationFromExcelFile(file, team);
+        if (ppmcImputation.isPresent()) {
+            update(ppmcImputation.get());
         }
         return ppmcImputation;
     }
@@ -273,7 +300,7 @@ public class ImputationServiceImpl implements ImputationService {
      */
     @Override
     public Object[] compareAppPpmc(MultipartFile file, AppRequestDTO appRequestDTO) {
-        Optional<Imputation> ppmcImputation = getPpmcImputation(file);
+        Optional<Imputation> ppmcImputation = getPpmcImputation(file, appRequestDTO.getAgresso());
         if (ppmcImputation.isPresent()) {
             if (!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
                 return new Object[]{Collections.emptyList(), INCOMPATIBLE_MONTHS_STATUS};
@@ -297,7 +324,7 @@ public class ImputationServiceImpl implements ImputationService {
      */
     @Override
     public Object[] compareAppPpmcAdvanced(MultipartFile file, AppRequestDTO appRequestDTO) {
-        Optional<Imputation> ppmcImputation = getPpmcImputation(file);
+        Optional<Imputation> ppmcImputation = getPpmcImputation(file, appRequestDTO.getAgresso());
         if (ppmcImputation.isPresent()) {
             if (!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
                 return new Object[]{Collections.emptyList(), INCOMPATIBLE_MONTHS_STATUS};
@@ -316,8 +343,8 @@ public class ImputationServiceImpl implements ImputationService {
 
     @Override
     public List<ImputationComparatorDTO> getComparisonFromDB(AppRequestDTO appRequestDTO, String ppmcImputationType) {
-        Optional<Imputation> ppmcImputation = findByRequestedParams(appRequestDTO, ppmcImputationType);
-        if(ppmcImputation.isPresent()){
+        Optional<Imputation> ppmcImputation = findByImputationAndTeam(appRequestDTO, ppmcImputationType);
+        if (ppmcImputation.isPresent()) {
             Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
             return utilService.compareImputations(appImputation, ppmcImputation.get());
         }
@@ -326,8 +353,8 @@ public class ImputationServiceImpl implements ImputationService {
 
     @Override
     public List<ImputationComparatorAdvancedDTO> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO, String ppmcImputationType) {
-        Optional<Imputation> ppmcImputation = findByRequestedParams(appRequestDTO, ppmcImputationType);
-        if(ppmcImputation.isPresent()){
+        Optional<Imputation> ppmcImputation = findByImputationAndTeam(appRequestDTO, ppmcImputationType);
+        if (ppmcImputation.isPresent()) {
             Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
             return utilService.compareImputationsAdvanced(appImputation, ppmcImputation.get());
         }
@@ -335,17 +362,17 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     @Override
-    public Optional<Imputation> findByRequestedParams(AppRequestDTO appRequestDTO, String ppmcImputationType) {
-        Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByRequestedParams(appRequestDTO.getAgresso(), appRequestDTO.getMonth(), appRequestDTO.getYear(), ppmcImputationType);
+    public Optional<Imputation> findByImputationAndTeam(AppRequestDTO appRequestDTO, String imputationType) {
+        Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByImputationAndTeam(appRequestDTO.getAgresso(), appRequestDTO.getMonth(), appRequestDTO.getYear(), imputationType);
         if (!monthlyImputations.isEmpty()) {
-            return createImputation(appRequestDTO, ppmcImputationType, monthlyImputations);
+            return createImputation(appRequestDTO, imputationType, monthlyImputations);
         }
         return Optional.empty();
     }
 
-    private Optional<Imputation> createImputation(AppRequestDTO appRequestDTO, String ppmcImputationType, Set<CollaboratorMonthlyImputation> monthlyImputations) {
+    private Optional<Imputation> createImputation(AppRequestDTO appRequestDTO, String imputationType, Set<CollaboratorMonthlyImputation> monthlyImputations) {
         Imputation imputation = utilService.createImputation(
-            appRequestDTO.getYear(), appRequestDTO.getMonth(), utilService.findImputationTypeByNameLike(ppmcImputationType)
+            appRequestDTO.getYear(), appRequestDTO.getMonth(), utilService.findImputationTypeByNameLike(imputationType)
         );
         imputation.setMonthlyImputations(monthlyImputations);
         return Optional.of(imputation);

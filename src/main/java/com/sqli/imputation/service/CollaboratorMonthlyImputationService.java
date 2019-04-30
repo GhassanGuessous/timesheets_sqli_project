@@ -46,7 +46,7 @@ public interface CollaboratorMonthlyImputationService {
      */
     void delete(Long id);
 
-    Set<CollaboratorMonthlyImputation> findByRequestedParams(String agresso, int month, int year, String imputationType);
+    Set<CollaboratorMonthlyImputation> findByImputationAndTeam(String agresso, int month, int year, String imputationType);
 
     /**
      * save all the imputations.
@@ -56,4 +56,6 @@ public interface CollaboratorMonthlyImputationService {
     void saveAll(Imputation imputation);
 
     CollaboratorMonthlyImputation update(CollaboratorMonthlyImputation monthlyFromDB);
+
+    Set<CollaboratorMonthlyImputation> findByImputationParams(Imputation imputation);
 }
