@@ -45,8 +45,6 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
     private UserRepository userRepository;
     @Autowired
     private TeamService teamService;
-    @Autowired
-    private StorageService storageService;
 
     private Map<String, Integer> headerColumns = new HashMap<>();
 

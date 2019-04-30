@@ -50,6 +50,21 @@
                             <span jhiTranslate="global.menu.entities.team">Team</span>
                         </a>
                     </li>
+                    <li>
+                        <a class="dropdown-item" routerLink="collaborator" routerLinkActive="active"
+                           [routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">
+                            <fa-icon icon="asterisk" fixedWidth="true"></fa-icon>
+                            <span jhiTranslate="global.menu.entities.collaborator">Collaborator</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a *jhiHasAnyAuthority="'ROLE_ADMIN'" class="dropdown-item" routerLink="correspondence"
+                           routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+                           (click)="collapseNavbar()">
+                            <fa-icon icon="asterisk" fixedWidth="true"></fa-icon>
+                            <span jhiTranslate="global.menu.entities.correspondence">Correspondence</span>
+                        </a>
+                    </li>
                     <!--<li>-->
                     <!--<a *jhiHasAnyAuthority="'ROLE_ADMIN'"  class="dropdown-item" routerLink="project" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">-->
                     <!--<fa-icon icon="asterisk" fixedWidth="true"></fa-icon>-->
@@ -65,10 +80,11 @@
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" routerLink="collaborator" routerLinkActive="active"
-                           [routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">
+                        <a *jhiHasAnyAuthority="'ROLE_ADMIN'" class="dropdown-item" routerLink="imputation-type"
+                           routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+                           (click)="collapseNavbar()">
                             <fa-icon icon="asterisk" fixedWidth="true"></fa-icon>
-                            <span jhiTranslate="global.menu.entities.collaborator">Collaborator</span>
+                            <span jhiTranslate="global.menu.entities.imputationType">Imputation Type</span>
                         </a>
                     </li>
                     <li>
@@ -79,43 +95,27 @@
                             <span jhiTranslate="global.menu.entities.activity">Activity</span>
                         </a>
                     </li>
-                    <li>
-                        <a *jhiHasAnyAuthority="'ROLE_ADMIN'" class="dropdown-item" routerLink="correspondence"
-                           routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-                           (click)="collapseNavbar()">
-                            <fa-icon icon="asterisk" fixedWidth="true"></fa-icon>
-                            <span jhiTranslate="global.menu.entities.correspondence">Correspondence</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" routerLink="imputation" routerLinkActive="active"
-                           [routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">
-                            <fa-icon icon="asterisk" fixedWidth="true"></fa-icon>
-                            <span jhiTranslate="global.menu.entities.imputation">Imputation</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a *jhiHasAnyAuthority="'ROLE_ADMIN'" class="dropdown-item" routerLink="imputation-type"
-                           routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-                           (click)="collapseNavbar()">
-                            <fa-icon icon="asterisk" fixedWidth="true"></fa-icon>
-                            <span jhiTranslate="global.menu.entities.imputationType">Imputation Type</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" routerLink="collaborator-monthly-imputation" routerLinkActive="active"
-                           [routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">
-                            <fa-icon icon="asterisk" fixedWidth="true"></fa-icon>
-                            <span jhiTranslate="global.menu.entities.collaboratorMonthlyImputation">Collaborator Monthly Imputation</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" routerLink="collaborator-daily-imputation" routerLinkActive="active"
-                           [routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">
-                            <fa-icon icon="asterisk" fixedWidth="true"></fa-icon>
-                            <span jhiTranslate="global.menu.entities.collaboratorDailyImputation">Collaborator Daily Imputation</span>
-                        </a>
-                    </li>
+                    <!--<li>-->
+                    <!--<a class="dropdown-item" routerLink="imputation" routerLinkActive="active"-->
+                    <!--[routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">-->
+                    <!--<fa-icon icon="asterisk" fixedWidth="true"></fa-icon>-->
+                    <!--<span jhiTranslate="global.menu.entities.imputation">Imputation</span>-->
+                    <!--</a>-->
+                    <!--</li>-->
+                    <!--<li>-->
+                        <!--<a class="dropdown-item" routerLink="collaborator-monthly-imputation" routerLinkActive="active"-->
+                           <!--[routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">-->
+                            <!--<fa-icon icon="asterisk" fixedWidth="true"></fa-icon>-->
+                            <!--<span jhiTranslate="global.menu.entities.collaboratorMonthlyImputation">Collaborator Monthly Imputation</span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                    <!--<li>-->
+                        <!--<a class="dropdown-item" routerLink="collaborator-daily-imputation" routerLinkActive="active"-->
+                           <!--[routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">-->
+                            <!--<fa-icon icon="asterisk" fixedWidth="true"></fa-icon>-->
+                            <!--<span jhiTranslate="global.menu.entities.collaboratorDailyImputation">Collaborator Daily Imputation</span>-->
+                        <!--</a>-->
+                    <!--</li>-->
                     <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
                 </ul>
             </li>
