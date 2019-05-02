@@ -5,7 +5,7 @@
     <div class="row justify-content-center" *ngIf="allTeams || myTeam">
         <div>
             <jhi-alert-error></jhi-alert-error>
-            <form class="form-inline" name="tbpImputationForm" role="form" novalidate #tbpImputationForm="ngForm" [ngSwitch]="isAdmin()" (ngSubmit)="getTimesheet()">
+            <form class="form-inline" name="tbpImputationForm" role="form" novalidate [ngSwitch]="isAdmin()" (ngSubmit)="getTimesheet()">
                 <div class="form-group tbp-import-form" *ngSwitchCase="true">
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.project_code"
                            for="field_code_project_admin">Code projet</label>
@@ -32,7 +32,7 @@
                     <button type="submit" id="tbp-timesheet-import-button" class="btn btn-primary float-right">
                         <!--<fa-icon [icon]="'calendar'"></fa-icon>-->
                         <span jhiTranslate="global.menu.entities.importTBP">
-                            Import TBP
+                            Get TBP timesheet
                         </span>
                     </button>
                 </div>

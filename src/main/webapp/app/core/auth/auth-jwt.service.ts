@@ -47,12 +47,14 @@ export class AuthServerProvider {
         } else {
             this.$sessionStorage.store('authenticationToken', jwt);
         }
+        localStorage.setItem('isTbpAuthenticated', 'false');
     }
 
     logout(): Observable<any> {
         return new Observable(observer => {
             this.$localStorage.clear('authenticationToken');
             this.$sessionStorage.clear('authenticationToken');
+            localStorage.setItem('isTbpAuthenticated', 'false');
             observer.complete();
         });
     }
