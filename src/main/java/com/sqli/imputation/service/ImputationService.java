@@ -55,7 +55,7 @@ public interface ImputationService {
      */
     List<Imputation> getAppImputation(AppRequestDTO appRequestDTO);
 
-    List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO);
+    Object[] getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO);
 
     Optional<Imputation> getPpmcImputation(MultipartFile file, String agresso);
 

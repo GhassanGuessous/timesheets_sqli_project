@@ -161,7 +161,7 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
     }
 
     private void setChargeTeams(String idTeamTbp) {
-        chargeTeamRestResponse = tbpResourceService.getTeamCharges(new TbpRequestBodyDTO(idTeamTbp, "2019-04-01", "2019-06-28"));
+        chargeTeamRestResponse = tbpResourceService.getTeamCharges(new TbpRequestBodyDTO(idTeamTbp, "2019-04-01", "2019-06-28", "", ""));
     }
 
     private void persistActivities() {

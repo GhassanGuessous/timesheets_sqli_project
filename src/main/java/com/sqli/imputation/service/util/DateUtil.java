@@ -1,6 +1,5 @@
 package com.sqli.imputation.service.util;
 
-import javax.xml.stream.events.StartDocument;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -96,5 +95,9 @@ public final class DateUtil {
 
     public static String toTwoDidit(int number) {
         return String.format(TWO_DIGITS_FORMAT, number);
+    }
+
+    public static boolean isNotValidDates(String startDate, String endDate) {
+        return (startDate == null || endDate == null) || (startDate.isEmpty() || endDate.isEmpty());
     }
 }

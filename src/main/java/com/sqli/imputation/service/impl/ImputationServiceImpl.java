@@ -24,6 +24,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -35,8 +36,13 @@ public class ImputationServiceImpl implements ImputationService {
 
     private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
 
-    public static final String ROLE_ADMIN = "ROLE_ADMIN";
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
+    private static final int INITIAL_VALUE = 1;
+    private static final int UNAUTHORIZED_HTTP_CODE = 401;
+    private static final int LIST_IMPUTATIONS_POSITION = 0;
+    private static final int STATUS_POSITION = 1;
     private static final int INCOMPATIBLE_MONTHS_STATUS = -1;
+    private static final int UNAUTHORIZED_STATUS = -1;
     private static final int ALL_GOOD_STATUS = 1;
     private static final int INVALID_FILE_STATUS = 0;
     private static final int APP_INDEX = 0;
@@ -215,25 +221,29 @@ public class ImputationServiceImpl implements ImputationService {
      * @return
      */
     @Override
-    public List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
+    public Object[] getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
         List<Imputation> imputations = new ArrayList<>();
+        final int[] status = {INITIAL_VALUE};
         Team team = teamRepository.findByIdTbpLike(tbpRequestBodyDTO.getIdTbp());
         List<TbpRequestBodyDTO> requestBodies = composerService.tbpDividePeriod(tbpRequestBodyDTO);
         requestBodies.forEach(requestBody -> {
             try {
                 getTbpImputationFromWS(imputations, requestBody);
             } catch (HttpClientErrorException e) {
-                AppRequestDTO appRequestDTO = new AppRequestDTO(team.getAgresso(), DateUtil.getMonth(requestBody.getStartDate()), DateUtil.getYear(requestBody.getStartDate()));
-                getImputationFromDB(imputations, appRequestDTO, Constants.TBP_IMPUTATION_TYPE);
+                if(e.getStatusCode().value() == UNAUTHORIZED_HTTP_CODE) {
+                    status[0] = UNAUTHORIZED_STATUS;
+                } else {
+                    AppRequestDTO appRequestDTO = new AppRequestDTO(team.getAgresso(), DateUtil.getMonth(requestBody.getStartDate()), DateUtil.getYear(requestBody.getStartDate()));
+                    getImputationFromDB(imputations, appRequestDTO, Constants.TBP_IMPUTATION_TYPE);
+                }
             }
         });
-        return imputations;
+        return new Object[]{imputations, status[0]};
     }
 
     private void getTbpImputationFromWS(List<Imputation> imputations, TbpRequestBodyDTO requestBody) {
-        Imputation imputation;
         List<ChargeTeamDTO> chargeTeamDTOS = tbpResourceService.getTeamCharges(requestBody).getBody().getData().getCharge();
-        imputation = tbpImputationConverterService.convert(chargeTeamDTOS, requestBody);
+        Imputation imputation = tbpImputationConverterService.convert(chargeTeamDTOS, requestBody);
         imputations.add(imputation);
         update(imputation);
     }
@@ -303,7 +313,10 @@ public class ImputationServiceImpl implements ImputationService {
         TbpRequestBodyDTO tbpRequestBodyDTO = requestBodyFactory.createTbpRequestBodyDTO(appTbpRequest.getTeam().getIdTbp(), appTbpRequest.getYear(), appTbpRequest.getMonth());
 
         Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
-        Imputation tbpImputation = getTbpImputation(tbpRequestBodyDTO).get(FIRST_ELEMENT_INDEX);
+        Object[] result = getTbpImputation(tbpRequestBodyDTO);
+        List<Imputation> imputations = (List<Imputation>) result[LIST_IMPUTATIONS_POSITION];
+        int status = (int) result[STATUS_POSITION];
+        Imputation tbpImputation = (status != UNAUTHORIZED_STATUS) ? imputations.get(FIRST_ELEMENT_INDEX) : new Imputation();
         return new Imputation[]{appImputation, tbpImputation};
     }
 

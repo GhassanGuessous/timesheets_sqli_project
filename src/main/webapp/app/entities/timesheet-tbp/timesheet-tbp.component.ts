@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { AccountService } from 'app/core';
 import { ITeam } from 'app/shared/model/team.model';
 import { ITbpRequestBody, TbpRequestBody } from 'app/shared/model/tbp-request-body';
-import { TimesheetTbpService } from 'app/entities/timesheet-tbp/timesheet-tbp.service';
 import { IImputation } from 'app/shared/model/imputation.model';
 import { TeamService } from 'app/entities/team';
+import { AuthTbpModalService } from 'app/core/authTbp/auth-tbp-modal.service';
+import { TimesheetTbpService } from 'app/entities/timesheet-tbp/timesheet-tbp.service';
 
 @Component({
     selector: 'jhi-timesheet-tbp',
@@ -20,9 +21,11 @@ export class TimesheetTbpComponent implements OnInit {
     predicate: any;
     reverse: any;
     private imputationDays: Map<IImputation, Array<number>> = new Map<IImputation, Array<number>>();
+
     constructor(
         protected accountService: AccountService,
         protected teamService: TeamService,
+        private authTbpModalService: AuthTbpModalService,
         protected timesheetTbpService: TimesheetTbpService
     ) {}
 
@@ -55,13 +58,39 @@ export class TimesheetTbpComponent implements OnInit {
     }
 
     getTimesheet() {
-        console.log(this.tbpRequestBody);
+        if (localStorage.getItem('isTbpAuthenticated') === 'false') {
+            this.authenticateThenGetTimesheet();
+        } else {
+            this.getTimesheetWhenIsAlreadyAuthenticated();
+        }
+    }
+
+    private authenticateThenGetTimesheet() {
+        this.authTbpModalService.open(this.tbpRequestBody).then(
+            result => {
+                this.imputations = result;
+                this.initializeDaysForImputation();
+            },
+            reason => {
+                console.log(reason);
+            }
+        );
+    }
+
+    private getTimesheetWhenIsAlreadyAuthenticated() {
+        this.tbpRequestBody.username = localStorage.getItem('username');
+        this.tbpRequestBody.password = localStorage.getItem('password');
+
         this.timesheetTbpService.findTbpChargeByTeam(this.tbpRequestBody).subscribe(res => {
             this.imputations = res.body;
-            for (let i = 0; i < this.imputations.length; i++) {
-                this.initializeDays(this.imputations[i]);
-            }
+            this.initializeDaysForImputation();
         });
+    }
+
+    private initializeDaysForImputation() {
+        for (let i = 0; i < this.imputations.length; i++) {
+            this.initializeDays(this.imputations[i]);
+        }
     }
 
     private initializeDays(imputation: any) {

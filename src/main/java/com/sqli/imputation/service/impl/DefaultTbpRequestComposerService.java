@@ -29,7 +29,7 @@ public class DefaultTbpRequestComposerService implements TbpRequestComposerServi
         if (isMultipleMonths(tbpRequestBodyDTO)) {
             int numberOfMonths = DateUtil.getNumberMonthsBetweenDates(tbpRequestBodyDTO.getStartDate(), tbpRequestBodyDTO.getEndDate());
             months = DateUtil.getMonths(tbpRequestBodyDTO.getStartDate(), tbpRequestBodyDTO.getEndDate(), numberOfMonths);
-            bodyDTOS = getTbpRequestBodyDTOS(months, DateUtil.getYear(tbpRequestBodyDTO.getStartDate()), tbpRequestBodyDTO.getIdTbp());
+            bodyDTOS = getTbpRequestBodyDTOS(months, DateUtil.getYear(tbpRequestBodyDTO.getStartDate()), tbpRequestBodyDTO);
         } else {
             bodyDTOS.add(tbpRequestBodyDTO);
         }
@@ -47,14 +47,14 @@ public class DefaultTbpRequestComposerService implements TbpRequestComposerServi
         return appRequestDTOS;
     }
 
-    private List<TbpRequestBodyDTO> getTbpRequestBodyDTOS(Map<Integer, Map<String, Integer>> months, int year, String idTbp) {
+    private List<TbpRequestBodyDTO> getTbpRequestBodyDTOS(Map<Integer, Map<String, Integer>> months, int year, TbpRequestBodyDTO dto) {
         List<TbpRequestBodyDTO> bodyDTOS = new ArrayList<>();
         months.forEach((month, startEndMap) -> {
             StringBuilder startDateBuilder = new StringBuilder(year + DELIMITER);
             StringBuilder endDateBuilder = new StringBuilder(year + DELIMITER);
             composeStartDate(month, startEndMap, startDateBuilder);
             composeEndDate(month, startEndMap, endDateBuilder);
-            bodyDTOS.add(new TbpRequestBodyDTO(idTbp, startDateBuilder.toString(), endDateBuilder.toString()));
+            bodyDTOS.add(new TbpRequestBodyDTO(dto.getIdTbp(), startDateBuilder.toString(), endDateBuilder.toString(), dto.getUsername(), dto.getPassword()));
         });
         return bodyDTOS;
     }

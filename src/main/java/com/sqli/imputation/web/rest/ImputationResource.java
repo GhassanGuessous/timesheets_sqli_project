@@ -34,12 +34,14 @@ public class ImputationResource {
 
     private final Logger log = LoggerFactory.getLogger(ImputationResource.class);
 
-    private static final String NEW_UPLOAD = "newUpload";
-    private static final String UPLOAD_A_PPMC_FILE_MESSAGE = "upload a ppmc file";
+    private static final int LIST_IMPUTATIONS_POSITION = 0;
+    private static final int UNAUTHORIZED_STATUS = -1;
     private static final int INCOMPATIBLE_MONTHS_STATUS = -1;
     private static final int STATUS_POSITION = 1;
     private static final int LIST_DTOS_POSITION = 0;
     private static final String AN_EMPTY_STRING = "";
+    private static final String UPLOAD_A_PPMC_FILE_MESSAGE = "upload a ppmc file";
+    private static final String NEW_UPLOAD = "newUpload";
     private static final String PROJECT_IS_REQUIRED = "Project is required";
     private static final String PROJECT_IS_NULL = "projectnull";
     private static final String ENTITY_NAME = "imputation";
@@ -156,16 +158,27 @@ public class ImputationResource {
 
         if (tbpRequestBodyDTO.getIdTbp() == null) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
-        } else if (startDate.equals(AN_EMPTY_STRING) || endDate.equals(AN_EMPTY_STRING)) {
+        } else if (DateUtil.isNotValidDates(startDate, endDate)) {
             throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
         } else if (DateUtil.isDatesOrderNotValid(startDate, endDate)) {
             throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
         } else if (DateUtil.isDifferentYears(startDate, endDate)) {
             throw new BadRequestAlertException("Different years", ENTITY_NAME, "different_years");
+        } else if(isNotValidTBPCredentials(tbpRequestBodyDTO.getUsername(), tbpRequestBodyDTO.getPassword())){
+            throw new BadRequestAlertException("Tbp credentials", ENTITY_NAME, "tbp_bad_credentials");
         } else {
-            List<Imputation> imputations = imputationService.getTbpImputation(tbpRequestBodyDTO);
+            Object[] result = imputationService.getTbpImputation(tbpRequestBodyDTO);
+            List<Imputation> imputations = (List<Imputation>) result[LIST_IMPUTATIONS_POSITION];
+            int status = (int) result[STATUS_POSITION];
+            if(status == UNAUTHORIZED_STATUS){
+                throw new BadRequestAlertException("Tbp credentials", ENTITY_NAME, "tbp_bad_credentials");
+            }
             return ResponseEntity.ok().body(imputations);
         }
+    }
+
+    private boolean isNotValidTBPCredentials(String username, String password) {
+        return (username == null || password == null) || (username.isEmpty() || password.isEmpty());
     }
 
     @PostMapping("/imputations/ppmc")
