@@ -5,8 +5,6 @@ import com.sqli.imputation.domain.*;
 import com.sqli.imputation.repository.*;
 import com.sqli.imputation.security.SecurityUtils;
 import com.sqli.imputation.service.PpmcImputationConverterService;
-import com.sqli.imputation.service.StorageService;
-import com.sqli.imputation.service.TeamService;
 import com.sqli.imputation.service.dto.CollabExcelImputationDTO;
 import com.sqli.imputation.service.util.FileExtensionUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -41,19 +39,13 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
     private ImputationConverterUtilService imputationConverterUtilService;
     @Autowired
     private CorrespondenceRepository correspondenceRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private TeamService teamService;
-
-    private Map<String, Integer> headerColumns = new HashMap<>();
 
     @Override
     public Optional<Imputation> getPpmcImputationFromExcelFile(MultipartFile file, Team team) {
         try {
             InputStream excelFile = file.getInputStream();
             Optional<Sheet> sheet = getWeeklyActualEffortSheet(file, excelFile);
-            headerColumns = getHeaderCoumns(sheet.get());
+            Map<String, Integer> headerColumns = getHeaderCoumns(sheet.get());
 
             Set<String> collaborators = getCollaborators(sheet.get(), headerColumns);
             List<CollabExcelImputationDTO> excelImputationDTOS = getExcelCollabDTOS(sheet.get(), headerColumns);
@@ -71,112 +63,46 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
         }
     }
 
-    private Map<String, Integer> getHeaderCoumns(Sheet sheet) {
-        Map<String, Integer> headerColumns = new HashMap<>();
-        Row row = sheet.getRow(HEADER_INDEX);
-        for (int j = row.getFirstCellNum(); j <= row.getLastCellNum(); j++) {
-            Cell cell = row.getCell(j);
-            if(cell != null) headerColumns.put(cell.getStringCellValue(), j);
-        }
-        return headerColumns;
-    }
-
-    private void getImputationsGivenConnectedUser(Imputation imputation, Team team) {
-        if(SecurityUtils.isCurrentUserInRole(ROLE_ADMIN)){
-            imputation.setMonthlyImputations(getTeamMembersOnly(imputation.getMonthlyImputations(), Optional.of(team)));
-        } else {
-            Optional<User> user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());
-            Optional<Team> delcoTeam = teamService.findOneByDelco(user.get().getId());
-            imputation.setMonthlyImputations(getTeamMembersOnly(imputation.getMonthlyImputations(), delcoTeam));
-        }
-    }
-
-    private Set<CollaboratorMonthlyImputation> getTeamMembersOnly(Set<CollaboratorMonthlyImputation> monthlyImputations, Optional<Team> team) {
-        return monthlyImputations.stream().filter(monthlyImputation ->
-            monthlyImputation.getCollaborator().getTeam() != null
-                && monthlyImputation.getCollaborator().getTeam().getId().equals(team.get().getId())
-        ).collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
     private Optional<Sheet> getWeeklyActualEffortSheet(MultipartFile file, InputStream excelFile) throws IOException {
         String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
         return getRows(excelFile, extension);
     }
 
-    private void createDailyImputationsForEachCollab(Set<String> ppmcIDs, List<CollabExcelImputationDTO> excelImputationDTOS, Imputation imputation) {
-        Set<CollaboratorMonthlyImputation> monthlyImputations = new HashSet<>();
-        ppmcIDs.forEach(ppmcId -> {
-            Correspondence correspondence = correspondenceRepository.findByIdPPMC(ppmcId);
-            if(isCorrespondenceNotExist(correspondence)){
-                return;
-            }else{
-                Collaborator collaborator = correspondence.getCollaborator();
-                CollaboratorMonthlyImputation monthlyImputation = imputationConverterUtilService.createMonthlyImputation(imputation, collaborator);
-                Set<CollaboratorDailyImputation> dailyImputations = new HashSet<>();
-
-                createDailyImputationFromExcelImputations(excelImputationDTOS, ppmcId, monthlyImputation, dailyImputations);
-
-                monthlyImputation.setDailyImputations(dailyImputations);
-                setTotalOfMonthlyImputation(monthlyImputation);
-                monthlyImputations.add(monthlyImputation);
-            }
-        });
-        imputation.setMonthlyImputations(monthlyImputations);
+    private Optional<Sheet> getRows(InputStream excelFile, String extension) throws IOException {
+        if(FileExtensionUtil.isXLS(extension)){
+            HSSFWorkbook workbook = new HSSFWorkbook(excelFile);
+            return Optional.of(workbook.getSheet(WEEKLY_ACTUAL_EFFORT_COLUMN));
+        }
+        if(FileExtensionUtil.isXLSX(extension)){
+            XSSFWorkbook workbook = new XSSFWorkbook(excelFile);
+            return Optional.of(workbook.getSheet(WEEKLY_ACTUAL_EFFORT_COLUMN));
+        }
+        return Optional.empty();
     }
 
-    private void setTotalOfMonthlyImputation(CollaboratorMonthlyImputation monthlyImputation) {
-        monthlyImputation.getDailyImputations().forEach(daily -> {
-            monthlyImputation.setTotal(monthlyImputation.getTotal() + daily.getCharge());
-        });
+    private Map<String, Integer> getHeaderCoumns(Sheet sheet) {
+        Map<String, Integer> headerColumnsMap = new HashMap<>();
+        Row row = sheet.getRow(HEADER_INDEX);
+        for (int j = row.getFirstCellNum(); j <= row.getLastCellNum(); j++) {
+            Cell cell = row.getCell(j);
+            if(cell != null) headerColumnsMap.put(cell.getStringCellValue(), j);
+        }
+        return headerColumnsMap;
     }
 
-    private void createDailyImputationFromExcelImputations(List<CollabExcelImputationDTO> excelImputationDTOS, String ppmcId, CollaboratorMonthlyImputation monthlyImputation, Set<CollaboratorDailyImputation> dailyImputations) {
-        excelImputationDTOS.forEach(dto -> {
-            if(dto.getCollaborator().equals(ppmcId)){
-                if(isDailyImputationExist(dailyImputations, dto.getDay())){
-                    setChargeToExistingDailyImputation(dailyImputations, dto.getDay(), dto.getCharge());
-                }else{
-                    CollaboratorDailyImputation dailyImputation = imputationConverterUtilService.createDailyImputation(dto.getDay(), dto.getCharge(), monthlyImputation);
-                    dailyImputations.add(dailyImputation);
+    private Set<String> getCollaborators(Sheet sheet, Map<String, Integer> headerColumns) {
+        Set<String> collaborators = new HashSet<>();
+        //I'm ignoring header for that I have +1 in loop
+        for (int i = sheet.getFirstRowNum() + 1; i <= sheet.getLastRowNum(); i++) {
+            Row row = sheet.getRow(i);
+            for (int j = row.getFirstCellNum(); j <= row.getLastCellNum(); j++) {
+                Cell cell = row.getCell(j);
+                if (j == headerColumns.get(RESOURCE_USER_NAME) && !cell.getStringCellValue().isEmpty()) {
+                    collaborators.add(cell.getStringCellValue());
                 }
             }
-        });
-    }
-
-    private boolean isCorrespondenceNotExist(Correspondence correspondence) {
-        return correspondence == null;
-    }
-
-    private boolean isDailyImputationExist(Set<CollaboratorDailyImputation> dailyImputations, int day) {
-        return dailyImputations.stream().anyMatch(dailyImputation -> dailyImputation.getDay().equals(day));
-    }
-
-    private void setChargeToExistingDailyImputation(Set<CollaboratorDailyImputation> dailyImputations, int day, double charge) {
-        double oldCharge = dailyImputations.stream().filter(
-            daily -> daily.getDay().equals(day)
-        ).findFirst().get().getCharge();
-        dailyImputations.stream().filter(daily -> daily.getDay().equals(day)).findFirst().get().setCharge(oldCharge + charge);
-    }
-
-    private List<CollabExcelImputationDTO> ignoreOutOfOfficeImputations(List<CollabExcelImputationDTO> excelImputationDTOS) {
-        return excelImputationDTOS.stream().filter(
-            collabExcelImputationDTO -> !collabExcelImputationDTO.getProjectRequestMisc().equals(OUT_OF_OFFICE)).collect(Collectors.toList()
-        );
-    }
-
-    private Imputation createPpmcImputation(Sheet rows, Map<String, Integer> headerColumns) {
-        ImputationType imputationType = imputationConverterUtilService.findImputationTypeByNameLike(Constants.PPMC_IMPUTATION_TYPE);
-        Map<String, Integer> period = getPeriod(rows, headerColumns);
-        return imputationConverterUtilService.createImputation(period.get(YEAR), period.get(MONTH), imputationType);
-    }
-
-    private Map<String, Integer> getPeriod(Sheet sheet, Map<String, Integer> headerColumns) {
-        Map<String, Integer> period = new HashMap<>();
-        int month = (int) sheet.getRow(FIRST_LINE_INDEX).getCell(headerColumns.get(MONTH)).getNumericCellValue();
-        int year = (int) sheet.getRow(FIRST_LINE_INDEX).getCell(headerColumns.get(YEAR)).getNumericCellValue();
-        period.put(MONTH, month);
-        period.put(YEAR, year);
-        return period;
+        }
+        return collaborators;
     }
 
     private List<CollabExcelImputationDTO> getExcelCollabDTOS(Sheet sheet, Map<String, Integer> headerColumns) {
@@ -200,15 +126,9 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
         setCharge(dto, currentElementColumnIndex, cell, headerColumns.get(ACTUAL_EFFORT_MAN_DAY));
     }
 
-    private void setCharge(CollabExcelImputationDTO dto, int currentElementColumnIndex, Cell cell, Integer manDayColumnIndex) {
-        if(currentElementColumnIndex == manDayColumnIndex){
-            dto.setCharge(cell.getNumericCellValue());
-        }
-    }
-
-    private void setDay(CollabExcelImputationDTO dto, int currentElementColumnIndex, Cell cell, Integer dayColumnIndex) {
-        if(currentElementColumnIndex == dayColumnIndex){
-            dto.setDay((int) cell.getNumericCellValue());
+    private void setCollaborator(CollabExcelImputationDTO dto, int currentElementColumnIndex, Cell cell, Integer idPpmcColumnIndex) {
+        if (currentElementColumnIndex == idPpmcColumnIndex) {
+            dto.setCollaborator(cell.getStringCellValue());
         }
     }
 
@@ -218,36 +138,114 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
         }
     }
 
-    private void setCollaborator(CollabExcelImputationDTO dto, int currentElementColumnIndex, Cell cell, Integer idPpmcColumnIndex) {
-        if (currentElementColumnIndex == idPpmcColumnIndex) {
-            dto.setCollaborator(cell.getStringCellValue());
+    private void setDay(CollabExcelImputationDTO dto, int currentElementColumnIndex, Cell cell, Integer dayColumnIndex) {
+        if(currentElementColumnIndex == dayColumnIndex){
+            dto.setDay((int) cell.getNumericCellValue());
         }
     }
 
-    private Set<String> getCollaborators(Sheet sheet, Map<String, Integer> headerColumns) {
-        Set<String> collaborators = new HashSet<>();
-        //I'm ignoring header for that I have +1 in loop
-        for (int i = sheet.getFirstRowNum() + 1; i <= sheet.getLastRowNum(); i++) {
-            Row row = sheet.getRow(i);
-            for (int j = row.getFirstCellNum(); j <= row.getLastCellNum(); j++) {
-                Cell cell = row.getCell(j);
-                if (j == headerColumns.get(RESOURCE_USER_NAME) && !cell.getStringCellValue().isEmpty()) {
-                    collaborators.add(cell.getStringCellValue());
+    private void setCharge(CollabExcelImputationDTO dto, int currentElementColumnIndex, Cell cell, Integer manDayColumnIndex) {
+        if(currentElementColumnIndex == manDayColumnIndex){
+            dto.setCharge(cell.getNumericCellValue());
+        }
+    }
+
+    private List<CollabExcelImputationDTO> ignoreOutOfOfficeImputations(List<CollabExcelImputationDTO> excelImputationDTOS) {
+        return excelImputationDTOS.stream().filter(
+            collabExcelImputationDTO -> !collabExcelImputationDTO.getProjectRequestMisc().equals(OUT_OF_OFFICE)).collect(Collectors.toList()
+        );
+    }
+
+    private Imputation createPpmcImputation(Sheet rows, Map<String, Integer> headerColumns) {
+        ImputationType imputationType = imputationConverterUtilService.findImputationTypeByNameLike(Constants.PPMC_IMPUTATION_TYPE);
+        Map<String, Integer> period = getPeriod(rows, headerColumns);
+        return imputationConverterUtilService.createImputation(period.get(YEAR), period.get(MONTH), imputationType);
+    }
+
+    private Map<String, Integer> getPeriod(Sheet sheet, Map<String, Integer> headerColumns) {
+        Map<String, Integer> period = new HashMap<>();
+        int month = (int) sheet.getRow(FIRST_LINE_INDEX).getCell(headerColumns.get(MONTH)).getNumericCellValue();
+        int year = (int) sheet.getRow(FIRST_LINE_INDEX).getCell(headerColumns.get(YEAR)).getNumericCellValue();
+        period.put(MONTH, month);
+        period.put(YEAR, year);
+        return period;
+    }
+
+    private void createDailyImputationsForEachCollab(Set<String> ppmcIDs, List<CollabExcelImputationDTO> excelImputationDTOS, Imputation imputation) {
+        Set<CollaboratorMonthlyImputation> monthlyImputations = new HashSet<>();
+        ppmcIDs.forEach(ppmcId -> {
+            Correspondence correspondence = correspondenceRepository.findByIdPPMC(ppmcId);
+            if(isCorrespondenceNotExist(correspondence)){
+                return;
+            }else{
+                Collaborator collaborator = correspondence.getCollaborator();
+                CollaboratorMonthlyImputation monthlyImputation = imputationConverterUtilService.createMonthlyImputation(imputation, collaborator);
+                Set<CollaboratorDailyImputation> dailyImputations = new HashSet<>();
+
+                createDailyImputationFromExcelImputations(excelImputationDTOS, ppmcId, monthlyImputation, dailyImputations);
+
+                monthlyImputation.setDailyImputations(dailyImputations);
+                setTotalOfMonthlyImputation(monthlyImputation);
+                monthlyImputations.add(monthlyImputation);
+            }
+        });
+        imputation.setMonthlyImputations(monthlyImputations);
+    }
+
+    private boolean isCorrespondenceNotExist(Correspondence correspondence) {
+        return correspondence == null;
+    }
+
+    private void createDailyImputationFromExcelImputations(
+        List<CollabExcelImputationDTO> excelImputationDTOS, String ppmcId,
+        CollaboratorMonthlyImputation monthlyImputation, Set<CollaboratorDailyImputation> dailyImputations
+    ) {
+        excelImputationDTOS.forEach(dto -> {
+            if(dto.getCollaborator().equals(ppmcId)){
+                if(isDailyImputationExist(dailyImputations, dto.getDay())){
+                    setChargeToExistingDailyImputation(dailyImputations, dto.getDay(), dto.getCharge());
+                }else{
+                    CollaboratorDailyImputation dailyImputation = imputationConverterUtilService.createDailyImputation(dto.getDay(), dto.getCharge(), monthlyImputation);
+                    dailyImputations.add(dailyImputation);
                 }
             }
-        }
-        return collaborators;
+        });
     }
 
-    private Optional<Sheet> getRows(InputStream excelFile, String extension) throws IOException {
-        if(FileExtensionUtil.isXLS(extension)){
-            HSSFWorkbook workbook = new HSSFWorkbook(excelFile);
-            return Optional.of(workbook.getSheet(WEEKLY_ACTUAL_EFFORT_COLUMN));
+    private boolean isDailyImputationExist(Set<CollaboratorDailyImputation> dailyImputations, int day) {
+        return dailyImputations.stream().anyMatch(dailyImputation -> dailyImputation.getDay().equals(day));
+    }
+
+    private void setChargeToExistingDailyImputation(Set<CollaboratorDailyImputation> dailyImputations, int day, double charge) {
+        double oldCharge = dailyImputations.stream().filter(
+            daily -> daily.getDay().equals(day)
+        ).findFirst().get().getCharge();
+        dailyImputations.stream().filter(daily -> daily.getDay().equals(day)).findFirst().get().setCharge(oldCharge + charge);
+    }
+
+    private void setTotalOfMonthlyImputation(CollaboratorMonthlyImputation monthlyImputation) {
+        monthlyImputation.getDailyImputations().forEach(daily -> monthlyImputation.setTotal(monthlyImputation.getTotal() + daily.getCharge())
+        );
+    }
+
+    private void getImputationsGivenConnectedUser(Imputation imputation, Team team) {
+        if(SecurityUtils.isCurrentUserInRole(ROLE_ADMIN)){
+            imputation.setMonthlyImputations(getAssinedCollabsOnly(imputation.getMonthlyImputations()));
+        } else {
+            imputation.setMonthlyImputations(getTeamMembersOnly(imputation.getMonthlyImputations(), team));
         }
-        if(FileExtensionUtil.isXLSX(extension)){
-            XSSFWorkbook workbook = new XSSFWorkbook(excelFile);
-            return Optional.of(workbook.getSheet(WEEKLY_ACTUAL_EFFORT_COLUMN));
-        }
-        return Optional.empty();
+    }
+
+    private Set<CollaboratorMonthlyImputation> getTeamMembersOnly(Set<CollaboratorMonthlyImputation> monthlyImputations, Team team) {
+        return monthlyImputations.stream().filter(monthlyImputation ->
+            monthlyImputation.getCollaborator().getTeam() != null
+                && monthlyImputation.getCollaborator().getTeam().getId().equals(team.getId())
+        ).collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    private Set<CollaboratorMonthlyImputation> getAssinedCollabsOnly(Set<CollaboratorMonthlyImputation> monthlyImputations) {
+        return monthlyImputations.stream().filter(monthlyImputation ->
+            monthlyImputation.getCollaborator().getTeam() != null
+        ).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

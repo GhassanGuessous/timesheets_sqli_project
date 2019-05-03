@@ -30,7 +30,11 @@
                 "advanced-app-vs-tbp": "APP VS TBP - Advanced",
                 "comparator-app-ppmc": "APP vs PPMC",
                 "comparator-app-ppmc-advanced": "APP vs PPMC - Advanced",
-                "compare": "compare"
+                "compare": "compare",
+                "upload_getTimesheet": "Upload & get PPMC timesheet",
+                "getTimesheet": "Get PPMC timesheet",
+                "authenticateToTbp": "Authenticate",
+                "TbpAuthTitle": "TBP Authentication"
             },
             "account": {
                 "main": "Account",
@@ -155,13 +159,14 @@
         "idexists": "A new {{ entityName }} cannot already have an ID",
         "idnull": "Invalid ID",
         "projectnull": "Project cannot be empty!",
-        "datenull": "Start date Or End date cannot be empty!",
+        "datenull": "Start date and end date cannot be empty!",
         "orderdates": "End date should be greater than start date!",
         "different_years": "Please select dates in the same year!",
         "extension_support": "This type of files is not supported, please use one of the following extensions : 'xsl', 'xslx'",
         "invalidPPMC": "Sorry, this File is not a valid PPMC file!",
         "differentMonths": "Sorry, the selected month and the month of the file must be the same!",
-        "newUpload": "No PPMC history for these params, you should upload a new PPMC file."
+        "newUpload": "No PPMC history for these params, you should upload a new PPMC file.",
+        "tbp_bad_credentials": "Bad TBP Credentials!"
     },
     "footer": "©SQLI Group 2017 - All rights reserved"
 }

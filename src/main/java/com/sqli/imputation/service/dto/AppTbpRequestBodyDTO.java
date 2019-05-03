@@ -7,6 +7,8 @@ public class AppTbpRequestBodyDTO {
     private Team team;
     private int year;
     private int month;
+    private String username;
+    private String password;
 
     public Team getTeam() {
         return team;
@@ -30,6 +32,22 @@ public class AppTbpRequestBodyDTO {
 
     public void setMonth(int month) {
         this.month = month;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

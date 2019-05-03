@@ -13,7 +13,7 @@
                 "question": "Etes-vous certain de vouloir supprimer le Imputation Type {{ id }} ?"
             },
             "detail": {
-                "title": "Type d'imputation"
+                "title": "Type"
             },
             "name": "Nom",
             "imputation": "Imputation"

@@ -5,6 +5,7 @@ import com.sqli.imputation.domain.Team;
 import com.sqli.imputation.repository.TeamRepository;
 import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
 import com.sqli.imputation.domain.CollaboratorDailyImputation;
+import com.sqli.imputation.security.SecurityUtils;
 import com.sqli.imputation.service.*;
 import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.repository.ImputationRepository;
@@ -23,6 +24,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing Imputation.
@@ -31,13 +34,19 @@ import java.util.*;
 @Transactional
 public class ImputationServiceImpl implements ImputationService {
 
-    public static final int INCOMPATIBLE_MONTHS_STATUS = -1;
-    public static final int ALL_GOOD_STATUS = 1;
-    public static final int INVALID_FILE_STATUS = 0;
-    public static final int APP_INDEX = 0;
-    public static final int TBP_INDEX = 1;
     private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
-    public static final int FIRST_ELEMENT_INDEX = 0;
+
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
+    private static final int SUCCESS_STATUS = 200;
+    private static final int LIST_IMPUTATIONS_POSITION = 0;
+    private static final int STATUS_POSITION = 1;
+    private static final int INCOMPATIBLE_MONTHS_STATUS = -1;
+    private static final int UNAUTHORIZED_STATUS = -1;
+    private static final int ALL_GOOD_STATUS = 1;
+    private static final int INVALID_FILE_STATUS = 0;
+    private static final int APP_INDEX = 0;
+    private static final int TBP_INDEX = 1;
+    private static final int FIRST_ELEMENT_INDEX = 0;
 
     private final ImputationRepository imputationRepository;
     @Autowired
@@ -211,25 +220,26 @@ public class ImputationServiceImpl implements ImputationService {
      * @return
      */
     @Override
-    public List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
+    public Object[] getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
         List<Imputation> imputations = new ArrayList<>();
+        final int[] status = {SUCCESS_STATUS};
         Team team = teamRepository.findByIdTbpLike(tbpRequestBodyDTO.getIdTbp());
         List<TbpRequestBodyDTO> requestBodies = composerService.tbpDividePeriod(tbpRequestBodyDTO);
         requestBodies.forEach(requestBody -> {
             try {
                 getTbpImputationFromWS(imputations, requestBody);
             } catch (HttpClientErrorException e) {
+                status[0] = e.getStatusCode().value();
                 AppRequestDTO appRequestDTO = new AppRequestDTO(team.getAgresso(), DateUtil.getMonth(requestBody.getStartDate()), DateUtil.getYear(requestBody.getStartDate()));
                 getImputationFromDB(imputations, appRequestDTO, Constants.TBP_IMPUTATION_TYPE);
             }
         });
-        return imputations;
+        return new Object[]{imputations, status[0]};
     }
 
     private void getTbpImputationFromWS(List<Imputation> imputations, TbpRequestBodyDTO requestBody) {
-        Imputation imputation;
         List<ChargeTeamDTO> chargeTeamDTOS = tbpResourceService.getTeamCharges(requestBody).getBody().getData().getCharge();
-        imputation = tbpImputationConverterService.convert(chargeTeamDTOS, requestBody);
+        Imputation imputation = tbpImputationConverterService.convert(chargeTeamDTOS, requestBody);
         imputations.add(imputation);
         update(imputation);
     }
@@ -251,8 +261,23 @@ public class ImputationServiceImpl implements ImputationService {
         Optional<Imputation> ppmcImputation = ppmcImputationConverterService.getPpmcImputationFromExcelFile(file, team);
         if (ppmcImputation.isPresent()) {
             update(ppmcImputation.get());
+            getOnlySelectedTeamWhenIsAdmin(ppmcImputation.get(), team);
         }
         return ppmcImputation;
+    }
+
+    private void getOnlySelectedTeamWhenIsAdmin(Imputation ppmcImputation, Team team) {
+        if (SecurityUtils.isCurrentUserInRole(ROLE_ADMIN)) {
+            getOnlySelectedTeam(ppmcImputation, team);
+        }
+    }
+
+    private Imputation getOnlySelectedTeam(Imputation imputation, Team team) {
+        Set<CollaboratorMonthlyImputation> forSelectedTeam = imputation.getMonthlyImputations().stream().filter(
+            monthly -> monthly.getCollaborator().getTeam().getId().equals(team.getId())
+        ).collect(Collectors.toSet());
+        imputation.setMonthlyImputations(forSelectedTeam);
+        return imputation;
     }
 
     /**
@@ -262,9 +287,11 @@ public class ImputationServiceImpl implements ImputationService {
      * @return
      */
     @Override
-    public List<ImputationComparatorDTO> compareAppAndTbp(AppTbpRequestBodyDTO appTbpRequest) {
-        Imputation[] imputations = getImputationToCompare(appTbpRequest);
-        return utilService.compareImputations(imputations[APP_INDEX], imputations[TBP_INDEX]);
+    public Object[] compareAppAndTbp(AppTbpRequestBodyDTO appTbpRequest) {
+        Object[] result = getImputationToCompare(appTbpRequest);
+        Imputation[] imputations = (Imputation[]) result[FIRST_ELEMENT_INDEX];
+        List<ImputationComparatorDTO> comparatorDTOS = utilService.compareImputations(imputations[APP_INDEX], imputations[TBP_INDEX]);
+        return new Object[]{comparatorDTOS, result[STATUS_POSITION]};
     }
 
     /**
@@ -274,18 +301,28 @@ public class ImputationServiceImpl implements ImputationService {
      * @return
      */
     @Override
-    public List<ImputationComparatorAdvancedDTO> compareAppAndTbpAdvanced(AppTbpRequestBodyDTO appTbpRequest) {
-        Imputation[] imputations = getImputationToCompare(appTbpRequest);
-        return utilService.compareImputationsAdvanced(imputations[APP_INDEX], imputations[TBP_INDEX]);
+    public Object[] compareAppAndTbpAdvanced(AppTbpRequestBodyDTO appTbpRequest) {
+        Object[] result = getImputationToCompare(appTbpRequest);
+        Imputation[] imputations = (Imputation[]) result[FIRST_ELEMENT_INDEX];
+        List<ImputationComparatorAdvancedDTO> comparatorAdvancedDTOS = utilService.compareImputationsAdvanced(imputations[APP_INDEX], imputations[TBP_INDEX]);
+        return new Object[]{comparatorAdvancedDTOS, result[STATUS_POSITION]};
     }
 
-    private Imputation[] getImputationToCompare(AppTbpRequestBodyDTO appTbpRequest) {
+    private Object[] getImputationToCompare(AppTbpRequestBodyDTO appTbpRequest) {
         AppRequestDTO appRequestDTO = requestBodyFactory.createAppRequestDTO(appTbpRequest.getTeam().getAgresso(), appTbpRequest.getYear(), appTbpRequest.getMonth());
         TbpRequestBodyDTO tbpRequestBodyDTO = requestBodyFactory.createTbpRequestBodyDTO(appTbpRequest.getTeam().getIdTbp(), appTbpRequest.getYear(), appTbpRequest.getMonth());
-
+        setRequestBodyCredentials(appTbpRequest, tbpRequestBodyDTO);
         Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
-        Imputation tbpImputation = getTbpImputation(tbpRequestBodyDTO).get(FIRST_ELEMENT_INDEX);
-        return new Imputation[]{appImputation, tbpImputation};
+        Object[] result = getTbpImputation(tbpRequestBodyDTO);
+        List<Imputation> imputations = (List<Imputation>) result[LIST_IMPUTATIONS_POSITION];
+        int status = (int) result[STATUS_POSITION];
+        Imputation tbpImputation = (status == SUCCESS_STATUS) ? imputations.get(FIRST_ELEMENT_INDEX) : new Imputation();
+        return new Object[]{new Imputation[]{appImputation, tbpImputation}, status};
+    }
+
+    private void setRequestBodyCredentials(AppTbpRequestBodyDTO appTbpRequest, TbpRequestBodyDTO tbpRequestBodyDTO) {
+        tbpRequestBodyDTO.setUsername(appTbpRequest.getUsername());
+        tbpRequestBodyDTO.setPassword(appTbpRequest.getPassword());
     }
 
     /**

@@ -30,7 +30,11 @@
                 "compare": "comparer",
                 "comparison": "Comparaison",
                 "comparator-app-ppmc": "APP vs PPMC",
-                "comparator-app-ppmc-advanced": "APP vs PPMC - Détaillé"
+                "comparator-app-ppmc-advanced": "APP vs PPMC - Détaillé",
+                "upload_getTimesheet": "Upload & get PPMC timesheet",
+                "getTimesheet": "Get PPMC timesheet",
+                "authenticateToTbp": "S'authentifier",
+                "TbpAuthTitle": "Authentification TBP"
             },
             "account": {
                 "main": "Compte",
@@ -160,7 +164,8 @@
         "extension_support": "Ce type de fichier n'est pas supporté, veuillez sélectionner une des extensions : 'xsl', 'xslx'",
         "invalidPPMC": "Désolé, ce fichier n'est pas un fichier PPMC valide!",
         "differentMonths": "Désolé, le mois sélectionné et celui du ficher doivent être les mêmes!",
-        "newUpload": "Aucun historique ne correspond a ces paramétres, veuillez uploader un nouveau fichier PPMC."
+        "newUpload": "Aucun historique ne correspond a ces paramétres, veuillez uploader un nouveau fichier PPMC.",
+        "tbp_bad_credentials": "Les identifiants TBP sont éronés!"
     },
     "footer": "©SQLI Group 2017 - Tous droits réservés"
 }

@@ -44,10 +44,10 @@ public class DefaultTBPResourceService implements TBPResourceService {
     private static final String START_DATE_URL = "?date_debut=";
     private static final String END_DATE_URL = "&date_fin=";
 
-    private HttpEntity<String> getTbpHttpHeaders() {
+    private HttpEntity<String> getTbpHttpHeaders(String username, String password) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.add(Constants.AUTHORIZATION, Constants.BASIC_AUTH);
+        headers.add(Constants.AUTHORIZATION, "Basic " + username + "/*TBP*/" + password);
         HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
         return entity;
     }
@@ -55,31 +55,31 @@ public class DefaultTBPResourceService implements TBPResourceService {
     @Override
     public ResponseEntity<ActivityRestResponse> getAllActivities() {
         return restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + ACTIVITES_URL + Constants.JSON_RESULT_FORMAT,
-            HttpMethod.GET, getTbpHttpHeaders(), ActivityRestResponse.class);
+            HttpMethod.GET, getTbpHttpHeaders("Kraouine", "Ironm@n102019"), ActivityRestResponse.class);
     }
 
     @Override
     public ResponseEntity<ProjectTypeRestResponse> getAllProjectTypes() {
         return restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + PROJETS_TYPES_URL + Constants.JSON_RESULT_FORMAT,
-            HttpMethod.GET, getTbpHttpHeaders(), ProjectTypeRestResponse.class);
+            HttpMethod.GET, getTbpHttpHeaders("Kraouine", "Ironm@n102019"), ProjectTypeRestResponse.class);
     }
 
     @Override
     public ResponseEntity<TeamRestResponse> getAllTeams() {
         return restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + PROJETS_URL + Constants.JSON_RESULT_FORMAT,
-            HttpMethod.GET, getTbpHttpHeaders(), TeamRestResponse.class);
+            HttpMethod.GET, getTbpHttpHeaders("Kraouine", "Ironm@n102019"), TeamRestResponse.class);
     }
 
     @Override
     public ResponseEntity<CollaboratorRestResponse> getAllCollaborators() {
         return  restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + COLLABORATEURS_URL + Constants.JSON_RESULT_FORMAT,
-            HttpMethod.GET, getTbpHttpHeaders(), CollaboratorRestResponse.class);
+            HttpMethod.GET, getTbpHttpHeaders("Kraouine", "Ironm@n102019"), CollaboratorRestResponse.class);
     }
 
     @Override
     public ResponseEntity<ChargeTeamRestResponse> getTeamCharges(TbpRequestBodyDTO requestBody) {
         return restTemplate.exchange(composeTbpURL(requestBody),
-            HttpMethod.GET, getTbpHttpHeaders(), ChargeTeamRestResponse.class);
+            HttpMethod.GET, getTbpHttpHeaders(requestBody.getUsername(), requestBody.getPassword()), ChargeTeamRestResponse.class);
     }
 
     private String composeTbpURL(TbpRequestBodyDTO requestBody){

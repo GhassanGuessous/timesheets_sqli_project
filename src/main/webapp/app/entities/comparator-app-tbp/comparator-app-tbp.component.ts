@@ -3,7 +3,8 @@ import { ITeam } from 'app/shared/model/team.model';
 import { AccountService } from 'app/core';
 import { TeamService } from 'app/entities/team';
 import { ComparatorAPPTBPService } from 'app/entities/comparator-app-tbp/comparator-app-tbp.service';
-import { AppTbpRequestBody } from 'app/shared/model/app-tbp-request-body';
+import { AppTbpRequestBody, IAppTbpRequestBody } from 'app/shared/model/app-tbp-request-body';
+import { AuthTbpModalService } from 'app/core/authTbp/auth-tbp-modal.service';
 
 @Component({
     selector: 'jhi-comparator-app-tbp',
@@ -21,9 +22,14 @@ export class ComparatorAPPTBPComponent implements OnInit {
     private predicate: any;
     private reverse: any;
     private comparator: any;
-    private appTbpRequestBody: AppTbpRequestBody = new AppTbpRequestBody(null, this.currentYear, this.currentMonth);
+    private appTbpRequestBody: IAppTbpRequestBody = new AppTbpRequestBody(null, this.currentYear, this.currentMonth);
 
-    constructor(protected service: ComparatorAPPTBPService, protected accountService: AccountService, protected teamService: TeamService) {}
+    constructor(
+        protected service: ComparatorAPPTBPService,
+        protected accountService: AccountService,
+        protected teamService: TeamService,
+        private authTbpModalService: AuthTbpModalService
+    ) {}
 
     ngOnInit() {
         this.initialize();
@@ -78,9 +84,11 @@ export class ComparatorAPPTBPComponent implements OnInit {
     }
 
     compare() {
-        this.service.compare(this.appTbpRequestBody).subscribe(res => {
-            this.comparator = res.body;
-        });
+        if (localStorage.getItem('isTbpAuthenticated') === 'false') {
+            this.authenticateThenCompare();
+        } else {
+            this.compareWhenIsAlreadyAuthenticated();
+        }
     }
 
     getcolor(difference: number): string {
@@ -91,5 +99,25 @@ export class ComparatorAPPTBPComponent implements OnInit {
         } else {
             return 'green';
         }
+    }
+
+    private authenticateThenCompare() {
+        this.appTbpRequestBody.requestType = 'APP_TBP_COMPARATOR';
+        this.authTbpModalService.open(this.appTbpRequestBody).then(
+            result => {
+                this.comparator = result;
+            },
+            reason => {
+                console.log(reason);
+            }
+        );
+    }
+
+    private compareWhenIsAlreadyAuthenticated() {
+        this.appTbpRequestBody.username = localStorage.getItem('username');
+        this.appTbpRequestBody.password = localStorage.getItem('password');
+        this.service.compare(this.appTbpRequestBody).subscribe(res => {
+            this.comparator = res.body;
+        });
     }
 }
