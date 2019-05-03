@@ -59,9 +59,9 @@ public interface ImputationService {
 
     Optional<Imputation> getPpmcImputation(MultipartFile file, String agresso);
 
-    List<ImputationComparatorDTO> compareAppAndTbp(AppTbpRequestBodyDTO appTbpRequest);
+    Object[] compareAppAndTbp(AppTbpRequestBodyDTO appTbpRequest);
 
-    List<ImputationComparatorAdvancedDTO> compareAppAndTbpAdvanced(AppTbpRequestBodyDTO appTbpRequest);
+    Object[] compareAppAndTbpAdvanced(AppTbpRequestBodyDTO appTbpRequest);
 
     Object[] compareAppPpmc(MultipartFile file, AppRequestDTO appRequestDTO);
 

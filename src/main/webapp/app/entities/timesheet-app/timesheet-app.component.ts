@@ -68,7 +68,6 @@ export class TimesheetAppComponent implements OnInit {
     private getTimesheet() {
         this.service.findAppChargeByTeam(this.appRequestBody).subscribe(res => {
             this.imputations = res.body;
-            console.log(res.body);
             for (let i = 0; i < this.imputations.length; i++) {
                 this.initializeDays(this.imputations[i]);
             }
@@ -98,7 +97,8 @@ export class TimesheetAppComponent implements OnInit {
     }
 
     private initializeYears() {
-        for (let i = 2015; i <= this.currentYear; i++) {
+        const startImputationsYear = 2015;
+        for (let i = startImputationsYear; i <= this.currentYear; i++) {
             this.years.push(i);
         }
     }
@@ -116,7 +116,8 @@ export class TimesheetAppComponent implements OnInit {
     }
 
     private initializeManDays() {
-        for (let i = 1; i <= 40; i++) {
+        const maxManDay = 40;
+        for (let i = 1; i <= maxManDay; i++) {
             this.manDays.push(i);
         }
     }

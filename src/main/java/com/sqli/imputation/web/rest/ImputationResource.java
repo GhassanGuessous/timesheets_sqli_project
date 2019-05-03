@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,7 +36,8 @@ public class ImputationResource {
     private final Logger log = LoggerFactory.getLogger(ImputationResource.class);
 
     private static final int LIST_IMPUTATIONS_POSITION = 0;
-    private static final int UNAUTHORIZED_STATUS = -1;
+    private static final int UNAUTHORIZED_STATUS = 401;
+    private static final int UNAUTHORIZED_AUTHORITY_STATUS = 405;
     private static final int INCOMPATIBLE_MONTHS_STATUS = -1;
     private static final int STATUS_POSITION = 1;
     private static final int LIST_DTOS_POSITION = 0;
@@ -169,10 +171,7 @@ public class ImputationResource {
         } else {
             Object[] result = imputationService.getTbpImputation(tbpRequestBodyDTO);
             List<Imputation> imputations = (List<Imputation>) result[LIST_IMPUTATIONS_POSITION];
-            int status = (int) result[STATUS_POSITION];
-            if(status == UNAUTHORIZED_STATUS){
-                throw new BadRequestAlertException("Tbp credentials", ENTITY_NAME, "tbp_bad_credentials");
-            }
+            throwTbpErrors((int) result[STATUS_POSITION]);
             return ResponseEntity.ok().body(imputations);
         }
     }
@@ -202,12 +201,12 @@ public class ImputationResource {
     }
 
     @PostMapping("/imputations/ppmc-database")
-    public ResponseEntity<Optional<Imputation>> getPPMCImputationFromDB(@RequestBody AppRequestDTO appRequestDTO){
+    public ResponseEntity<Optional<Imputation>> getPPMCImputationFromDB(@RequestBody AppRequestDTO appRequestDTO) {
         if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else {
             Optional<Imputation> ppmcImputation = imputationService.findByImputationAndTeam(appRequestDTO, Constants.PPMC_IMPUTATION_TYPE);
-            if(!ppmcImputation.isPresent()){
+            if (!ppmcImputation.isPresent()) {
                 throw new BadRequestAlertException(UPLOAD_A_PPMC_FILE_MESSAGE, ENTITY_NAME, NEW_UPLOAD);
             }
             return ResponseEntity.ok().body(ppmcImputation);
@@ -225,9 +224,22 @@ public class ImputationResource {
         log.debug("REST request to get APP - TBP Imputation : {}", appTbpRequest);
         if (appTbpRequest.getTeam() == null) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
+        } else if (isNotValidTBPCredentials(appTbpRequest.getUsername(), appTbpRequest.getPassword())) {
+            throw new BadRequestAlertException("Tbp credentials", ENTITY_NAME, "tbp_bad_credentials");
         } else {
-            List<ImputationComparatorDTO> comparatorDTOS = imputationService.compareAppAndTbp(appTbpRequest);
-             return ResponseEntity.ok().body(comparatorDTOS);
+            Object[] result = imputationService.compareAppAndTbp(appTbpRequest);
+            List<ImputationComparatorDTO> comparatorDTOS = (List<ImputationComparatorDTO>) result[LIST_IMPUTATIONS_POSITION];
+            throwTbpErrors((int) result[STATUS_POSITION]);
+            return ResponseEntity.ok().body(comparatorDTOS);
+        }
+    }
+
+    private void throwTbpErrors(int status) {
+        if (status == UNAUTHORIZED_STATUS) {
+            throw new BadRequestAlertException("Tbp credentials", ENTITY_NAME, "tbp_bad_credentials");
+        }
+        if (status == UNAUTHORIZED_AUTHORITY_STATUS) {
+            throw new BadRequestAlertException("Tbp authority", ENTITY_NAME, "tbp_bad_authority");
         }
     }
 
@@ -242,8 +254,12 @@ public class ImputationResource {
         log.debug("REST request to get APP - TBP Imputation : {}", appTbpRequest);
         if (appTbpRequest.getTeam() == null) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
+        }else if (isNotValidTBPCredentials(appTbpRequest.getUsername(), appTbpRequest.getPassword())) {
+            throw new BadRequestAlertException("Tbp credentials", ENTITY_NAME, "tbp_bad_credentials");
         } else {
-            List<ImputationComparatorAdvancedDTO> comparatorDTOS = imputationService.compareAppAndTbpAdvanced(appTbpRequest);
+            Object[] result = imputationService.compareAppAndTbpAdvanced(appTbpRequest);
+            List<ImputationComparatorAdvancedDTO> comparatorDTOS = (List<ImputationComparatorAdvancedDTO>) result[LIST_IMPUTATIONS_POSITION];
+            throwTbpErrors((int) result[STATUS_POSITION]);
             return ResponseEntity.ok().body(comparatorDTOS);
         }
     }
@@ -296,8 +312,8 @@ public class ImputationResource {
         Object[] result = isAdvanced ? imputationService.compareAppPpmcAdvanced(file, appRequestDTO) : imputationService.compareAppPpmc(file, appRequestDTO);
         List<T> comparatorDTOS = (List<T>) result[LIST_DTOS_POSITION];
         int status = (int) result[STATUS_POSITION];
-        if(comparatorDTOS.isEmpty()) {
-            if(isIncompatibleMonths(status)) {
+        if (comparatorDTOS.isEmpty()) {
+            if (isIncompatibleMonths(status)) {
                 throw new BadRequestAlertException("Different months", ENTITY_NAME, "differentMonths");
             }
             throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
@@ -319,14 +335,14 @@ public class ImputationResource {
     public ResponseEntity<List<ImputationComparatorDTO>> getAppPpmcComparisonFromDB(@RequestBody AppRequestDTO appRequestDTO) {
         if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
-        }  else {
+        } else {
             return getComparisonFromDB(appRequestDTO);
         }
     }
 
     private ResponseEntity<List<ImputationComparatorDTO>> getComparisonFromDB(AppRequestDTO appRequestDTO) {
-        List<ImputationComparatorDTO> comparatorDTOS = imputationService.getComparisonFromDB(appRequestDTO,Constants.PPMC_IMPUTATION_TYPE);
-        if(comparatorDTOS.isEmpty()){
+        List<ImputationComparatorDTO> comparatorDTOS = imputationService.getComparisonFromDB(appRequestDTO, Constants.PPMC_IMPUTATION_TYPE);
+        if (comparatorDTOS.isEmpty()) {
             throw new BadRequestAlertException(UPLOAD_A_PPMC_FILE_MESSAGE, ENTITY_NAME, NEW_UPLOAD);
         }
         return ResponseEntity.ok().body(comparatorDTOS);
@@ -339,7 +355,7 @@ public class ImputationResource {
      * @return
      */
     @PostMapping("/imputations/comparison-app-ppmc-advanced-database")
-    public ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedAppPpmcComparisonFromDB(@RequestBody AppRequestDTO appRequestDTO){
+    public ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedAppPpmcComparisonFromDB(@RequestBody AppRequestDTO appRequestDTO) {
         if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else {
@@ -349,14 +365,14 @@ public class ImputationResource {
 
     private ResponseEntity<List<ImputationComparatorAdvancedDTO>> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO) {
         List<ImputationComparatorAdvancedDTO> advancedComparatorDTOS = imputationService.getAdvancedComparisonFromDB(appRequestDTO, Constants.PPMC_IMPUTATION_TYPE);
-        if(advancedComparatorDTOS.isEmpty()){
+        if (advancedComparatorDTOS.isEmpty()) {
             throw new BadRequestAlertException(UPLOAD_A_PPMC_FILE_MESSAGE, ENTITY_NAME, NEW_UPLOAD);
         }
         return ResponseEntity.ok().body(advancedComparatorDTOS);
     }
 
     @PostMapping("/imputations/notify")
-    public ResponseEntity<Void> sendNotificationsToCollabs(@RequestBody List<NotificationDTO> notifications){
+    public ResponseEntity<Void> sendNotificationsToCollabs(@RequestBody List<NotificationDTO> notifications) {
         imputationService.sendNotifications(notifications);
         return ResponseEntity.ok().headers(HeaderUtil.createEmailSendingAlert(ENTITY_NAME)).build();
     }

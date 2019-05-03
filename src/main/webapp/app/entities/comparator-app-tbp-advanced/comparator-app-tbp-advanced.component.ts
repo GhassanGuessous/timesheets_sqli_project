@@ -3,12 +3,13 @@ import { ITeam } from 'app/shared/model/team.model';
 import { AccountService } from 'app/core';
 import { TeamService } from 'app/entities/team';
 import { ComparatorAppTbpAdvancedService } from 'app/entities/comparator-app-tbp-advanced/comparator-app-tbp-advanced.service';
-import { AppTbpRequestBody } from 'app/shared/model/app-tbp-request-body';
+import { AppTbpRequestBody, IAppTbpRequestBody } from 'app/shared/model/app-tbp-request-body';
 import { ICollaborator } from 'app/shared/model/collaborator.model';
 import { CollaboratorDailyImputation, ICollaboratorDailyImputation } from 'app/shared/model/collaborator-daily-imputation.model';
 import { INotificationModel, NotificationModel } from 'app/shared/model/notification.model';
 import { IImputationComparatorAdvancedDTO } from 'app/shared/model/imputation-comparator-advanced-dto.model';
 import { GapModel } from 'app/shared/model/gap.model';
+import { AuthTbpModalService } from 'app/core/authTbp/auth-tbp-modal.service';
 
 @Component({
     selector: 'jhi-comparator-app-tbp-advanced',
@@ -29,12 +30,13 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
     private imputationDays: Array<number>;
     private notifiableCollabs: Map<ICollaborator, Array<number>> = new Map<ICollaborator, Array<number>>();
     private notifications?: INotificationModel[];
-    private appTbpRequestBody: AppTbpRequestBody = new AppTbpRequestBody(null, this.currentYear, this.currentMonth);
+    private appTbpRequestBody: IAppTbpRequestBody = new AppTbpRequestBody(null, this.currentYear, this.currentMonth);
 
     constructor(
         protected service: ComparatorAppTbpAdvancedService,
         protected accountService: AccountService,
-        protected teamService: TeamService
+        protected teamService: TeamService,
+        private authTbpModalService: AuthTbpModalService
     ) {}
 
     ngOnInit() {
@@ -72,7 +74,8 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
     }
 
     private initializeYears() {
-        for (let i = 2015; i <= this.currentYear; i++) {
+        const startImputationsYear = 2015;
+        for (let i = startImputationsYear; i <= this.currentYear; i++) {
             this.years.push(i);
         }
     }
@@ -89,6 +92,30 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
     }
 
     private compare() {
+        if (localStorage.getItem('isTbpAuthenticated') === 'false') {
+            this.authenticateThenCompare();
+        } else {
+            this.compareWhenIsAlreadyAuthenticated();
+        }
+    }
+
+    private authenticateThenCompare() {
+        this.appTbpRequestBody.requestType = 'APP_TBP_ADVANCED_COMPARATOR';
+        this.authTbpModalService.open(this.appTbpRequestBody).then(
+            result => {
+                this.comparator = result;
+                this.initializeDays();
+                this.initNotifiableCollabs();
+            },
+            reason => {
+                console.log(reason);
+            }
+        );
+    }
+
+    private compareWhenIsAlreadyAuthenticated() {
+        this.appTbpRequestBody.username = localStorage.getItem('username');
+        this.appTbpRequestBody.password = localStorage.getItem('password');
         this.service.compare(this.appTbpRequestBody).subscribe(res => {
             this.comparator = res.body;
             this.initializeDays();
@@ -122,7 +149,7 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
     private initNotifiableCollabs() {
         this.comparator.forEach(element => {
             this.imputationDays.forEach(day => {
-                if (this.isWillBeColored(element, day)) {
+                if (this.isDayWithGap(element, day)) {
                     if (this.notifiableCollabs.has(element.collaborator)) {
                         this.notifiableCollabs.get(element.collaborator).push(day);
                     } else {
@@ -133,7 +160,7 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
         });
     }
 
-    private isWillBeColored(element: any, day: number): boolean {
+    private isDayWithGap(element: any, day: number): boolean {
         if (element.appMonthlyImputation && element.comparedMonthlyImputation) {
             const appDailyImputation = this.findDailyImputation(element.appMonthlyImputation, day);
             const comparedDailyImputation = this.findDailyImputation(element.comparedMonthlyImputation, day);
@@ -187,7 +214,9 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
         const comparedDailies: ICollaboratorDailyImputation[] = [];
         appGap.dailyImputations = appDailies;
         comparedGap.dailyImputations = comparedDailies;
-        this.notifications.push(new NotificationModel(element.collaborator, 0, 0, appGap, comparedGap));
+        this.notifications.push(
+            new NotificationModel(element.collaborator, this.appTbpRequestBody.month, this.appTbpRequestBody.year, appGap, comparedGap)
+        );
     }
 
     private notifyCollabsWithGap(collabElement?: any) {
@@ -200,10 +229,7 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
                 this.notifySingleCollab(element);
             });
         }
-        console.log(this.notifications);
-        this.service.sendNotifications(this.notifications).subscribe(res => {
-            console.log(res.body);
-        });
+        this.service.sendNotifications(this.notifications).subscribe();
     }
 
     private notifySingleCollab(element) {

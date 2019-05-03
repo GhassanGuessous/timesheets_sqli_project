@@ -66,6 +66,7 @@ export class TimesheetTbpComponent implements OnInit {
     }
 
     private authenticateThenGetTimesheet() {
+        this.tbpRequestBody.requestType = 'TBP';
         this.authTbpModalService.open(this.tbpRequestBody).then(
             result => {
                 this.imputations = result;
