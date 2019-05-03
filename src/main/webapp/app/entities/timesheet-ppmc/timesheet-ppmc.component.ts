@@ -67,29 +67,19 @@ export class TimesheetPpmcComponent implements OnInit {
         if (this.selectedFiles !== undefined) {
             this.progress.percentage = 0;
             this.currentFileUpload = this.selectedFiles.item(0);
-            this.timesheetPpmcService.getPpmcTimeSheet(this.currentFileUpload, this.appRequestBody).subscribe(
-                event => {
-                    if (event.type === HttpEventType.UploadProgress) {
-                        this.progress.percentage = Math.round((100 * event.loaded) / event.total);
-                    } else if (event instanceof HttpResponse) {
-                        this.imputation = event.body;
-                        this.initializeDays(this.imputation);
-                    }
-                },
-                error => {
-                    console.log(error);
-                }
-            );
-        } else {
-            this.timesheetPpmcService.getPpmcTimeSheetFromDB(this.appRequestBody).subscribe(
-                res => {
-                    this.imputation = res.body;
+            this.timesheetPpmcService.getPpmcTimeSheet(this.currentFileUpload, this.appRequestBody).subscribe(event => {
+                if (event.type === HttpEventType.UploadProgress) {
+                    this.progress.percentage = Math.round((100 * event.loaded) / event.total);
+                } else if (event instanceof HttpResponse) {
+                    this.imputation = event.body;
                     this.initializeDays(this.imputation);
-                },
-                error => {
-                    console.log(error);
                 }
-            );
+            });
+        } else {
+            this.timesheetPpmcService.getPpmcTimeSheetFromDB(this.appRequestBody).subscribe(res => {
+                this.imputation = res.body;
+                this.initializeDays(this.imputation);
+            });
         }
         this.selectedFiles = undefined;
     }
@@ -100,7 +90,8 @@ export class TimesheetPpmcComponent implements OnInit {
     }
 
     private initializeYears() {
-        for (let i = 2015; i <= this.currentYear; i++) {
+        const startImputationsYear = 2015;
+        for (let i = startImputationsYear; i <= this.currentYear; i++) {
             this.years.push(i);
         }
     }

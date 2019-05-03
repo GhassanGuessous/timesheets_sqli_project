@@ -13,7 +13,7 @@ public final class Constants {
     public static final String DEFAULT_LANGUAGE = "en";
 
     public static final String AUTHORIZATION = "Authorization";
-    public static final String BASIC_AUTH = "Basic Kraouine/*TBP*/Ironm@n10019";
+    public static final String BASIC_AUTH = "Basic Kraouine/*TBP*/Ironm@n102019";
     public static final String TBP_URL_WEB_SERVICE = "http://tbp-maroc.sqli.com/restService/public/";
     public static final String JSON_RESULT_FORMAT = ".json";
     public static final String APP_IMPUTATION_TYPE = "APP";

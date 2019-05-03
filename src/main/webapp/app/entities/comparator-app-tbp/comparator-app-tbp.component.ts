@@ -60,24 +60,24 @@ export class ComparatorAPPTBPComponent implements OnInit {
     }
 
     private initializeYears() {
-        for (let i = 2015; i <= this.currentYear; i++) {
+        const startImputationsYear = 2015;
+        for (let i = startImputationsYear; i <= this.currentYear; i++) {
             this.years.push(i);
         }
     }
 
     private initializeMonth() {
-        let lastYear = 12;
+        let lastMonthInYear = 12;
         this.months = [];
         if (this.appTbpRequestBody.year == this.currentYear) {
-            lastYear = this.currentMonth;
+            lastMonthInYear = this.currentMonth;
         }
-        for (let i = 1; i <= lastYear; i++) {
+        for (let i = 1; i <= lastMonthInYear; i++) {
             this.months.push(i);
         }
     }
 
     compare() {
-        console.log(this.appTbpRequestBody);
         this.service.compare(this.appTbpRequestBody).subscribe(res => {
             this.comparator = res.body;
         });

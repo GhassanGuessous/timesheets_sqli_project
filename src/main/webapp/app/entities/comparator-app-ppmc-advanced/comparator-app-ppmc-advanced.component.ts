@@ -73,18 +73,13 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         this.appRequestBody.manDay = new Date(this.appRequestBody.year, this.appRequestBody.month, 0).getDate();
         if (this.selectedFiles !== undefined) {
             this.currentFileUpload = this.selectedFiles.item(0);
-            this.comparatorAppPpmcAdvancedService.getAdvancedComparison(this.currentFileUpload, this.appRequestBody).subscribe(
-                event => {
-                    if (event instanceof HttpResponse) {
-                        this.comparator = event.body;
-                        this.initializeDays();
-                        this.initNotifiableCollabs();
-                    }
-                },
-                error => {
-                    console.log(error);
+            this.comparatorAppPpmcAdvancedService.getAdvancedComparison(this.currentFileUpload, this.appRequestBody).subscribe(event => {
+                if (event instanceof HttpResponse) {
+                    this.comparator = event.body;
+                    this.initializeDays();
+                    this.initNotifiableCollabs();
                 }
-            );
+            });
         } else {
             this.comparatorAppPpmcAdvancedService.getAdvancedComparisonFromDB(this.appRequestBody).subscribe(res => {
                 this.comparator = res.body;
@@ -98,7 +93,7 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     private initNotifiableCollabs() {
         this.comparator.forEach(element => {
             this.imputationDays.forEach(day => {
-                if (this.isWillBeColored(element, day)) {
+                if (this.isDayWithGap(element, day)) {
                     if (this.notifiableCollabs.has(element.collaborator)) {
                         this.notifiableCollabs.get(element.collaborator).push(day);
                     } else {
@@ -109,12 +104,12 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         });
     }
 
-    private isWillBeColored(element: any, day: number): boolean {
+    private isDayWithGap(element: any, day: number): boolean {
         if (element.appMonthlyImputation && element.comparedMonthlyImputation) {
             const appDaily = this.findDailyImputation(element.appMonthlyImputation, day);
             const comparedDaily = this.findDailyImputation(element.comparedMonthlyImputation, day);
             if (appDaily && comparedDaily) {
-                return this.getColorWhenDifferentCharge(appDaily, comparedDaily);
+                return this.isChargesDifferent(appDaily, comparedDaily);
             } else {
                 if (this.isOneUndefined(appDaily, comparedDaily)) {
                     return this.getDefinedOne(appDaily, comparedDaily).charge !== 0;
@@ -129,7 +124,7 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
         return appDaily;
     }
 
-    private getColorWhenDifferentCharge(appDaily: ICollaboratorDailyImputation, comparedDaily: ICollaboratorDailyImputation): boolean {
+    private isChargesDifferent(appDaily: ICollaboratorDailyImputation, comparedDaily: ICollaboratorDailyImputation): boolean {
         if (appDaily.charge !== comparedDaily.charge) {
             return true;
         }
@@ -190,10 +185,7 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
                 this.notifySingleCollab(element);
             });
         }
-        console.log(this.notifications);
-        this.comparatorAppPpmcAdvancedService.sendNotifications(this.notifications).subscribe(res => {
-            console.log(res.body);
-        });
+        this.comparatorAppPpmcAdvancedService.sendNotifications(this.notifications).subscribe();
     }
 
     private notifySingleCollab(element) {
@@ -240,7 +232,8 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     }
 
     private initializeYears() {
-        for (let i = 2015; i <= this.currentYear; i++) {
+        const startImputationsYear = 2015;
+        for (let i = startImputationsYear; i <= this.currentYear; i++) {
             this.years.push(i);
         }
     }

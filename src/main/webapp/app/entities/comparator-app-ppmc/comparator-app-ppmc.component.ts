@@ -23,7 +23,6 @@ export class ComparatorAppPpmcComponent implements OnInit {
     private currentMonth: number = new Date().getMonth() + 1;
     private years: Array<number> = [];
     private months: Array<number> = [];
-    private numberOfDaysOfCurrentMonth: number = new Date(this.currentYear, this.currentMonth, 0).getDate();
     private appRequestBody: IAppRequestBody = new AppRequestBody('', this.currentYear, this.currentMonth, 1, 0);
 
     constructor(
@@ -65,18 +64,12 @@ export class ComparatorAppPpmcComponent implements OnInit {
         this.appRequestBody.manDay = new Date(this.appRequestBody.year, this.appRequestBody.month, 0).getDate();
         if (this.selectedFiles !== undefined) {
             this.currentFileUpload = this.selectedFiles.item(0);
-            this.comparatorAppPpmcService.getComparison(this.currentFileUpload, this.appRequestBody).subscribe(
-                event => {
-                    if (event instanceof HttpResponse) {
-                        this.comparator = event.body;
-                    }
-                },
-                error => {
-                    console.log(error);
+            this.comparatorAppPpmcService.getComparison(this.currentFileUpload, this.appRequestBody).subscribe(event => {
+                if (event instanceof HttpResponse) {
+                    this.comparator = event.body;
                 }
-            );
+            });
         } else {
-            console.log(this.appRequestBody);
             this.comparatorAppPpmcService.getComparisonFromDB(this.appRequestBody).subscribe(res => {
                 this.comparator = res.body;
             });
@@ -104,18 +97,19 @@ export class ComparatorAppPpmcComponent implements OnInit {
     }
 
     private initializeYears() {
-        for (let i = 2015; i <= this.currentYear; i++) {
+        const startImputationsYear = 2015;
+        for (let i = startImputationsYear; i <= this.currentYear; i++) {
             this.years.push(i);
         }
     }
 
     private initializeMonth() {
-        let lastYear = 12;
+        let lastMonthInYear = 12;
         this.months = [];
         if (this.appRequestBody.year == this.currentYear) {
-            lastYear = this.currentMonth;
+            lastMonthInYear = this.currentMonth;
         }
-        for (let i = 1; i <= lastYear; i++) {
+        for (let i = 1; i <= lastMonthInYear; i++) {
             this.months.push(i);
         }
     }
