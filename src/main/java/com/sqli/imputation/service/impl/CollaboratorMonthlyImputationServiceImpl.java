@@ -5,6 +5,7 @@ import com.sqli.imputation.service.CollaboratorDailyImputationService;
 import com.sqli.imputation.service.CollaboratorMonthlyImputationService;
 import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
 import com.sqli.imputation.repository.CollaboratorMonthlyImputationRepository;
+import com.sqli.imputation.service.dto.AppRequestDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,8 +88,8 @@ public class CollaboratorMonthlyImputationServiceImpl implements CollaboratorMon
     }
 
     @Override
-    public Set<CollaboratorMonthlyImputation> findByImputationAndTeam(String agresso, int month, int year, String imputationType) {
-        return collaboratorMonthlyImputationRepository.findByImputationAndTeam(agresso, month, year, imputationType);
+    public Set<CollaboratorMonthlyImputation> findByImputationAndTeam(AppRequestDTO appRequestDTO, String imputationType) {
+        return collaboratorMonthlyImputationRepository.findByImputationAndTeam(appRequestDTO.getAgresso(), appRequestDTO.getMonth(), appRequestDTO.getYear(), imputationType);
     }
 
     @Override

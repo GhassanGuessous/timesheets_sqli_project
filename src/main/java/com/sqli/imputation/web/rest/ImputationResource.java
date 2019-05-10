@@ -167,7 +167,7 @@ public class ImputationResource {
         } else if (DateUtil.isDifferentYears(startDate, endDate)) {
             throw new BadRequestAlertException("Different years", ENTITY_NAME, "different_years");
         } else if(isNotValidTBPCredentials(tbpRequestBodyDTO.getUsername(), tbpRequestBodyDTO.getPassword())){
-            throw new BadRequestAlertException("Tbp credentials", ENTITY_NAME, "tbp_bad_credentials");
+            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
         } else {
             Object[] result = imputationService.getTbpImputation(tbpRequestBodyDTO);
             List<Imputation> imputations = (List<Imputation>) result[LIST_IMPUTATIONS_POSITION];
@@ -225,7 +225,7 @@ public class ImputationResource {
         if (appTbpRequest.getTeam() == null) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else if (isNotValidTBPCredentials(appTbpRequest.getUsername(), appTbpRequest.getPassword())) {
-            throw new BadRequestAlertException("Tbp credentials", ENTITY_NAME, "tbp_bad_credentials");
+            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
         } else {
             Object[] result = imputationService.compareAppAndTbp(appTbpRequest);
             List<ImputationComparatorDTO> comparatorDTOS = (List<ImputationComparatorDTO>) result[LIST_IMPUTATIONS_POSITION];
@@ -255,7 +255,7 @@ public class ImputationResource {
         if (appTbpRequest.getTeam() == null) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         }else if (isNotValidTBPCredentials(appTbpRequest.getUsername(), appTbpRequest.getPassword())) {
-            throw new BadRequestAlertException("Tbp credentials", ENTITY_NAME, "tbp_bad_credentials");
+            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
         } else {
             Object[] result = imputationService.compareAppAndTbpAdvanced(appTbpRequest);
             List<ImputationComparatorAdvancedDTO> comparatorDTOS = (List<ImputationComparatorAdvancedDTO>) result[LIST_IMPUTATIONS_POSITION];

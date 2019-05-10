@@ -69,7 +69,7 @@ public interface ImputationService {
 
     void sendNotifications(List<NotificationDTO> notifications);
 
-    Optional<Imputation> findByImputationAndTeam(AppRequestDTO appRequestDTO, String ppmcImputationType);
+    Optional<Imputation> findByImputationAndTeam(AppRequestDTO appRequestDTO, String imputationType);
 
     List<ImputationComparatorDTO> getComparisonFromDB(AppRequestDTO appRequestDTO, String imputationType);
 

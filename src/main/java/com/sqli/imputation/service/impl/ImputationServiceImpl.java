@@ -400,7 +400,7 @@ public class ImputationServiceImpl implements ImputationService {
 
     @Override
     public Optional<Imputation> findByImputationAndTeam(AppRequestDTO appRequestDTO, String imputationType) {
-        Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByImputationAndTeam(appRequestDTO.getAgresso(), appRequestDTO.getMonth(), appRequestDTO.getYear(), imputationType);
+        Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByImputationAndTeam(appRequestDTO, imputationType);
         if (!monthlyImputations.isEmpty()) {
             return createImputation(appRequestDTO, imputationType, monthlyImputations);
         }

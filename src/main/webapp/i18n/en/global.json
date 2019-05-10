@@ -166,7 +166,8 @@
         "invalidPPMC": "Sorry, this File is not a valid PPMC file!",
         "differentMonths": "Sorry, the selected month and the month of the file must be the same!",
         "newUpload": "No PPMC history for these params, you should upload a new PPMC file.",
-        "tbp_bad_credentials": "Bad TBP Credentials!"
+        "tbp_bad_credentials": "Bad TBP Credentials!",
+        "tbp_invalid_inputs": "TBP username & password are required"
     },
     "footer": "©SQLI Group 2017 - All rights reserved"
 }
