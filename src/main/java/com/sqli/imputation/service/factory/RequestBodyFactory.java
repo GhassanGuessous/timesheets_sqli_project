@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class RequestBodyFactory {
 
+    private static final int FIRST_DAY_OF_MONTH = 1;
+
     public TbpRequestBodyDTO createTbpRequestBodyDTO(String idTbp, int year, int month) {
         TbpRequestBodyDTO tbpRequestBodyDTO = new TbpRequestBodyDTO(idTbp);
         tbpRequestBodyDTO.setStartDate(DateUtil.getDateOfFirstDay(year, month));
@@ -16,7 +18,7 @@ public class RequestBodyFactory {
     }
 
     public AppRequestDTO createAppRequestDTO(String agresso, int year, int month) {
-        AppRequestDTO appRequestDTO = new AppRequestDTO(agresso, year, month, DateUtil.FIRST_DAY_OF_MONTH, DateUtil.getLastDayOfMonth(year, month));
+        AppRequestDTO appRequestDTO = new AppRequestDTO(agresso, year, month, FIRST_DAY_OF_MONTH, DateUtil.getLastDayOfMonth(year, month));
         return appRequestDTO;
     }
 }

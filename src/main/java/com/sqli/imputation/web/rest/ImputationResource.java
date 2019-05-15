@@ -205,7 +205,8 @@ public class ImputationResource {
         if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else {
-            Optional<Imputation> ppmcImputation = imputationService.findByImputationAndTeam(appRequestDTO, Constants.PPMC_IMPUTATION_TYPE);
+            ImputationRequestDTO imputationRequestDTO = new ImputationRequestDTO(appRequestDTO.getAgresso(), appRequestDTO.getYear(), appRequestDTO.getMonth(), Constants.PPMC_IMPUTATION_TYPE);
+            Optional<Imputation> ppmcImputation = imputationService.findByTeam(imputationRequestDTO);
             if (!ppmcImputation.isPresent()) {
                 throw new BadRequestAlertException(UPLOAD_A_PPMC_FILE_MESSAGE, ENTITY_NAME, NEW_UPLOAD);
             }
@@ -294,9 +295,7 @@ public class ImputationResource {
         return getAppPpmcResponseEntity(file, requestDTO, true);
     }
 
-    private <T> ResponseEntity<List<T>> getAppPpmcResponseEntity(
-        @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO, boolean isAdvanced
-    ) throws IOException {
+    private <T> ResponseEntity<List<T>> getAppPpmcResponseEntity(MultipartFile file, String requestDTO, boolean isAdvanced) throws IOException {
         AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
         String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
         if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {

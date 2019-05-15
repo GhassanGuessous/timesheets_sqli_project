@@ -8,6 +8,20 @@ public class AppRequestDTO {
     private int manDay;
     private int startDay;
 
+    public AppRequestDTO(String agresso, int year, int month, int startDay, int manDay) {
+        this.agresso = agresso;
+        this.year = year;
+        this.month = month;
+        this.startDay = startDay;
+        this.manDay = manDay;
+    }
+
+    public AppRequestDTO(String agresso, int year, int month) {
+        this.agresso = agresso;
+        this.year = year;
+        this.month = month;
+    }
+
     public String getAgresso() {
         return agresso;
     }
@@ -37,20 +51,6 @@ public class AppRequestDTO {
     }
 
     public AppRequestDTO() {
-    }
-
-    public AppRequestDTO(String agresso, int year, int month, int startDay, int manDay) {
-        this.agresso = agresso;
-        this.year = year;
-        this.month = month;
-        this.startDay = startDay;
-        this.manDay = manDay;
-    }
-
-    public AppRequestDTO(String agresso, int year, int month) {
-        this.agresso = agresso;
-        this.year = year;
-        this.month = month;
     }
 
     public void setManDay(int manDay) {
