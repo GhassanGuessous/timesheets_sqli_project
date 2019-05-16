@@ -1,22 +1,24 @@
 package com.sqli.imputation.service.util;
 
+import com.sqli.imputation.service.dto.TbpPeriodDTO;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.YearMonth;
 import java.util.*;
 
-public final class DateUtil {
+public class DateUtil {
 
-    public static final String DELIMITER = "-";
-    public static final int FIRST_POSITION = 0;
+    private static final String DELIMITER = "-";
+    private static final int FIRST_POSITION = 0;
     private static final int SECOND_POSITION = 1;
     private static final int THIRD_POSITION = 2;
-    public static final String PATTERN = "yyyy-MM-dd";
-    public static final String START = "start";
-    public static final String END = "end";
-    public static final int FIRST_DAY_OF_MONTH = 1;
-    public static final int FIRST_MONTH = 0;
+    private static final String PATTERN = "yyyy-MM-dd";
+    private static final String START_STRING = "start";
+    private static final String END_STRING = "end";
+    private static final int FIRST_DAY_OF_MONTH = 1;
+    private static final int FIRST_MONTH = 0;
     private static final String TWO_DIGITS_FORMAT = "%02d";
 
     public static int getYear(String date) {
@@ -50,24 +52,37 @@ public final class DateUtil {
         return getMonth(endDate) - getMonth(startDate);
     }
 
-    public static Map<Integer, Map<String, Integer>> getMonths(String startDate, String endDate, int numberMonths) {
-        int startMonth = getMonth(startDate);
-        int year = getYear(startDate);
+    /**
+     * this function return a map representing months
+     * of the TbpPeriodDTO (input) as follow :
+     * 1 :
+     *      start : 01
+     *      end : 30
+     * 2 :
+     *      start : 01
+     *      end : 28
+     *
+     * @param tbpPeriodDTO
+     * @return
+     */
+    public static Map<Integer, Map<String, Integer>> getStartEndDatesOfMonths(TbpPeriodDTO tbpPeriodDTO) {
+        int startMonth = getMonth(tbpPeriodDTO.getStartDate());
+        int year = getYear(tbpPeriodDTO.getStartDate());
         Map<Integer, Map<String, Integer>> months = new HashMap<>();
 
-        for (int i = FIRST_MONTH; i <= numberMonths; i++) {
-            Map<String, Integer> start_end_days = new HashMap<>();
+        for (int i = FIRST_MONTH; i <= tbpPeriodDTO.getNumberMonths(); i++) {
+            Map<String, Integer> startEndDays = new HashMap<>();
             if (i == FIRST_MONTH) {
-                start_end_days.put(START, getDay(startDate));
-                start_end_days.put(END, getLastDayOfMonth(year, startMonth));
-            } else if (i == numberMonths) {
-                start_end_days.put(START, FIRST_DAY_OF_MONTH);
-                start_end_days.put(END, getDay(endDate));
+                startEndDays.put(START_STRING, getDay(tbpPeriodDTO.getStartDate()));
+                startEndDays.put(END_STRING, getLastDayOfMonth(year, startMonth));
+            } else if (i == tbpPeriodDTO.getNumberMonths()) {
+                startEndDays.put(START_STRING, FIRST_DAY_OF_MONTH);
+                startEndDays.put(END_STRING, getDay(tbpPeriodDTO.getEndDate()));
             } else {
-                start_end_days.put(START, FIRST_DAY_OF_MONTH);
-                start_end_days.put(END, getLastDayOfMonth(year, startMonth));
+                startEndDays.put(START_STRING, FIRST_DAY_OF_MONTH);
+                startEndDays.put(END_STRING, getLastDayOfMonth(year, startMonth));
             }
-            months.put(startMonth, start_end_days);
+            months.put(startMonth, startEndDays);
             startMonth++;
         }
         return months;

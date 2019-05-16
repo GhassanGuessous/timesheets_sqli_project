@@ -166,12 +166,12 @@ public class ImputationResource {
             throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
         } else if (DateUtil.isDifferentYears(startDate, endDate)) {
             throw new BadRequestAlertException("Different years", ENTITY_NAME, "different_years");
-        } else if (isNotValidTBPCredentials(tbpRequestBodyDTO.getUsername(), tbpRequestBodyDTO.getPassword())) {
-            throw new BadRequestAlertException("Tbp credentials", ENTITY_NAME, "tbp_bad_credentials");
+        } else if(isNotValidTBPCredentials(tbpRequestBodyDTO.getUsername(), tbpRequestBodyDTO.getPassword())){
+            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
         } else {
             Object[] result = imputationService.getTbpImputation(tbpRequestBodyDTO);
             List<Imputation> imputations = (List<Imputation>) result[LIST_IMPUTATIONS_POSITION];
-            throwTbpErors((int) result[STATUS_POSITION]);
+            throwTbpErrors((int) result[STATUS_POSITION]);
             return ResponseEntity.ok().body(imputations);
         }
     }
@@ -205,7 +205,8 @@ public class ImputationResource {
         if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else {
-            Optional<Imputation> ppmcImputation = imputationService.findByImputationAndTeam(appRequestDTO, Constants.PPMC_IMPUTATION_TYPE);
+            ImputationRequestDTO imputationRequestDTO = new ImputationRequestDTO(appRequestDTO.getAgresso(), appRequestDTO.getYear(), appRequestDTO.getMonth(), Constants.PPMC_IMPUTATION_TYPE);
+            Optional<Imputation> ppmcImputation = imputationService.findByTeam(imputationRequestDTO);
             if (!ppmcImputation.isPresent()) {
                 throw new BadRequestAlertException(UPLOAD_A_PPMC_FILE_MESSAGE, ENTITY_NAME, NEW_UPLOAD);
             }
@@ -225,16 +226,16 @@ public class ImputationResource {
         if (appTbpRequest.getTeam() == null) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else if (isNotValidTBPCredentials(appTbpRequest.getUsername(), appTbpRequest.getPassword())) {
-            throw new BadRequestAlertException("Tbp credentials", ENTITY_NAME, "tbp_bad_credentials");
+            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
         } else {
             Object[] result = imputationService.compareAppAndTbp(appTbpRequest);
             List<ImputationComparatorDTO> comparatorDTOS = (List<ImputationComparatorDTO>) result[LIST_IMPUTATIONS_POSITION];
-            throwTbpErors((int) result[STATUS_POSITION]);
+            throwTbpErrors((int) result[STATUS_POSITION]);
             return ResponseEntity.ok().body(comparatorDTOS);
         }
     }
 
-    private void throwTbpErors(int status) {
+    private void throwTbpErrors(int status) {
         if (status == UNAUTHORIZED_STATUS) {
             throw new BadRequestAlertException("Tbp credentials", ENTITY_NAME, "tbp_bad_credentials");
         }
@@ -255,11 +256,11 @@ public class ImputationResource {
         if (appTbpRequest.getTeam() == null) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         }else if (isNotValidTBPCredentials(appTbpRequest.getUsername(), appTbpRequest.getPassword())) {
-            throw new BadRequestAlertException("Tbp credentials", ENTITY_NAME, "tbp_bad_credentials");
+            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
         } else {
             Object[] result = imputationService.compareAppAndTbpAdvanced(appTbpRequest);
             List<ImputationComparatorAdvancedDTO> comparatorDTOS = (List<ImputationComparatorAdvancedDTO>) result[LIST_IMPUTATIONS_POSITION];
-            throwTbpErors((int) result[STATUS_POSITION]);
+            throwTbpErrors((int) result[STATUS_POSITION]);
             return ResponseEntity.ok().body(comparatorDTOS);
         }
     }
@@ -294,9 +295,7 @@ public class ImputationResource {
         return getAppPpmcResponseEntity(file, requestDTO, true);
     }
 
-    private <T> ResponseEntity<List<T>> getAppPpmcResponseEntity(
-        @RequestParam("file") MultipartFile file, @RequestParam("appRequestBody") String requestDTO, boolean isAdvanced
-    ) throws IOException {
+    private <T> ResponseEntity<List<T>> getAppPpmcResponseEntity(MultipartFile file, String requestDTO, boolean isAdvanced) throws IOException {
         AppRequestDTO appRequestDTO = JsonUtil.getAppRequestDTO(requestDTO);
         String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
         if (appRequestDTO.getAgresso().equals(AN_EMPTY_STRING)) {

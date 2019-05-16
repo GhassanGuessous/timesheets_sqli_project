@@ -60,7 +60,7 @@ public class DefaultAppImputationConverterService implements AppImputationConver
     private void fillCollaboratorMonthlyImputation(CollaboratorMonthlyImputation monthlyImputation, AppChargeDTO appChargeDTO) {
         CollaboratorDailyImputation dailyImputation = imputationConverterUtilService.createDailyImputation(appChargeDTO.getDay(), appChargeDTO.getCharge(), monthlyImputation);
         monthlyImputation.getDailyImputations().add(dailyImputation);
-        imputationConverterUtilService.setTotalImputationOfCollab(monthlyImputation, dailyImputation.getCharge());
+        imputationConverterUtilService.setTotalOfMonthlyImputation(monthlyImputation, dailyImputation.getCharge());
     }
 
 }

@@ -14,6 +14,6 @@ export class TbpRequestBody implements ITbpRequestBody {
         public endDate?: string,
         public username?: string,
         public password?: string,
-        requestType?: string
+        public requestType?: string
     ) {}
 }

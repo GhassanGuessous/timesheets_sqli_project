@@ -166,7 +166,8 @@
         "invalidPPMC": "Désolé, ce fichier n'est pas un fichier PPMC valide!",
         "differentMonths": "Désolé, le mois sélectionné et celui du ficher doivent être les mêmes!",
         "newUpload": "Aucun historique ne correspond a ces paramétres, veuillez uploader un nouveau fichier PPMC.",
-        "tbp_bad_credentials": "Les identifiants TBP sont éronés!"
+        "tbp_bad_credentials": "Les identifiants TBP sont éronés!",
+        "tbp_invalid_inputs": "Les champs username & password sont obligatoires!"
     },
     "footer": "©SQLI Group 2017 - Tous droits réservés"
 }

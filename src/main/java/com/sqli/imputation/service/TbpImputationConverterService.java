@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface TbpImputationConverterService {
 
-    Imputation convert(List<ChargeTeamDTO> chargeTeamDTOS, TbpRequestBodyDTO tbpRequestBodyDTO);
+    void convertChargesToImputation(List<ChargeTeamDTO> chargeTeamDTOS, Imputation imputation);
 }

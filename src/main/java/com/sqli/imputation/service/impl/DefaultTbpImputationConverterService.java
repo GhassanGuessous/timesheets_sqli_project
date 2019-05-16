@@ -22,11 +22,9 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
     private CorrespondenceRepository correspondenceRepository;
 
     @Override
-    public Imputation convert(List<ChargeTeamDTO> chargeTeamDTOS, TbpRequestBodyDTO tbpRequestBodyDTO) {
-        Imputation imputation = createImputation(tbpRequestBodyDTO);
+    public void convertChargesToImputation(List<ChargeTeamDTO> chargeTeamDTOS, Imputation imputation) {
         chargeTeamDTOS.forEach(chargeTeamDTO -> fillMonthlyImputationForFachCollab(imputation, chargeTeamDTO));
         imputationConverterUtilService.sortImputations(imputation);
-        return imputation;
     }
 
     private void fillMonthlyImputationForFachCollab(Imputation imputation, ChargeTeamDTO chargeTeamDTO) {
@@ -37,7 +35,7 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
             CollaboratorDailyImputation dailyImputation = createCollaboratorDailyImputation(chargeTeamDTO, collaborateurDTO, monthlyImputation);
 
             imputationConverterUtilService.addDailyToMonthlyImputation(monthlyImputation, dailyImputation);
-            imputationConverterUtilService.setTotalImputationOfCollab(monthlyImputation, Double.parseDouble(collaborateurDTO.getCharge()));
+            imputationConverterUtilService.setTotalOfMonthlyImputation(monthlyImputation, Double.parseDouble(collaborateurDTO.getCharge()));
             imputationConverterUtilService.addMonthlyImputationToImputation(imputation, monthlyImputation);
         });
     }
@@ -48,7 +46,7 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
         return collaborator;
     }
 
-    private Imputation createImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
+    public Imputation createImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
         return imputationConverterUtilService.createImputation(DateUtil.getYear(tbpRequestBodyDTO.getStartDate()),
             DateUtil.getMonth(tbpRequestBodyDTO.getStartDate()), imputationConverterUtilService.findImputationTypeByNameLike(Constants.TBP_IMPUTATION_TYPE));
     }
