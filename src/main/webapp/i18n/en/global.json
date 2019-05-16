@@ -113,7 +113,8 @@
         "ribbon": {
             "dev": "Development"
         },
-        "item-count": "Showing {{first}} - {{second}} of {{total}} items."
+        "item-count": "Showing {{first}} - {{second}} of {{total}} items.",
+        "noDataFound": "No element Found."
     },
     "entity": {
         "action": {

@@ -25,7 +25,9 @@ export class HomeComponent implements OnInit {
     ngOnInit() {
         this.accountService.identity().then((account: Account) => {
             this.account = account;
-            this.loadDelcoTeam();
+            if (this.isDelco()) {
+                this.loadDelcoTeam();
+            }
         });
         this.registerAuthenticationSuccess();
     }
@@ -46,6 +48,10 @@ export class HomeComponent implements OnInit {
 
     isAuthenticated() {
         return this.accountService.isAuthenticated();
+    }
+
+    private isDelco() {
+        return this.account.authorities.includes('ROLE_DELCO');
     }
 
     login() {

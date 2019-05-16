@@ -20,18 +20,8 @@ public class AppParserService {
     public static final int DAY_POSITION = 5;
     public static final int CHARGE_POSITION = 6;
 
-    public List<AppChargeDTO> parse() {
-        String xml = "";
-        try {
-            xml = FileUtils.readFileToString(new File("C:/Users/gguessous/Desktop/data.xml"), "UTF-8");
-        } catch (IOException e) {
-            try {
-                xml = FileUtils.readFileToString(new File("C:/Users/aaitbassou/Desktop/data.xml"), "UTF-8");
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-            e.printStackTrace();
-        }
+    public List<AppChargeDTO> parse(String xml) {
+
         Parsing parsing = ParsingFactory.getInstance().create();
         Document document = parsing.xml().document(xml);
 

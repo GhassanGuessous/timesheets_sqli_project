@@ -17,7 +17,7 @@ import { CorrespondenceService } from './correspondence.service';
 })
 export class CorrespondenceComponent implements OnInit, OnDestroy {
     private currentAccount: any;
-    private correspondences: ICorrespondence[];
+    correspondences: ICorrespondence[];
     error: any;
     success: any;
     private eventSubscriber: Subscription;
@@ -25,8 +25,8 @@ export class CorrespondenceComponent implements OnInit, OnDestroy {
     private links: any;
     private totalItems: any;
     itemsPerPage: any;
-    private page: any;
-    private predicate: any;
+    page: any;
+    predicate: any;
     private previousPage: any;
     private reverse: any;
     private searchedKey: string;

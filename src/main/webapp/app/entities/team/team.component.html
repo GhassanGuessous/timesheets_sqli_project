@@ -5,48 +5,48 @@
     <div class="table-responsive" *ngIf="myTeam">
         <table class="table table-striped">
             <thead>
-                <tr>
-                    <th><span jhiTranslate="global.field.id">ID</span>
-                    </th>
-                    <th><span jhiTranslate="imputationSqliApp.team.name">Name</span>
-                    </th>
-                    <th><span jhiTranslate="imputationSqliApp.team.agresso">Agresso</span>
-                    </th>
-                    <th><span jhiTranslate="imputationSqliApp.team.projectType">Project Type</span>
-                    </th>
-                    <!--<th jhiSortBy="deliveryCoordinator.id"><span jhiTranslate="imputationSqliApp.team.deliveryCoordinator">Delivery Coordinator</span>-->
-                    <!--<fa-icon [icon]="'sort'"></fa-icon>-->
-                    <!--</th>-->
-                    <th></th>
-                </tr>
+            <tr>
+                <th><span jhiTranslate="global.field.id">ID</span>
+                </th>
+                <th><span jhiTranslate="imputationSqliApp.team.name">Name</span>
+                </th>
+                <th><span jhiTranslate="imputationSqliApp.team.agresso">Agresso</span>
+                </th>
+                <th><span jhiTranslate="imputationSqliApp.team.projectType">Project Type</span>
+                </th>
+                <!--<th jhiSortBy="deliveryCoordinator.id"><span jhiTranslate="imputationSqliApp.team.deliveryCoordinator">Delivery Coordinator</span>-->
+                <!--<fa-icon [icon]="'sort'"></fa-icon>-->
+                <!--</th>-->
+                <th></th>
+            </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><a [routerLink]="['/team', myTeam.id, 'view' ]">{{myTeam.id}}</a></td>
-                    <td>{{myTeam.name}}</td>
-                    <td>{{myTeam.agresso}}</td>
-                    <td>
-                        <div *ngIf="myTeam.projectType">
-                            <a
-                                [routerLink]="['../project-type', myTeam.projectType?.id, 'view' ]">{{myTeam.projectType?.name}}</a>
-                        </div>
-                    </td>
-                    <!--<td>-->
-                    <!--<div *ngIf="myTeam.deliveryCoordinator">-->
-                    <!--&lt;!&ndash;<a [routerLink]="['/admin/user-management', myTeam.deliveryCoordinator?.login, 'view' ]">{{myTeam.deliveryCoordinator?.firstName}} {{myTeam.deliveryCoordinator?.lastName}}</a>&ndash;&gt;-->
-                    <!--<a routerLink="/admin/user-management/{{myTeam.deliveryCoordinator?.login}}/view">{{myTeam.deliveryCoordinator?.firstName}} {{myTeam.deliveryCoordinator?.lastName}}</a>-->
-                    <!--</div>-->
-                    <!--</td>-->
-                    <td class="text-right">
-                        <div class="btn-group flex-btn-group-container">
-                            <button type="submit" [routerLink]="['/team', myTeam.id, 'view' ]"
+            <tr>
+                <td><a [routerLink]="['/team', myTeam.id, 'view' ]">{{myTeam.id}}</a></td>
+                <td>{{myTeam.name}}</td>
+                <td>{{myTeam.agresso}}</td>
+                <td>
+                    <div *ngIf="myTeam.projectType">
+                        <a
+                            [routerLink]="['../project-type', myTeam.projectType?.id, 'view' ]">{{myTeam.projectType?.name}}</a>
+                    </div>
+                </td>
+                <!--<td>-->
+                <!--<div *ngIf="myTeam.deliveryCoordinator">-->
+                <!--&lt;!&ndash;<a [routerLink]="['/admin/user-management', myTeam.deliveryCoordinator?.login, 'view' ]">{{myTeam.deliveryCoordinator?.firstName}} {{myTeam.deliveryCoordinator?.lastName}}</a>&ndash;&gt;-->
+                <!--<a routerLink="/admin/user-management/{{myTeam.deliveryCoordinator?.login}}/view">{{myTeam.deliveryCoordinator?.firstName}} {{myTeam.deliveryCoordinator?.lastName}}</a>-->
+                <!--</div>-->
+                <!--</td>-->
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit" [routerLink]="['/team', myTeam.id, 'view' ]"
                                 class="btn btn-info btn-sm">
-                                <fa-icon [icon]="'eye'"></fa-icon>
-                                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
@@ -57,7 +57,7 @@
         <span jhiTranslate="imputationSqliApp.team.home.title">Teams</span>
         <input type="text" [(ngModel)]="searchedKey" (keyup)="findBySearchedKey()" placeholder="Search">
         <button *jhiHasAnyAuthority="'ROLE_ADMIN'" id="jh-create-entity"
-            class="btn btn-primary float-right jh-create-entity create-team" [routerLink]="['/team/new']">
+                class="btn btn-primary float-right jh-create-entity create-team" [routerLink]="['/team/new']">
             <fa-icon [icon]="'plus'"></fa-icon>
             <span jhiTranslate="imputationSqliApp.team.home.createLabel">
                 Create new Team
@@ -65,10 +65,14 @@
         </button>
     </h2>
     <jhi-alert></jhi-alert>
-    <br />
-    <div class="table-responsive" *ngIf="teams">
-        <table class="table table-striped">
-            <thead>
+    <br/>
+    <div [ngSwitch]="teams && teams.length>0">
+        <div *ngSwitchCase="false">
+            <p jhiTranslate="global.noDataFound">No element Found.</p>
+        </div>
+        <div class="table-responsive" *ngSwitchCase="true">
+            <table class="table table-striped">
+                <thead>
                 <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
                     <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
                         <fa-icon [icon]="'sort'"></fa-icon>
@@ -86,13 +90,13 @@
                         <fa-icon [icon]="'sort'"></fa-icon>
                     </th>
                     <th jhiSortBy="deliveryCoordinator.id"><span
-                            jhiTranslate="imputationSqliApp.team.deliveryCoordinator">Delivery Coordinator</span>
+                        jhiTranslate="imputationSqliApp.team.deliveryCoordinator">Delivery Coordinator</span>
                         <fa-icon [icon]="'sort'"></fa-icon>
                     </th>
                     <th></th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 <tr *ngFor="let team of teams ;trackBy: trackId">
                     <td><a [routerLink]="['/team', team.id, 'view' ]">{{team.id}}</a></td>
                     <td>{{team.name}}</td>
@@ -114,35 +118,38 @@
                     <td class="text-right">
                         <div class="btn-group flex-btn-group-container">
                             <button type="submit" [routerLink]="['/team', team.id, 'view' ]"
-                                class="btn btn-info btn-sm">
+                                    class="btn btn-info btn-sm">
                                 <fa-icon [icon]="'eye'"></fa-icon>
                                 <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
                             </button>
                             <button *jhiHasAnyAuthority="'ROLE_ADMIN'" type="submit"
-                                [routerLink]="['/team', team.id, 'edit']" class="btn btn-primary btn-sm">
+                                    [routerLink]="['/team', team.id, 'edit']" class="btn btn-primary btn-sm">
                                 <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                 <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
                             </button>
                             <button *jhiHasAnyAuthority="'ROLE_ADMIN'" type="submit"
-                                [routerLink]="['/', 'team', { outlets: { popup: team.id + '/delete'} }]"
-                                replaceUrl="true" queryParamsHandling="merge" class="btn btn-danger btn-sm">
+                                    [routerLink]="['/', 'team', { outlets: { popup: team.id + '/delete'} }]"
+                                    replaceUrl="true" queryParamsHandling="merge" class="btn btn-danger btn-sm">
                                 <fa-icon [icon]="'times'"></fa-icon>
                                 <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
                             </button>
                         </div>
                     </td>
                 </tr>
-            </tbody>
-        </table>
-    </div>
-    <div *ngIf="teams && teams.length">
-        <div class="row justify-content-center">
-            <jhi-item-count [page]="page" [total]="totalItems" [maxSize]="5" [itemsPerPage]="itemsPerPage">
-            </jhi-item-count>
-        </div>
-        <div class="row justify-content-center">
-            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5"
-                [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+                </tbody>
+            </table>
+            <div *ngIf="teams && teams.length">
+                <div class="row justify-content-center">
+                    <jhi-item-count [page]="page" [total]="totalItems" [maxSize]="5" [itemsPerPage]="itemsPerPage">
+                    </jhi-item-count>
+                </div>
+                <div class="row justify-content-center">
+                    <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                    [maxSize]="5"
+                                    [rotate]="true" [boundaryLinks]="true"
+                                    (pageChange)="loadPage(page)"></ngb-pagination>
+                </div>
+            </div>
         </div>
     </div>
 </div>

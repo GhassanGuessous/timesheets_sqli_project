@@ -19,7 +19,6 @@ export class ComparatorAPPTBPService {
     }
 
     compare(appTbpRequestBody: AppTbpRequestBody): Observable<EntityResponseType> {
-        console.log(appTbpRequestBody);
         return this.http.post<any>(this.resourceAppUrl, appTbpRequestBody, { observe: 'response' });
     }
 }

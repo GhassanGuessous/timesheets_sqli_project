@@ -30,7 +30,7 @@
             "manDay": "Duration in Man/Day",
             "monthlyImputation": "Monthly Imputation",
             "imputationType": "Imputation Type",
-            "project_code": "Project code",
+            "project_code": "Project",
             "start_date": "Start Date",
             "end_date": "End date",
             "difference": "Difference",

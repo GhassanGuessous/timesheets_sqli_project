@@ -2,10 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 
-import { ITeam, Team } from 'app/shared/model/team.model';
+import { ITeam } from 'app/shared/model/team.model';
 import { AccountService } from 'app/core';
 
 import { ITEMS_PER_PAGE } from 'app/shared';
@@ -17,7 +16,7 @@ import { TeamService } from './team.service';
 })
 export class TeamComponent implements OnInit, OnDestroy {
     private currentAccount: any;
-    private teams: ITeam[];
+    teams: ITeam[];
     private myTeam: any;
     error: any;
     success: any;
@@ -26,8 +25,8 @@ export class TeamComponent implements OnInit, OnDestroy {
     private links: any;
     private totalItems: any;
     itemsPerPage: any;
-    private page: any;
-    private predicate: any;
+    page: any;
+    predicate: any;
     private previousPage: any;
     private reverse: any;
     private searchedKey: string;
@@ -103,7 +102,9 @@ export class TeamComponent implements OnInit, OnDestroy {
         this.loadAll();
         this.accountService.identity().then(account => {
             this.currentAccount = account;
-            this.loadDelcoTeam();
+            if (this.isDelco()) {
+                this.loadDelcoTeam();
+            }
         });
         this.registerChangeInTeams();
     }
@@ -136,6 +137,10 @@ export class TeamComponent implements OnInit, OnDestroy {
 
     protected onError(errorMessage: string) {
         this.jhiAlertService.error(errorMessage, null, null);
+    }
+
+    private isDelco() {
+        return this.currentAccount.authorities.includes('ROLE_DELCO');
     }
 
     findBySearchedKey() {

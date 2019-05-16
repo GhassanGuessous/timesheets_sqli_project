@@ -56,7 +56,7 @@ public class ImputationServiceImpl implements ImputationService {
     @Autowired
     private TeamRepository teamRepository;
     @Autowired
-    private AppParserService appParserService;
+    private AppResourceService appResourceService;
     @Autowired
     private AppImputationConverterService appConverterService;
     @Autowired
@@ -207,7 +207,7 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     private void getAppImputationFromWS(List<Imputation> imputations, AppRequestDTO dto) {
-        List<AppChargeDTO> appChargeDTOS = appParserService.parse();
+        List<AppChargeDTO> appChargeDTOS = appResourceService.getTeamCharges(dto);
         Imputation imputation = appConverterService.convert(dto, appChargeDTOS);
         imputations.add(imputation);
         update(imputation);

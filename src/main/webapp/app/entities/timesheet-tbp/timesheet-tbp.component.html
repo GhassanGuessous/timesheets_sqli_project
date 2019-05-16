@@ -8,7 +8,7 @@
             <form class="form-inline" name="tbpImputationForm" role="form" novalidate [ngSwitch]="isAdmin()" (ngSubmit)="getTimesheet()">
                 <div class="form-group tbp-import-form" *ngSwitchCase="true">
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.project_code"
-                           for="field_code_project_admin">Code projet</label>
+                           for="field_code_project_admin">Projet</label>
                     <select class="form-control" id="field_code_project_admin" name="code_project" [(ngModel)]="tbpRequestBody.idTbp">
                         <option *ngFor="let team of allTeams" [ngValue]="team.idTbp">{{team.name}}</option>
                     </select>

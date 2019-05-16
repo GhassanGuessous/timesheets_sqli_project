@@ -24,7 +24,7 @@
                   [ngSwitch]="isAdmin()" (ngSubmit)="upload()">
                 <div class="form-group tbp-import-form" *ngSwitchCase="true">
                     <label class="form-control-label"
-                           for="field_code_project_admin">Code project</label>
+                           for="field_code_project_admin" jhiTranslate="imputationSqliApp.imputation.project_code">Project</label>
                     <select class="form-control" id="field_code_project_admin" name="code_project"
                             [(ngModel)]="appRequestBody.agresso">
                         <option *ngFor="let team of allTeams" [value]="team.agresso">{{team.name}}</option>

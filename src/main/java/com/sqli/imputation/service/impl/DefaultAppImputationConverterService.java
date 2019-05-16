@@ -18,7 +18,7 @@ public class DefaultAppImputationConverterService implements AppImputationConver
     private ImputationConverterUtilService imputationConverterUtilService;
     @Autowired
     private CorrespondenceRepository correspondenceRepository;
-
+    List<String> strings = new ArrayList<>();
     @Override
     public Imputation convert(AppRequestDTO appRequestDTO, List<AppChargeDTO> appChargeDTOS) {
         Imputation imputation = createImputation(appRequestDTO);
@@ -35,10 +35,14 @@ public class DefaultAppImputationConverterService implements AppImputationConver
     private void fillImputation(Imputation imputation, List<AppChargeDTO> appChargeDTOS, AppRequestDTO appRequestDTO) {
         appChargeDTOS.forEach(appChargeDTO -> {
             if (isDayRequested(appChargeDTO, appRequestDTO)) {
-                Collaborator collaborator = findCollabByCorrespondence(appChargeDTO.getAppLogin());
-                CollaboratorMonthlyImputation monthlyImputation = imputationConverterUtilService.getCollabMonthlyImputation(imputation, collaborator);
-                fillCollaboratorMonthlyImputation(monthlyImputation, appChargeDTO);
-                imputationConverterUtilService.addMonthlyImputationToImputation(imputation, monthlyImputation);
+                try {
+                    Collaborator collaborator = findCollabByCorrespondence(appChargeDTO.getAppLogin());
+                    CollaboratorMonthlyImputation monthlyImputation = imputationConverterUtilService.getCollabMonthlyImputation(imputation, collaborator);
+                    fillCollaboratorMonthlyImputation(monthlyImputation, appChargeDTO);
+                    imputationConverterUtilService.addMonthlyImputationToImputation(imputation, monthlyImputation);
+                }catch (Exception e){
+                    strings.add(appChargeDTO.getAppLogin());
+                }
             }
         });
     }

@@ -2,6 +2,17 @@
 Bootstrap tweaks
 ===============================================================*/
 
+html {
+    height: 100%;
+    box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
 body,
 h1,
 h2,
@@ -11,7 +22,10 @@ h4 {
 }
 
 body {
-    background: #e4e5e6;
+    position: relative;
+    padding-bottom: 2rem;
+    min-height: 100%;
+    background: white;
 }
 
 a {
@@ -86,6 +100,12 @@ Generic styles
 }
 
 .footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background: #e4e5e6;
+    text-align: center;
     border-top: 1px solid rgba(0, 0, 0, 0.125);
 }
 
@@ -100,6 +120,7 @@ Custom alerts for notification
 .alerts .alert {
     text-overflow: ellipsis;
 }
+
 .alert pre {
     background: none;
     border: none;
@@ -148,15 +169,19 @@ http://stackoverflow.com/questions/19562903/remove-padding-from-columns-in-boots
 .no-padding-left {
     padding-left: 0 !important;
 }
+
 .no-padding-right {
     padding-right: 0 !important;
 }
+
 .no-padding-top {
     padding-top: 0 !important;
 }
+
 .no-padding-bottom {
     padding-bottom: 0 !important;
 }
+
 .no-padding {
     padding: 0 !important;
 }
