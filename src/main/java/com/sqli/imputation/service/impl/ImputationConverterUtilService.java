@@ -30,7 +30,7 @@ public class ImputationConverterUtilService {
         monthlyImputation.getDailyImputations().add(dailyImputation);
     }
 
-    public void setTotalImputationOfCollab(CollaboratorMonthlyImputation monthlyImputation, Double charge) {
+    public void setTotalOfMonthlyImputation(CollaboratorMonthlyImputation monthlyImputation, Double charge) {
         monthlyImputation.setTotal(monthlyImputation.getTotal() + charge);
     }
 
@@ -47,9 +47,10 @@ public class ImputationConverterUtilService {
 
     public boolean isDailyImputationExist(Set<CollaboratorDailyImputation> dailyImputations, int day) {
         return dailyImputations.stream()
-            .anyMatch(collaboratorMonthlyImputation -> collaboratorMonthlyImputation.getDay().equals(day));
+            .anyMatch(dailyImputation -> dailyImputation.getDay().equals(day));
     }
-    public CollaboratorDailyImputation findDailyImputationByCollab(Set<CollaboratorDailyImputation> dailyImputations, int day) {
+
+    public CollaboratorDailyImputation findDailyImputationByDay(Set<CollaboratorDailyImputation> dailyImputations, int day) {
         return dailyImputations.stream().filter(
             collaboratorMonthlyImputation -> collaboratorMonthlyImputation.getDay().equals(day)
         ).findFirst().get();
@@ -76,7 +77,7 @@ public class ImputationConverterUtilService {
 
     public void replaceDailyImputation(CollaboratorMonthlyImputation monthlyImputation, CollaboratorDailyImputation dailyImputation) {
         List<CollaboratorDailyImputation> dailyImputations = new ArrayList<>(monthlyImputation.getDailyImputations());
-        int index = dailyImputations.indexOf(findDailyImputationByCollab(monthlyImputation.getDailyImputations(), dailyImputation.getDay()));
+        int index = dailyImputations.indexOf(findDailyImputationByDay(monthlyImputation.getDailyImputations(), dailyImputation.getDay()));
         dailyImputations.set(index, dailyImputation);
         monthlyImputation.setDailyImputations(new HashSet<>(dailyImputations));
     }
@@ -122,7 +123,7 @@ public class ImputationConverterUtilService {
 
     private void fillDTOsWithComparedImputation(List<ImputationComparatorDTO> comparatorDTOS, Imputation comparedImputation) {
         comparedImputation.getMonthlyImputations().forEach(monthly -> {
-            if(isExistWithTheSameCollab(comparatorDTOS, monthly.getCollaborator())){
+            if(isComparatorExistWithTheSameCollab(comparatorDTOS, monthly.getCollaborator())){
                 setComparedTotal(comparatorDTOS, monthly);
             }else{
                 comparatorDTOS.add(new ImputationComparatorDTO(monthly.getCollaborator(), 0D, monthly.getTotal()));
@@ -146,7 +147,7 @@ public class ImputationConverterUtilService {
         ).findFirst().get().setTotalCompared(monthly.getTotal());
     }
 
-    private boolean isExistWithTheSameCollab(List<ImputationComparatorDTO> comparatorDTOS, Collaborator collaborator) {
+    private boolean isComparatorExistWithTheSameCollab(List<ImputationComparatorDTO> comparatorDTOS, Collaborator collaborator) {
         return comparatorDTOS.stream().anyMatch(dto -> dto.getCollaborator().getId().equals(collaborator.getId()));
     }
 
@@ -159,7 +160,7 @@ public class ImputationConverterUtilService {
 
     private void fillAdvancedDTOsWithComparedImputation(List<ImputationComparatorAdvancedDTO> comparatorDTOS, Imputation comparedImputation) {
         comparedImputation.getMonthlyImputations().forEach(monthly -> {
-            if(isAdvancedExistWithTheSameCollab(comparatorDTOS, monthly.getCollaborator())){
+            if(isAdvancedComparatorExistWithTheSameCollab(comparatorDTOS, monthly.getCollaborator())){
                 setComparedList(comparatorDTOS, monthly);
             }else{
                 comparatorDTOS.add(new ImputationComparatorAdvancedDTO(monthly.getCollaborator(), new CollaboratorMonthlyImputation(), monthly));
@@ -173,7 +174,7 @@ public class ImputationConverterUtilService {
         );
     }
 
-    private boolean isAdvancedExistWithTheSameCollab(List<ImputationComparatorAdvancedDTO> comparatorDTOS, Collaborator collaborator) {
+    private boolean isAdvancedComparatorExistWithTheSameCollab(List<ImputationComparatorAdvancedDTO> comparatorDTOS, Collaborator collaborator) {
         return comparatorDTOS.stream().anyMatch(dto -> dto.getCollaborator().getId().equals(collaborator.getId()));
     }
 

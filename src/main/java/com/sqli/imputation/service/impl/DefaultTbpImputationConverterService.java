@@ -35,7 +35,7 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
             CollaboratorDailyImputation dailyImputation = createCollaboratorDailyImputation(chargeTeamDTO, collaborateurDTO, monthlyImputation);
 
             imputationConverterUtilService.addDailyToMonthlyImputation(monthlyImputation, dailyImputation);
-            imputationConverterUtilService.setTotalImputationOfCollab(monthlyImputation, Double.parseDouble(collaborateurDTO.getCharge()));
+            imputationConverterUtilService.setTotalOfMonthlyImputation(monthlyImputation, Double.parseDouble(collaborateurDTO.getCharge()));
             imputationConverterUtilService.addMonthlyImputationToImputation(imputation, monthlyImputation);
         });
     }

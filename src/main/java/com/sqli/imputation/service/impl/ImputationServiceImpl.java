@@ -173,13 +173,13 @@ public class ImputationServiceImpl implements ImputationService {
     private void addNewDailyImputation(CollaboratorMonthlyImputation monthlyFromDB, CollaboratorDailyImputation dailyImputation) {
         dailyImputation.setCollaboratorMonthlyImputation(monthlyFromDB);
         utilService.addDailyToMonthlyImputation(monthlyFromDB, dailyImputationService.save(dailyImputation));
-        utilService.setTotalImputationOfCollab(monthlyFromDB, dailyImputation.getCharge());
+        utilService.setTotalOfMonthlyImputation(monthlyFromDB, dailyImputation.getCharge());
     }
 
     private void updateDailyImputation(CollaboratorMonthlyImputation monthlyFromDB, CollaboratorDailyImputation dailyImputation) {
-        CollaboratorDailyImputation dailyFromDB = utilService.findDailyImputationByCollab(monthlyFromDB.getDailyImputations(), dailyImputation.getDay());
+        CollaboratorDailyImputation dailyFromDB = utilService.findDailyImputationByDay(monthlyFromDB.getDailyImputations(), dailyImputation.getDay());
         if (!dailyFromDB.getCharge().equals(dailyImputation.getCharge())) {
-            utilService.setTotalImputationOfCollab(monthlyFromDB, dailyImputation.getCharge() - dailyFromDB.getCharge());
+            utilService.setTotalOfMonthlyImputation(monthlyFromDB, dailyImputation.getCharge() - dailyFromDB.getCharge());
             dailyFromDB.setCharge(dailyImputation.getCharge());
             dailyImputationService.save(dailyFromDB);
             utilService.replaceDailyImputation(monthlyFromDB, dailyFromDB);

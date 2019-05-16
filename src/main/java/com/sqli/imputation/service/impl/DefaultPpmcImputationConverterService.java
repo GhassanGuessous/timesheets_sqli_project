@@ -44,14 +44,14 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
     public Optional<Imputation> getPpmcImputationFromExcelFile(MultipartFile file, Team team) {
         try {
             InputStream excelFile = file.getInputStream();
-            Optional<Sheet> sheet = getWeeklyActualEffortSheet(file, excelFile);
-            Map<String, Integer> headerColumns = getHeaderCoumns(sheet.get());
+            Optional<Sheet> sheet = getWeeklyActualEffortSheet(file.getOriginalFilename(), excelFile);
+            Map<String, Integer> headerColumns = getHeaderColumns(sheet.get());
 
-            Set<String> collaborators = getCollaborators(sheet.get(), headerColumns);
+            Set<String> collaboratorsPpmcIds = getCollaborators(sheet.get(), headerColumns);
             List<CollabExcelImputationDTO> excelImputationDTOS = getExcelCollabDTOS(sheet.get(), headerColumns);
 
             Imputation imputation = createPpmcImputation(sheet.get(), headerColumns);
-            createDailyImputationsForEachCollab(collaborators, excelImputationDTOS, imputation);
+            createDailyImputationsForEachCollab(collaboratorsPpmcIds, excelImputationDTOS, imputation);
 
             getImputationsGivenConnectedUser(imputation, team);
             imputationConverterUtilService.sortImputations(imputation);
@@ -63,24 +63,25 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
         }
     }
 
-    private Optional<Sheet> getWeeklyActualEffortSheet(MultipartFile file, InputStream excelFile) throws IOException {
-        String extension = FileExtensionUtil.getExtension(file.getOriginalFilename());
+    private Optional<Sheet> getWeeklyActualEffortSheet(String originalFileName, InputStream excelFile) throws IOException {
+        String extension = FileExtensionUtil.getExtension(originalFileName);
         return getRows(excelFile, extension);
     }
 
-    private Optional<Sheet> getRows(InputStream excelFile, String extension) throws IOException {
-        if(FileExtensionUtil.isXLS(extension)){
+    private Optional<Sheet> getRows(InputStream excelFile, String excelExtension) throws IOException {
+        if(FileExtensionUtil.isXLS(excelExtension)){
             HSSFWorkbook workbook = new HSSFWorkbook(excelFile);
             return Optional.of(workbook.getSheet(WEEKLY_ACTUAL_EFFORT_COLUMN));
         }
-        if(FileExtensionUtil.isXLSX(extension)){
+        if(FileExtensionUtil.isXLSX(excelExtension)){
             XSSFWorkbook workbook = new XSSFWorkbook(excelFile);
             return Optional.of(workbook.getSheet(WEEKLY_ACTUAL_EFFORT_COLUMN));
         }
         return Optional.empty();
     }
 
-    private Map<String, Integer> getHeaderCoumns(Sheet sheet) {
+    private Map<String, Integer> getHeaderColumns(Sheet sheet) {
+        //headerColumnMap contains name of the header of each column and its index in the file
         Map<String, Integer> headerColumnsMap = new HashMap<>();
         Row row = sheet.getRow(HEADER_INDEX);
         for (int j = row.getFirstCellNum(); j <= row.getLastCellNum(); j++) {
@@ -202,7 +203,7 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
     ) {
         excelImputationDTOS.forEach(dto -> {
             if(dto.getCollaborator().equals(ppmcId)){
-                if(isDailyImputationExist(dailyImputations, dto.getDay())){
+                if(imputationConverterUtilService.isDailyImputationExist(dailyImputations, dto.getDay())){
                     setChargeToExistingDailyImputation(dailyImputations, dto.getDay(), dto.getCharge());
                 }else{
                     CollaboratorDailyImputation dailyImputation = imputationConverterUtilService.createDailyImputation(dto.getDay(), dto.getCharge(), monthlyImputation);
@@ -210,10 +211,6 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
                 }
             }
         });
-    }
-
-    private boolean isDailyImputationExist(Set<CollaboratorDailyImputation> dailyImputations, int day) {
-        return dailyImputations.stream().anyMatch(dailyImputation -> dailyImputation.getDay().equals(day));
     }
 
     private void setChargeToExistingDailyImputation(Set<CollaboratorDailyImputation> dailyImputations, int day, double charge) {
