@@ -15,9 +15,11 @@
             </div>
             <br/>
             <div id="isNewUploadForm">
-                <label class="radio-inline"><input type="radio" name="newUpload" value="false" (click)="setIsNewUpload('false')">A PPMC file is
+                <label class="radio-inline"><input type="radio" name="newUpload" value="false"
+                                                   (click)="setIsNewUpload('false')">A PPMC file is
                     already uploaded</label>
-                <label class="radio-inline"><input type="radio" name="newUpload" value="true" (click)="setIsNewUpload('true')" [checked]="true">Upload a new PPMC
+                <label class="radio-inline"><input type="radio" name="newUpload" value="true"
+                                                   (click)="setIsNewUpload('true')" [checked]="true">Upload a new PPMC
                     file </label>
             </div>
             <form class="form-inline" name="comparatorForm" role="form" novalidate
@@ -68,28 +70,35 @@
     </div>
     <jhi-alert></jhi-alert>
     <br/>
-    <div class=" table table-responsive" *ngIf="imputation">
-        <table class="table table-bordered table-hover table-sm">
-            <thead>
-            <tr>
-                <th><span>Collaborator</span>
-                </th>
-                <th><span>Total</span>
-                </th>
-                <th *ngFor="let day of days" [id]="day">{{day + '/' + imputation.month}}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let monthlyImputation of imputation.monthlyImputations">
-                <td>{{monthlyImputation.collaborator.lastname + ' ' + monthlyImputation.collaborator.firstname}}</td>
-                <td class="text-center">{{monthlyImputation.total}}</td>
-                <td class="text-center" *ngFor="let day of days" [id]="day">
+    <div [ngSwitch]="isFilledImputation()">
+        <div class=" table table-responsive" *ngSwitchCase="true">
+            <table class="table table-bordered table-hover table-sm">
+                <thead>
+                <tr>
+                    <th><span>Collaborator</span>
+                    </th>
+                    <th><span>Total</span>
+                    </th>
+                    <th *ngFor="let day of days" [id]="day">{{day + '/' + imputation.month}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let monthlyImputation of imputation.monthlyImputations">
+                    <td>{{monthlyImputation.collaborator.lastname + ' ' + monthlyImputation.collaborator.firstname}}</td>
+                    <td class="text-center">{{monthlyImputation.total}}</td>
+                    <td class="text-center" *ngFor="let day of days" [id]="day">
                     <span
                         *ngFor="let dailyImputation of monthlyImputation.dailyImputations">{{day == dailyImputation.day ? dailyImputation.charge : ''}}
                     </span>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="nothingToShow" *ngSwitchCase="false">
+            <span jhiTranslate="global.nothingToShow">There is nothing to show, please fill the form and submit.</span>
+            <br/>
+            <span><fa-icon icon="search"></fa-icon></span>
+        </div>
     </div>
 </div>

@@ -132,4 +132,8 @@ export class TimesheetAppComponent implements OnInit {
     private getDaysOfMonth(year, month) {
         return new Date(year, month, 0).getDate();
     }
+
+    private isFilledImputation(): boolean {
+        return this.imputations !== undefined;
+    }
 }

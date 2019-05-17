@@ -266,3 +266,8 @@ ui bootstrap tweaks
 #notify-all {
     margin-bottom: 15px;
 }
+
+.nothingToShow {
+    text-align: center;
+    font-size: xx-large;
+}

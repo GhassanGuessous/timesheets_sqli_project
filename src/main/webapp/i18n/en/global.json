@@ -114,7 +114,8 @@
             "dev": "Development"
         },
         "item-count": "Showing {{first}} - {{second}} of {{total}} items.",
-        "noDataFound": "No element Found."
+        "noDataFound": "No element Found.",
+        "nothingToShow": "There is nothing to show, please fill and submit the form."
     },
     "entity": {
         "action": {

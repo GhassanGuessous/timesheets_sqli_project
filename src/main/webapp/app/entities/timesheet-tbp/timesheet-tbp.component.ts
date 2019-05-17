@@ -108,4 +108,8 @@ export class TimesheetTbpComponent implements OnInit {
         days = Array.from(new Set(days)).sort((a, b) => a - b);
         this.imputationDays.set(imputation, days);
     }
+
+    private isFilledImputation(): boolean {
+        return this.imputations !== undefined;
+    }
 }

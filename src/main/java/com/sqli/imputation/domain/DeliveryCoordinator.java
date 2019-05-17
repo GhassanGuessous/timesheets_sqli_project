@@ -4,9 +4,6 @@ package com.sqli.imputation.domain;
 
 import javax.persistence.*;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 /**
  * A DeliveryCoordinator.
  */

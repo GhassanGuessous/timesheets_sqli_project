@@ -114,7 +114,8 @@
             "dev": "Développement"
         },
         "item-count": "Affichage {{first}} - {{second}} de {{total}} items.",
-        "noDataFound": "Aucun élément trouvé."
+        "noDataFound": "Aucun élément trouvé.",
+        "nothingToShow": "Il n'y a rien a afficher, veuillez remplir et valider le formulaire."
     },
     "entity": {
         "action": {

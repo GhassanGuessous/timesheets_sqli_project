@@ -16,6 +16,8 @@ import java.util.*;
 @Service
 public class DefaultTbpImputationConverterService implements TbpImputationConverterService {
 
+    List<String> strings = new ArrayList<>();
+
     @Autowired
     private ImputationConverterUtilService imputationConverterUtilService;
     @Autowired
@@ -29,14 +31,18 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
 
     private void fillMonthlyImputationForFachCollab(Imputation imputation, ChargeTeamDTO chargeTeamDTO) {
         chargeTeamDTO.getCollaborateurs().forEach(collaborateurDTO -> {
-            Collaborator collaborator = findCollabByCorrespondence(collaborateurDTO);
+            try {
+                Collaborator collaborator = findCollabByCorrespondence(collaborateurDTO);
 
-            CollaboratorMonthlyImputation monthlyImputation = imputationConverterUtilService.getCollabMonthlyImputation(imputation, collaborator);
-            CollaboratorDailyImputation dailyImputation = createCollaboratorDailyImputation(chargeTeamDTO, collaborateurDTO, monthlyImputation);
+                CollaboratorMonthlyImputation monthlyImputation = imputationConverterUtilService.getCollabMonthlyImputation(imputation, collaborator);
+                CollaboratorDailyImputation dailyImputation = createCollaboratorDailyImputation(chargeTeamDTO, collaborateurDTO, monthlyImputation);
 
-            imputationConverterUtilService.addDailyToMonthlyImputation(monthlyImputation, dailyImputation);
-            imputationConverterUtilService.setTotalOfMonthlyImputation(monthlyImputation, Double.parseDouble(collaborateurDTO.getCharge()));
-            imputationConverterUtilService.addMonthlyImputationToImputation(imputation, monthlyImputation);
+                imputationConverterUtilService.addDailyToMonthlyImputation(monthlyImputation, dailyImputation);
+                imputationConverterUtilService.setTotalOfMonthlyImputation(monthlyImputation, Double.parseDouble(collaborateurDTO.getCharge()));
+                imputationConverterUtilService.addMonthlyImputationToImputation(imputation, monthlyImputation);
+            }catch (Exception e){
+                strings.add(collaborateurDTO.getId());
+            }
         });
     }
 
