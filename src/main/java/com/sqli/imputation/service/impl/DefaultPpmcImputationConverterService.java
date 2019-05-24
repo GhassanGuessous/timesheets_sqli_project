@@ -175,7 +175,7 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
     private void createDailyImputationsForEachCollab(Set<String> ppmcIDs, List<CollabExcelImputationDTO> excelImputationDTOS, Imputation imputation) {
         Set<CollaboratorMonthlyImputation> monthlyImputations = new HashSet<>();
         ppmcIDs.forEach(ppmcId -> {
-            Correspondence correspondence = correspondenceRepository.findByIdPPMC(ppmcId);
+            Correspondence correspondence = correspondenceRepository.findByIdPPMC(ppmcId).stream().findFirst().get();
             if(isCorrespondenceNotExist(correspondence)){
                 return;
             }else{

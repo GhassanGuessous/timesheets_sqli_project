@@ -84,8 +84,8 @@ public class DefaultAppResourceService implements AppResourceService {
         addItemParam(params, "annee", "" + requestBody.getYear());
     }
 
-    private void addItemParam(SOAPElement soapBodyElem1, String key, String value) throws SOAPException {
-        SOAPElement itemElement = soapBodyElem1.addChildElement("item");
+    private void addItemParam(SOAPElement params, String key, String value) throws SOAPException {
+        SOAPElement itemElement = params.addChildElement("item");
         SOAPElement keyElement = itemElement.addChildElement("key");
         keyElement.setAttribute("xsi:type", "xsd:string");
         SOAPElement valueElement = itemElement.addChildElement("value");
