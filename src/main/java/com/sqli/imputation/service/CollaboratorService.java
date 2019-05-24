@@ -24,6 +24,13 @@ public interface CollaboratorService {
     /**
      * Get all the collaborators.
      *
+     * @return the list of entities
+     */
+    List<Collaborator> findAll();
+
+    /**
+     * Get all the collaborators.
+     *
      * @param pageable the pagination information
      * @return the list of entities
      */

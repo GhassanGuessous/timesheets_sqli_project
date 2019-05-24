@@ -46,6 +46,18 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     /**
      * Get all the collaborators.
      *
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Collaborator> findAll() {
+        log.debug("Request to get all Collaborators");
+        return collaboratorRepository.findAll();
+    }
+
+    /**
+     * Get all the collaborators.
+     *
      * @param pageable the pagination information
      * @return the list of entities
      */

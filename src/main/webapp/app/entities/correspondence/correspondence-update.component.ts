@@ -32,7 +32,7 @@ export class CorrespondenceUpdateComponent implements OnInit {
             this.correspondence = correspondence;
         });
         this.collaboratorService
-            .findAllCollaboratorsWithoutPagination({ filter: 'correspondence-is-null' })
+            .findAllCollaboratorsWithoutPagination()
             .pipe(
                 filter((mayBeOk: HttpResponse<ICollaborator[]>) => mayBeOk.ok),
                 map((response: HttpResponse<ICollaborator[]>) => response.body)

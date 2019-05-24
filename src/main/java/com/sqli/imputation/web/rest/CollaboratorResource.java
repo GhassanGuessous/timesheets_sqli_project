@@ -97,6 +97,18 @@ public class CollaboratorResource {
      * @return the ResponseEntity with status 200 (OK) and the list of collaborators in body
      */
     @GetMapping("/all-collaborators")
+    public ResponseEntity<List<Collaborator>> getAllCollaborators() {
+        log.debug("REST request to get a page of Collaborators");
+        List<Collaborator> collaborators = collaboratorService.findAll();
+        return ResponseEntity.ok().body(collaborators);
+    }
+
+    /**
+     * GET  /collaborators : get all the collaborators without correspendence.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of collaborators in body
+     */
+    @GetMapping("/collaborators-no-correspondence")
     public ResponseEntity<List<Collaborator>> getAllWithNoCorrespondence() {
         log.debug("REST request to get a page of Collaborators");
         List<Collaborator> collaborators = collaboratorService.getAllWithNoCorrespondence();

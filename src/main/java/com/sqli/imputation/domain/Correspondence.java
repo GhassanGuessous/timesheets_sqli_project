@@ -27,8 +27,7 @@ public class Correspondence implements Serializable {
     @Column(name = "id_tbp")
     private String idTBP;
 
-    @OneToOne
-    @JoinColumn(unique = true)
+    @ManyToOne
     private Collaborator collaborator;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
