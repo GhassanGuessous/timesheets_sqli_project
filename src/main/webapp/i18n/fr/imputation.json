@@ -9,7 +9,8 @@
                 "createLabel": "Créer un nouveau Imputation",
                 "createOrEditLabel": "Créer ou éditer un Imputation",
                 "comparatorAppPpmcTitle": "Comparateur APP-PPMC",
-                "comparatorAppPpmcAdvancedTitle": "Comparateur APP-PPMC détaillé"
+                "comparatorAppPpmcAdvancedTitle": "Comparateur APP-PPMC détaillé",
+                "statisticsTitle": "Statistiques"
             },
             "created": "Un nouveau Imputation a été créé avec l'identifiant {{ param }}",
             "updated": "Le Imputation avec l'identifiant {{ param }} a été mis à jour",

@@ -8,7 +8,7 @@ import { ComparatorAppTbpAdvancedService } from 'app/entities/comparator-app-tbp
 import { ComparatorAPPTBPService } from 'app/entities/comparator-app-tbp/comparator-app-tbp.service';
 
 @Component({
-    selector: 'auth-tbp-modal',
+    selector: 'jhi-auth-tbp-modal',
     templateUrl: './auth-tbp.component.html'
 })
 export class AuthTbpModalComponent {

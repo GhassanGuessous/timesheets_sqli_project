@@ -26,7 +26,7 @@ public class Imputation implements Serializable {
     @Column(name = "month")
     private Integer month;
 
-    @Column(name = "jhi_year")
+    @Column(name = "year")
     private Integer year;
 
     @OneToMany(mappedBy = "imputation")

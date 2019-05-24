@@ -1,0 +1,41 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="global.menu.entities.app-timesheet">APP Timesheet</span>
+    </h2>
+    <div class="row justify-content-center" *ngIf="allTeams || myTeam">
+        <div>
+            <jhi-alert-error></jhi-alert-error>
+            <form class="form-inline" name="appImputationForm" role="form" novalidate
+                  [ngSwitch]="isAdmin()" (ngSubmit)="getStatistics()">
+                <div class="form-group tbp-import-form" *ngSwitchCase="true">
+                    <label class="form-control-label"
+                           for="field_code_project_admin" jhiTranslate="imputationSqliApp.imputation.project_code">Project</label>
+                    <select class="form-control" id="field_code_project_admin" name="code_project"
+                            [(ngModel)]="teamYearRequest.team">
+                        <option *ngFor="let team of allTeams" [ngValue]="team">{{team.name}}</option>
+                    </select>
+                </div>
+                <div class="form-group tbp-import-form" *ngSwitchCase="false">
+                    <span id="field_code_project_delco"><b>{{myTeam.name}}</b></span>
+                </div>
+                <div class="form-group tbp-import-form">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.year"
+                           for="field_year">Year</label>
+                    <select class="form-control" id="field_year" name="year" [(ngModel)]="teamYearRequest.year">
+                        <option *ngFor="let year of years" [selected]="year == currentYear">{{year}}</option>
+                    </select>
+                </div>
+                <div class="form-group tbp-import-form">
+                    <button type="submit" id="tbp-timesheet-import-button" class="btn btn-primary float-right">
+                        <span jhiTranslate="global.menu.statistics">
+                            Statistics
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+            <!-- statistics -->
+            <!--<p-chart type="bar" width="400" height="400" [data]="data" [options]="options"></p-chart>-->
+        <div #chartdiv id="chartdiv" style="width: 100%; height: 500px"></div>
+    </div>
+</div>

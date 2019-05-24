@@ -58,7 +58,8 @@
                 "database": "Base de données",
                 "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
             },
-            "language": "Langue"
+            "language": "Langue",
+            "statistics": "Statistiques"
         },
         "form": {
             "username": "Nom d'utilisateur",
@@ -170,5 +171,5 @@
         "tbp_bad_credentials": "Les identifiants TBP sont éronés!",
         "tbp_invalid_inputs": "Les champs username & password sont obligatoires!"
     },
-    "footer": "©SQLI Group 2017 - Tous droits réservés"
+    "footer": "©SQLI Maroc {{ year }} - Tous droits réservés"
 }

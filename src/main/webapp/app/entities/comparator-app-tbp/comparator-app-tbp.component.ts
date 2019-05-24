@@ -84,6 +84,7 @@ export class ComparatorAPPTBPComponent implements OnInit {
     }
 
     compare() {
+        console.log(this.appTbpRequestBody);
         if (localStorage.getItem('isTbpAuthenticated') === 'false') {
             this.authenticateThenCompare();
         } else {

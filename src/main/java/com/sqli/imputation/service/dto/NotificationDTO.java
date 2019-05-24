@@ -40,16 +40,9 @@ public class NotificationDTO {
         return appGap;
     }
 
-    public void setAppGap(GapDTO appGap) {
-        this.appGap = appGap;
-    }
 
     public GapDTO getComparedGap() {
         return comparedGap;
-    }
-
-    public void setComparedGap(GapDTO comparedGap) {
-        this.comparedGap = comparedGap;
     }
 
     @Override

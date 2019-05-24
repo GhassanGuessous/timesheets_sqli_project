@@ -1,13 +1,10 @@
 package com.sqli.imputation.service.impl;
 
 import com.sqli.imputation.config.Constants;
-import com.sqli.imputation.domain.Team;
+import com.sqli.imputation.domain.*;
 import com.sqli.imputation.repository.TeamRepository;
-import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
-import com.sqli.imputation.domain.CollaboratorDailyImputation;
 import com.sqli.imputation.security.SecurityUtils;
 import com.sqli.imputation.service.*;
-import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.repository.ImputationRepository;
 import com.sqli.imputation.service.dto.*;
 import com.sqli.imputation.service.factory.RequestBodyFactory;
@@ -73,6 +70,8 @@ public class ImputationServiceImpl implements ImputationService {
     private ImputationConverterUtilService utilService;
     @Autowired
     private MailService mailService;
+    @Autowired
+    private NotificationService notificationService;
 
     public ImputationServiceImpl(ImputationRepository imputationRepository) {
         this.imputationRepository = imputationRepository;
@@ -200,7 +199,7 @@ public class ImputationServiceImpl implements ImputationService {
             try {
                 getAppImputationFromWS(imputations, dto);
             } catch (HttpClientErrorException e) {
-                ImputationRequestDTO imputationRequestDTO = new ImputationRequestDTO(dto.getAgresso(), dto.getYear(), dto.getMonth(), Constants.APP_IMPUTATION_TYPE);
+                ImputationRequestDTO imputationRequestDTO = getImputationRequestDTO(dto, Constants.APP_IMPUTATION_TYPE);
                 getImputationFromDB(imputations, imputationRequestDTO);
             }
         });
@@ -378,12 +377,19 @@ public class ImputationServiceImpl implements ImputationService {
 
     @Override
     public void sendNotifications(List<NotificationDTO> notifications) {
-        notifications.forEach(notification -> mailService.sendNotificationMail(notification));
+        notifications.forEach(dto -> {
+            Optional<Notification> notificationFromDB = notificationService.find(dto);
+            if(!notificationFromDB.isPresent()){
+                Notification notification = notificationService.createFromDTO(dto);
+                notificationService.save(notification);
+            }
+            mailService.sendNotificationMail(dto);
+        });
     }
 
     @Override
     public List<ImputationComparatorDTO> getComparisonFromDB(AppRequestDTO appRequestDTO, String ppmcImputationType) {
-        ImputationRequestDTO imputationRequestDTO = new ImputationRequestDTO(appRequestDTO.getAgresso(), appRequestDTO.getYear(), appRequestDTO.getMonth(), ppmcImputationType);
+        ImputationRequestDTO imputationRequestDTO = getImputationRequestDTO(appRequestDTO, ppmcImputationType);
         Optional<Imputation> ppmcImputation = findByTeam(imputationRequestDTO);
         if (ppmcImputation.isPresent()) {
             Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
@@ -392,9 +398,13 @@ public class ImputationServiceImpl implements ImputationService {
         return Collections.emptyList();
     }
 
+    private ImputationRequestDTO getImputationRequestDTO(AppRequestDTO appRequestDTO, String ppmcImputationType) {
+        return new ImputationRequestDTO(appRequestDTO.getAgresso(), appRequestDTO.getYear(), appRequestDTO.getMonth(), ppmcImputationType);
+    }
+
     @Override
     public List<ImputationComparatorAdvancedDTO> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO, String ppmcImputationType) {
-        ImputationRequestDTO imputationRequestDTO = new ImputationRequestDTO(appRequestDTO.getAgresso(), appRequestDTO.getYear(), appRequestDTO.getMonth(), ppmcImputationType);
+        ImputationRequestDTO imputationRequestDTO = getImputationRequestDTO(appRequestDTO, ppmcImputationType);
         Optional<Imputation> ppmcImputation = findByTeam(imputationRequestDTO);
         if (ppmcImputation.isPresent()) {
             Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);

@@ -123,7 +123,7 @@
                 [routerLinkActiveOptions]="{exact: true}">
                 <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="imputation-menu">
                     <span>
-                        <fa-icon icon="th-list"></fa-icon>
+                        <fa-icon icon="fingerprint"></fa-icon>
                         <span jhiTranslate="global.menu.entities.imputation">
                             Imputations
                         </span>
@@ -159,7 +159,7 @@
                 [routerLinkActiveOptions]="{exact: true}">
                 <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="comparator-menu">
                     <span>
-                        <fa-icon icon="th-list"></fa-icon>
+                        <fa-icon icon="not-equal"></fa-icon>
                         <span jhiTranslate="global.menu.entities.comparison">
                             Comparison
                         </span>
@@ -193,6 +193,14 @@
                 </ul>
             </li>
 
+            <li *ngSwitchCase="true">
+                <a class="nav-link" routerLink="statistics" (click)="collapseNavbar()">
+                    <span>
+                        <fa-icon icon="chart-bar"></fa-icon>
+                        <span jhiTranslate="global.menu.statistics">Statistiques</span>
+                    </span>
+                </a>
+            </li>
 
             <li *jhiHasAnyAuthority="'ROLE_ADMIN'" ngbDropdown class="nav-item dropdown pointer"
                 routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">

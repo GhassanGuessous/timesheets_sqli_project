@@ -16,8 +16,6 @@ import java.util.*;
 @Service
 public class DefaultTbpImputationConverterService implements TbpImputationConverterService {
 
-    List<String> strings = new ArrayList<>();
-
     @Autowired
     private ImputationConverterUtilService imputationConverterUtilService;
     @Autowired
@@ -41,7 +39,7 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
                 imputationConverterUtilService.setTotalOfMonthlyImputation(monthlyImputation, Double.parseDouble(collaborateurDTO.getCharge()));
                 imputationConverterUtilService.addMonthlyImputationToImputation(imputation, monthlyImputation);
             }catch (Exception e){
-                strings.add(collaborateurDTO.getId());
+                return;
             }
         });
     }

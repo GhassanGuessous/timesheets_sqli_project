@@ -2,7 +2,9 @@ package com.sqli.imputation.web.rest;
 
 import com.sqli.imputation.config.Constants;
 import com.sqli.imputation.domain.Imputation;
+import com.sqli.imputation.domain.Notification;
 import com.sqli.imputation.service.ImputationService;
+import com.sqli.imputation.service.NotificationService;
 import com.sqli.imputation.service.dto.*;
 import com.sqli.imputation.service.util.DateUtil;
 import com.sqli.imputation.service.util.FileExtensionUtil;
@@ -13,6 +15,7 @@ import com.sqli.imputation.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -49,6 +52,8 @@ public class ImputationResource {
     private static final String ENTITY_NAME = "imputation";
 
     private final ImputationService imputationService;
+    @Autowired
+    private NotificationService notificationService;
 
     public ImputationResource(ImputationService imputationService) {
         this.imputationService = imputationService;
@@ -374,5 +379,11 @@ public class ImputationResource {
     public ResponseEntity<Void> sendNotificationsToCollabs(@RequestBody List<NotificationDTO> notifications) {
         imputationService.sendNotifications(notifications);
         return ResponseEntity.ok().headers(HeaderUtil.createEmailSendingAlert(ENTITY_NAME)).build();
+    }
+
+    @PostMapping("/imputations/statistics")
+    public ResponseEntity<List<StatisticsDTO>> getTeamNotifications(@RequestBody TeamYearDTO teamYearDTO) {
+        List<StatisticsDTO> statisticsDTOS = notificationService.getStatistics(teamYearDTO);
+        return ResponseEntity.ok().body(statisticsDTOS);
     }
 }

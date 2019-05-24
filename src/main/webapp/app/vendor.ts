@@ -3,7 +3,6 @@
 import '../content/css/vendor.css';
 
 // Imports all fontawesome core and solid icons
-
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
     faUser,
@@ -40,7 +39,10 @@ import {
     faAsterisk,
     faTasks,
     faHome,
-    faEnvelope
+    faEnvelope,
+    faChartBar,
+    faNotEqual,
+    faFingerprint
 } from '@fortawesome/free-solid-svg-icons';
 
 // Adds the SVG icon to the library so you can use it in your page
@@ -80,5 +82,8 @@ library.add(faTrashAlt);
 library.add(faAsterisk);
 library.add(faEnvelope);
 library.add(faSearch);
+library.add(faChartBar);
+library.add(faNotEqual);
+library.add(faFingerprint);
 
 // jhipster-needle-add-element-to-vendor - JHipster will add new menu items here
