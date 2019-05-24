@@ -35,14 +35,14 @@
                 <div class="form-group tbp-import-form" *ngSwitchCase="false">
                     <span id="field_code_project_delco"><b>{{myTeam.name}}</b></span>
                 </div>
-                <div class="form-group tbp-import-form">
+                <div class="form-group tbp-import-form" *ngIf="!isNewUpload">
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.year"
                            for="field_year">Year</label>
                     <select class="form-control" id="field_year" name="year" [(ngModel)]="appRequestBody.year">
                         <option *ngFor="let year of years" [selected]="year == currentYear">{{year}}</option>
                     </select>
                 </div>
-                <div class="form-group tbp-import-form">
+                <div class="form-group tbp-import-form" *ngIf="!isNewUpload">
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.month"
                            for="field_month">Month</label>
                     <select class="form-control" id="field_month" name="month"

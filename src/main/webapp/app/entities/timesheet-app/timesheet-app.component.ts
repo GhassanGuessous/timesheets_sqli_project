@@ -129,6 +129,11 @@ export class TimesheetAppComponent implements OnInit {
         }
     }
 
+    private refreshManDays() {
+        this.initializeDayOfCurrentMonth();
+        this.appRequestBody.manDay = this.getDaysOfMonth(this.appRequestBody.year, this.appRequestBody.month);
+    }
+
     private getDaysOfMonth(year, month) {
         return new Date(year, month, 0).getDate();
     }

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 /**
  * Spring Data  repository for the Correspondence entity.
@@ -17,9 +19,9 @@ public interface CorrespondenceRepository extends JpaRepository<Correspondence, 
 
     Correspondence findByIdTBP(String tbpId);
 
-    Correspondence findByIdAPP(String appID);
+    List<Correspondence> findByIdAPP(String appID);
 
-    Correspondence findByIdPPMC(String ppmcId);
+    List<Correspondence> findByIdPPMC(String ppmcId);
 
     @Query(value = "select c from Correspondence c left join c.collaborator collab " +
         "where c.idAPP like %:key% or c.idPPMC like %:key% or c.idTBP like %:key%" +

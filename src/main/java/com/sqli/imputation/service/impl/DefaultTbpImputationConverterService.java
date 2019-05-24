@@ -20,9 +20,10 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
     private ImputationConverterUtilService imputationConverterUtilService;
     @Autowired
     private CorrespondenceRepository correspondenceRepository;
-
+    List<String> strings;
     @Override
     public void convertChargesToImputation(List<ChargeTeamDTO> chargeTeamDTOS, Imputation imputation) {
+        strings = new ArrayList<>();
         chargeTeamDTOS.forEach(chargeTeamDTO -> fillMonthlyImputationForFachCollab(imputation, chargeTeamDTO));
         imputationConverterUtilService.sortImputations(imputation);
     }
@@ -39,8 +40,9 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
                 imputationConverterUtilService.setTotalOfMonthlyImputation(monthlyImputation, Double.parseDouble(collaborateurDTO.getCharge()));
                 imputationConverterUtilService.addMonthlyImputationToImputation(imputation, monthlyImputation);
             }catch (Exception e){
-                return;
+                strings.add(collaborateurDTO.toString());
             }
+
         });
     }
 

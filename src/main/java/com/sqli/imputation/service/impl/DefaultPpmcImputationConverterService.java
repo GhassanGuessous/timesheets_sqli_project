@@ -175,11 +175,11 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
     private void createDailyImputationsForEachCollab(Set<String> ppmcIDs, List<CollabExcelImputationDTO> excelImputationDTOS, Imputation imputation) {
         Set<CollaboratorMonthlyImputation> monthlyImputations = new HashSet<>();
         ppmcIDs.forEach(ppmcId -> {
-            Correspondence correspondence = correspondenceRepository.findByIdPPMC(ppmcId);
-            if(isCorrespondenceNotExist(correspondence)){
+            Optional<Correspondence> correspondenceOptional = correspondenceRepository.findByIdPPMC(ppmcId).stream().findFirst();
+            if(!correspondenceOptional.isPresent()){
                 return;
             }else{
-                Collaborator collaborator = correspondence.getCollaborator();
+                Collaborator collaborator = correspondenceOptional.get().getCollaborator();
                 CollaboratorMonthlyImputation monthlyImputation = imputationConverterUtilService.createMonthlyImputation(imputation, collaborator);
                 Set<CollaboratorDailyImputation> dailyImputations = new HashSet<>();
 
@@ -191,10 +191,6 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
             }
         });
         imputation.setMonthlyImputations(monthlyImputations);
-    }
-
-    private boolean isCorrespondenceNotExist(Correspondence correspondence) {
-        return correspondence == null;
     }
 
     private void createDailyImputationFromExcelImputations(

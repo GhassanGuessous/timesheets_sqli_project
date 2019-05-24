@@ -79,6 +79,15 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.currentAccount.authorities.includes('ROLE_ADMIN');
     }
 
+    private getStatistics() {
+        this.notifications = this.statisticsService.findTeamNotifications(this.teamYearRequest).subscribe(data => {
+            this.notifications = data.body;
+            this.zone.runOutsideAngular(() => {
+                this.createChart(this.notifications);
+            });
+        });
+    }
+
     private createChart(data) {
         const htmlElement = this.chartDiv.nativeElement;
         const chart = am4core.create(htmlElement, am4charts.XYChart);
@@ -139,15 +148,6 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
         categoryLabel.label.fill = am4core.color('#fff');
         categoryLabel.label.hideOversized = false;
         categoryLabel.label.truncate = false;
-    }
-
-    private getStatistics() {
-        this.notifications = this.statisticsService.findTeamNotifications(this.teamYearRequest).subscribe(data => {
-            this.notifications = data.body;
-            this.zone.runOutsideAngular(() => {
-                this.createChart(this.notifications);
-            });
-        });
     }
 
     ngOnDestroy() {

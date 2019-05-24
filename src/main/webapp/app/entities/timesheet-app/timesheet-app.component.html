@@ -1,4 +1,4 @@
-    <div>
+<div>
     <h2 id="page-heading">
         <span jhiTranslate="global.menu.entities.app-timesheet">APP Timesheet</span>
     </h2>
@@ -30,21 +30,20 @@
                     <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.month"
                            for="field_month">Month</label>
                     <select class="form-control" id="field_month" name="month"
-                            [(ngModel)]="appRequestBody.month" (change)="initializeDayOfCurrentMonth()">
+                            [(ngModel)]="appRequestBody.month" (change)="refreshManDays()">
                         <option *ngFor="let month of months" [selected]="month == currentMonth">{{month}}</option>
                     </select>
                 </div>
                 <div class="form-group tbp-import-form">
-                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.startDay"
-                           for="field_month">Month</label>
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.startDay">
+                        Start Day</label>
                     <select class="form-control" id="field_startDay" name="startDay"
                             [(ngModel)]="appRequestBody.startDay">
                         <option *ngFor="let day of days">{{day}}</option>
                     </select>
                 </div>
                 <div class="form-group tbp-import-form">
-                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.manDay"
-                           for="field_month">Month</label>
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.manDay">Man Day</label>
                     <select class="form-control" id="field_man_day" name="manDay"
                             [(ngModel)]="appRequestBody.manDay">
                         <option *ngFor="let manDay of manDays">{{manDay}}</option>
