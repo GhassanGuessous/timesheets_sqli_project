@@ -302,4 +302,8 @@ export class ComparatorAppPpmcAdvancedComponent implements OnInit {
     private setIsNewUpload(predicate: string) {
         this.isNewUpload = predicate === 'false' ? false : true;
     }
+
+    private isFilledImputation(): boolean {
+        return this.comparator !== undefined;
+    }
 }

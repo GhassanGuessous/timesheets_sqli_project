@@ -46,8 +46,8 @@
         </div>
     </div>
     <br/>
-    <div class="container-fluid" [ngSwitch]="comparator !== undefined">
-        <div class="table-responsive" *ngSwitchCase="true" >
+    <div class="container-fluid" [ngSwitch]="isFilledImputation()">
+        <div class="table-responsive" *ngSwitchCase="true">
             <button id="notify-all" (click)="notifyCollabsWithGap()"
                     class="btn btn-info btn-sm float-right">
                 <fa-icon [icon]="'envelope'"></fa-icon>

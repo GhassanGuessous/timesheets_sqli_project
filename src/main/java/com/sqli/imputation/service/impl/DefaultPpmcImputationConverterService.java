@@ -198,10 +198,6 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
         imputation.setMonthlyImputations(monthlyImputations);
     }
 
-    private boolean isCorrespondenceNotExist(Correspondence correspondence) {
-        return correspondence == null;
-    }
-
     private void createDailyImputationFromExcelImputations(
         List<CollabExcelImputationDTO> excelImputationDTOS, String ppmcId,
         CollaboratorMonthlyImputation monthlyImputation, Set<CollaboratorDailyImputation> dailyImputations

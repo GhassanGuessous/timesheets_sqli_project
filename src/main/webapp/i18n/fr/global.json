@@ -33,6 +33,8 @@
                 "comparator-app-ppmc-advanced": "APP vs PPMC - Détaillé",
                 "upload_getTimesheet": "Upload & get PPMC timesheet",
                 "getTimesheet": "Get PPMC timesheet",
+                "newUpload": "Importer un nouveau fichier PPMC",
+                "fileUploadedAlredy": "Un fichier PPMC est déja impoté",
                 "authenticateToTbp": "S'authentifier",
                 "TbpAuthTitle": "Authentification TBP"
             },

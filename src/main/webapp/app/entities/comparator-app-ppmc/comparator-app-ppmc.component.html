@@ -59,44 +59,43 @@
         </div>
     </div>
     <br/>
-    <div [ngSwitch]="comparator !== undefined">
-        <div class=" table table-responsive" *ngSwitchCase="true">
-            <table class="table table-bordered table-hover table-sm">
-                <thead>
-                <tr>
-                    <th class="text-center"><span jhiTranslate="global.field.id">ID</span>
-                    </th>
-                    <th><span jhiTranslate="imputationSqliApp.imputation.collaborator">Collaborator</span>
-                    </th>
-                    <th class="text-center"><span>APP</span>
-                    </th>
-                    <th class="text-center"><span>PPMC</span>
-                    </th>
-                    <th class="text-center"><span jhiTranslate="imputationSqliApp.imputation.difference">Difference</span>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let element of comparator">
-                    <td class="text-center">{{element.collaborator.id}}
-                    </td>
-                    <td><a [routerLink]="['/collaborator', element.collaborator.id, 'view' ]">{{element.collaborator.firstname + ' ' + element.collaborator.lastname}}</a>
-                    </td>
-                    <td class="text-center">{{element.totalApp}}
-                    </td>
-                    <td class="text-center">{{element.totalCompared}}
-                    </td>
-                    <td class="text-center" [ngStyle]="{color: getColor(element.difference)}"><b>{{element.difference}}</b>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="nothingToShow" *ngSwitchCase="false">
-            <span jhiTranslate="global.nothingToShow">There is nothing to show, please fill the form and submit.</span>
-            <br/>
-            <span><fa-icon icon="search"></fa-icon></span>
-        </div>
-    </div>
+   <div [ngSwitch]="isFilledImputation()">
+       <div class=" table table-responsive" *ngSwitchCase="true">
+           <table class="table table-bordered table-hover table-sm">
+               <thead>
+               <tr>
+                   <th class="text-center"><span jhiTranslate="global.field.id">ID</span>
+                   </th>
+                   <th><span jhiTranslate="imputationSqliApp.imputation.collaborator">Collaborator</span>
+                   </th>
+                   <th class="text-center"><span>APP</span>
+                   </th>
+                   <th class="text-center"><span>PPMC</span>
+                   </th>
+                   <th class="text-center"><span jhiTranslate="imputationSqliApp.imputation.difference">Difference</span>
+                   </th>
+               </tr>
+               </thead>
+               <tbody>
+               <tr *ngFor="let element of comparator">
+                   <td class="text-center">{{element.collaborator.id}}
+                   </td>
+                   <td><a [routerLink]="['/collaborator', element.collaborator.id, 'view' ]">{{element.collaborator.firstname + ' ' + element.collaborator.lastname}}</a>
+                   </td>
+                   <td class="text-center">{{element.totalApp}}
+                   </td>
+                   <td class="text-center">{{element.totalCompared}}
+                   </td>
+                   <td class="text-center" [ngStyle]="{color: getColor(element.difference)}"><b>{{element.difference}}</b>
+                   </td>
+               </tr>
+               </tbody>
+           </table>
+       </div>
+       <div class="nothingToShow" *ngSwitchCase="false">
+           <span jhiTranslate="global.nothingToShow">There is nothing to show, please fill the form and submit.</span>
+           <br/>
+           <span><fa-icon icon="search"></fa-icon></span>
+       </div>
+   </div>
 </div>

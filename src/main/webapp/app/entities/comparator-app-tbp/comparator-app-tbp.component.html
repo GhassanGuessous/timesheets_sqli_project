@@ -47,7 +47,7 @@
     </div>
     <br/>
 
-    <div [ngSwitch]="comparator !== undefined">
+    <div [ngSwitch]="isFilledImputation()">
         <div class="table-responsive" *ngSwitchCase="true">
             <table class="table table-bordered table-hover table-sm">
                 <thead>
@@ -73,7 +73,7 @@
                     </td>
                     <td class="text-center"><b>{{element.totalApp}}</b></td>
                     <td class="text-center"><b>{{element.totalCompared}}</b></td>
-                    <td class="text-center" [ngStyle]="{color:getcolor(element.difference)}">
+                    <td class="text-center" [ngStyle]="{color:getColor(element.difference)}">
                         <b>{{element.difference}}</b></td>
                 </tr>
                 </tbody>

@@ -33,6 +33,8 @@
                 "compare": "compare",
                 "upload_getTimesheet": "Upload & get PPMC timesheet",
                 "getTimesheet": "Get PPMC timesheet",
+                "newUpload": "Upload a new PPMC file",
+                "fileUploadedAlredy": "A PPMC file is already uploaded",
                 "authenticateToTbp": "Authenticate",
                 "TbpAuthTitle": "TBP Authentication"
             },

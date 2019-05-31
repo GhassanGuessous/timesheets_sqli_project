@@ -58,7 +58,7 @@
             </form>
         </div>
     </div>
-    <div [ngSwitch]="comparator !== undefined">
+    <div [ngSwitch]="isFilledImputation()">
         <div class="table-responsive" *ngSwitchCase="true">
             <button class="btn btn-info btn-sm float-right" id="notify-all" type="submit" (click)="notifyCollabsWithGap()">
                 <fa-icon [icon]="'envelope'"></fa-icon>

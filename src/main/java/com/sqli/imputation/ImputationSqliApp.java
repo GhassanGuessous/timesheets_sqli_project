@@ -123,7 +123,7 @@ public class ImputationSqliApp {
     @Bean
     public CommandLineRunner run() throws Exception {
         return args -> {
-            defaultDbPopulator.populate();
+//            defaultDbPopulator.populate();
 
             // delete collabs with team is not nespresso
 //            List<Collaborator> collaborators = collaboratorRepository.findAll();
