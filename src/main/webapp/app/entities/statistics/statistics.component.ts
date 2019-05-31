@@ -93,61 +93,42 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
         const chart = am4core.create(htmlElement, am4charts.XYChart);
         chart.data = data;
 
-        this.getValueAxis(chart);
         this.getCategoryAxis(chart);
+        this.getValueAxis(chart);
 
         this.chart = chart;
 
         this.createSeries('app_vs_ppmc', 'APP-vs-PPMC');
         this.createSeries('app_vs_tbp', 'APP-vs-TBP');
 
-        // Add cursor
         chart.cursor = new am4charts.XYCursor();
-        // Add legend
         chart.legend = new am4charts.Legend();
     }
 
     private getValueAxis(chart) {
-        const valueAxis = chart.xAxes.push(new am4charts.ValueAxis());
+        const valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
         valueAxis.title.text = 'Notification frequency';
-        valueAxis.renderer.opposite = true;
     }
 
     private getCategoryAxis(chart) {
-        const categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
+        const categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
         categoryAxis.dataFields.category = 'collaborator';
         categoryAxis.title.text = 'Collaborators';
-        categoryAxis.numberFormatter.numberFormat = '#';
-        categoryAxis.renderer.inversed = true;
         categoryAxis.renderer.grid.template.location = 0;
-        categoryAxis.renderer.cellStartLocation = 0.1;
-        categoryAxis.renderer.cellEndLocation = 0.9;
+        categoryAxis.renderer.minGridDistance = 0;
+        categoryAxis.renderer.labels.template.rotation = 270;
     }
 
     // Create series
     createSeries(field, name) {
         const series = this.chart.series.push(new am4charts.ColumnSeries());
-        series.dataFields.valueX = field;
-        series.dataFields.categoryY = 'collaborator';
+        series.dataFields.valueY = field;
+        series.dataFields.categoryX = 'collaborator';
         series.name = name;
-        series.columns.template.tooltipText = '{name}: [bold]{valueX}[/]';
         series.columns.template.height = am4core.percent(100);
-        series.sequencedInterpolation = true;
-
-        const valueLabel = series.bullets.push(new am4charts.LabelBullet());
-        valueLabel.label.text = '{valueX}';
-        valueLabel.label.horizontalCenter = 'left';
-        valueLabel.label.dx = 10;
-        valueLabel.label.hideOversized = false;
-        valueLabel.label.truncate = false;
-
-        const categoryLabel = series.bullets.push(new am4charts.LabelBullet());
-        // categoryLabel.label.text = "{name}";
-        categoryLabel.label.horizontalCenter = 'right';
-        categoryLabel.label.dx = -10;
-        categoryLabel.label.fill = am4core.color('#fff');
-        categoryLabel.label.hideOversized = false;
-        categoryLabel.label.truncate = false;
+        series.columns.template.tooltipText = '{categoryX}: [bold]{valueY}[/]';
+        series.tooltip.pointerOrientation = 'vertical';
+        series.columns.template.fillOpacity = 0.8;
     }
 
     ngOnDestroy() {

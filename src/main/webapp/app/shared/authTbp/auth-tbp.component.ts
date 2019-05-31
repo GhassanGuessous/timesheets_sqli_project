@@ -15,7 +15,7 @@ export class AuthTbpModalComponent {
     requestBody: any;
 
     @Output()
-    passEntry: EventEmitter<any> = new EventEmitter();
+    private passEntry: EventEmitter<any> = new EventEmitter();
 
     constructor(
         private eventManager: JhiEventManager,

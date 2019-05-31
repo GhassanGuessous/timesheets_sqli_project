@@ -6,7 +6,7 @@
         <div>
             <jhi-alert-error></jhi-alert-error>
             <jhi-alert></jhi-alert>
-            <div *ngIf="currentFileUpload" class="progress">
+            <div *ngIf="currentFileUpload && isNewUpload" class="progress">
                 <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar"
                      attr.aria-valuenow="{{progress.percentage}}"
                      aria-valuemin="0" aria-valuemax="100" [ngStyle]="{width:progress.percentage+'%'}">
@@ -15,11 +15,13 @@
             </div>
             <br/>
             <div id="isNewUploadForm">
-                <label class="radio-inline"><input type="radio" name="newUpload" value="false"
-                                                   (click)="setIsNewUpload('false')">A PPMC file is
+                <label class="radio-inline">
+                    <input type="radio" name="newUpload" value="false"
+                           (click)="setIsNewUpload('false')">A PPMC file is
                     already uploaded</label>
-                <label class="radio-inline"><input type="radio" name="newUpload" value="true"
-                                                   (click)="setIsNewUpload('true')" [checked]="true">Upload a new PPMC
+                <label class="radio-inline">
+                    <input type="radio" name="newUpload" value="true"
+                           (click)="setIsNewUpload('true')" [checked]="true">Upload a new PPMC
                     file </label>
             </div>
             <form class="form-inline" name="comparatorForm" role="form" novalidate

@@ -84,7 +84,6 @@ export class ComparatorAPPTBPComponent implements OnInit {
     }
 
     compare() {
-        console.log(this.appTbpRequestBody);
         if (localStorage.getItem('isTbpAuthenticated') === 'false') {
             this.authenticateThenCompare();
         } else {
@@ -92,7 +91,7 @@ export class ComparatorAPPTBPComponent implements OnInit {
         }
     }
 
-    getcolor(difference: number): string {
+    getColor(difference: number): string {
         if (difference < 0) {
             return 'red';
         } else if (difference > 0) {
@@ -120,5 +119,9 @@ export class ComparatorAPPTBPComponent implements OnInit {
         this.service.compare(this.appTbpRequestBody).subscribe(res => {
             this.comparator = res.body;
         });
+    }
+
+    private isFilledImputation(): boolean {
+        return this.comparator !== undefined;
     }
 }

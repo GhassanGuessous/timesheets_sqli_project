@@ -276,4 +276,8 @@ export class ComparatorAppTbpAdvancedComponent implements OnInit {
     private findNotificationByCollab(collaborator: ICollaborator): INotificationModel {
         return this.notifications.find(notif => notif.collaborator.id === collaborator.id);
     }
+
+    private isFilledImputation(): boolean {
+        return this.comparator !== undefined;
+    }
 }

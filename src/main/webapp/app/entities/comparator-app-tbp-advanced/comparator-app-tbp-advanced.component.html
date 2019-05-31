@@ -46,8 +46,8 @@
         </div>
     </div>
     <br/>
-    <div class="container-fluid">
-        <div class="table-responsive" *ngIf="comparator">
+    <div class="container-fluid" [ngSwitch]="isFilledImputation()">
+        <div class="table-responsive" *ngSwitchCase="true">
             <button id="notify-all" (click)="notifyCollabsWithGap()"
                     class="btn btn-info btn-sm float-right">
                 <fa-icon [icon]="'envelope'"></fa-icon>
@@ -105,6 +105,11 @@
                 </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="nothingToShow" *ngSwitchCase="false">
+            <span jhiTranslate="global.nothingToShow">There is nothing to show, please fill the form and submit.</span>
+            <br/>
+            <span><fa-icon icon="search"></fa-icon></span>
         </div>
     </div>
 </div>

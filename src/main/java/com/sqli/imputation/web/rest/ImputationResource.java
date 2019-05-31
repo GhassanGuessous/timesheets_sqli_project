@@ -260,7 +260,7 @@ public class ImputationResource {
         log.debug("REST request to get APP - TBP Imputation : {}", appTbpRequest);
         if (appTbpRequest.getTeam() == null) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
-        }else if (isNotValidTBPCredentials(appTbpRequest.getUsername(), appTbpRequest.getPassword())) {
+        } else if (isNotValidTBPCredentials(appTbpRequest.getUsername(), appTbpRequest.getPassword())) {
             throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
         } else {
             Object[] result = imputationService.compareAppAndTbpAdvanced(appTbpRequest);
