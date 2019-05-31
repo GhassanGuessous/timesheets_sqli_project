@@ -59,7 +59,9 @@
                 "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
             },
             "language": "Language",
-            "statistics": "Statistics"
+            "statistics": "Statistics",
+            "gapTeamStatistics": "Statistics per team",
+            "gapVariationStatistics": "global Statistics"
         },
         "form": {
             "username": "Username",

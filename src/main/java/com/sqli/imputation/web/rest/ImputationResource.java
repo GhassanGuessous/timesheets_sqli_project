@@ -386,4 +386,10 @@ public class ImputationResource {
         List<StatisticsDTO> statisticsDTOS = notificationService.getStatistics(teamYearDTO);
         return ResponseEntity.ok().body(statisticsDTOS);
     }
+
+    @PostMapping("/imputations/gap-variation-statistics")
+    public ResponseEntity<List<NotificationGapVariationDTO>> getTeamNotificationGapVariation(@RequestBody TeamYearDTO teamYearDTO) {
+        List<NotificationGapVariationDTO> gapVariationDTOS = notificationService.getNotificationGapVariation(teamYearDTO);
+        return ResponseEntity.ok().body(gapVariationDTOS);
+    }
 }

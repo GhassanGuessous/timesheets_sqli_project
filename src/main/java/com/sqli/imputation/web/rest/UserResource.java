@@ -180,4 +180,19 @@ public class UserResource {
         userService.deleteUser(login);
         return ResponseEntity.ok().headers(HeaderUtil.createAlert( "userManagement.deleted", login)).build();
     }
+
+    /**
+     * GET  /users/search : get all the users with key.
+     *
+     * @param key the key to base searching on
+     * @param pageable the pagination information
+     * @return the ResponseEntity with status 200 (OK) and the list of users in body
+     */
+    @GetMapping("/users/search/{key}")
+    public ResponseEntity<List<UserDTO>> getAllUsers(@PathVariable String key, Pageable pageable) {
+        log.debug("REST request to get a page of Users with key");
+        Page<UserDTO> page = userService.findByKey(key, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/users");
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
 }

@@ -297,4 +297,9 @@ public class UserService {
         Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)).evict(user.getLogin());
         Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evict(user.getEmail());
     }
+
+    public Page<UserDTO> findByKey(String key, Pageable pageable) {
+        log.debug("Request to get all Correspondences with key: " + key);
+        return userRepository.findByKeyAndLoginNot(key, Constants.ANONYMOUS_USER, pageable).map(UserDTO::new);
+    }
 }

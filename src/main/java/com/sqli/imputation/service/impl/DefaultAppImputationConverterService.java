@@ -6,6 +6,8 @@ import com.sqli.imputation.repository.CorrespondenceRepository;
 import com.sqli.imputation.service.AppImputationConverterService;
 import com.sqli.imputation.service.dto.AppChargeDTO;
 import com.sqli.imputation.service.dto.AppRequestDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,8 @@ import java.util.*;
 
 @Service
 public class DefaultAppImputationConverterService implements AppImputationConverterService {
+
+    private final Logger log = LoggerFactory.getLogger(DefaultAppImputationConverterService.class);
 
     @Autowired
     private ImputationConverterUtilService imputationConverterUtilService;
@@ -43,6 +47,7 @@ public class DefaultAppImputationConverterService implements AppImputationConver
                     fillCollaboratorMonthlyImputation(monthlyImputation, appChargeDTO);
                     imputationConverterUtilService.addMonthlyImputationToImputation(imputation, monthlyImputation);
                 } catch (Exception e) {
+                    log.error("No APP login for "+appChargeDTO.getAppLogin());
                     strings.add(appChargeDTO.getAppLogin());
                 }
             }

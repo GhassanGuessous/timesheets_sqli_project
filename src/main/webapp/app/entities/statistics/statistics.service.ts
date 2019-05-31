@@ -9,11 +9,16 @@ type EntityResponseType = HttpResponse<any>;
 
 @Injectable({ providedIn: 'root' })
 export class StatisticsService {
-    public resourceAppUrl = SERVER_API_URL + 'api/imputations/statistics';
+    public resourceStatisticsUrl = SERVER_API_URL + 'api/imputations/statistics';
+    public resourceGapVariationUrl = SERVER_API_URL + 'api/imputations/gap-variation-statistics';
 
     constructor(protected http: HttpClient) {}
 
     findTeamNotifications(teamYearRequest: ITeamYearRequest): Observable<EntityResponseType> {
-        return this.http.post<any>(this.resourceAppUrl, teamYearRequest, { observe: 'response' });
+        return this.http.post<any>(this.resourceStatisticsUrl, teamYearRequest, { observe: 'response' });
+    }
+
+    getNotificationsGapVariation(teamYearRequest: ITeamYearRequest): Observable<EntityResponseType> {
+        return this.http.post<any>(this.resourceGapVariationUrl, teamYearRequest, { observe: 'response' });
     }
 }

@@ -8,6 +8,14 @@ import { ProfileInfo } from './profile-info.model';
         <div class="ribbon" *ngIf="ribbonEnv">
             <a href="" jhiTranslate="global.ribbon.{{ ribbonEnv }}">{{ ribbonEnv }}</a>
         </div>
+        <ngx-loading-bar
+            [color]="'#907d4c'"
+            [includeBar]="true"
+            [includeSpinner]="true"
+            [fixed]="true"
+            [height]="'5px'"
+            [diameter]="'30px'"
+        ></ngx-loading-bar>
     `,
     styleUrls: ['page-ribbon.css']
 })

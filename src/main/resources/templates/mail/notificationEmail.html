@@ -38,7 +38,6 @@
         table thead {
             background: #c0a06d;
         }
-
         table tr:nth-child(even) {
             background: #dfdfdf;
         }
@@ -78,7 +77,7 @@
         <header>
             <tr>
                 <td align="center" bgcolor="#c0a06d" style="padding: 40px 0 30px 0;">
-                    <h1 th:text="${notification.getAppGap().getImputationType()} + ' VS. ' + ${notification.getComparedGap().getImputationType()}"></h1>
+                    <h1 th:text="${notification.getAppGap().getImputationType()} + ' VS ' + ${notification.getComparedGap().getImputationType()}"></h1>
                     <h2>Période : <span th:text="${notification.getMonth()} + '/' + ${notification.getYear()}"></span>
                     </h2>
                 </td>
@@ -98,7 +97,7 @@
                 <table>
                     <thead>
                     <tr>
-                        <th style="border: 1px solid #bbb;">Imputation</th>
+                        <th style="border: 1px solid #bbb;">Imputation\Jour</th>
                         <th style="border: 1px solid #bbb;"
                             th:each="daily: ${notification.getAppGap().getDailyImputations()}">
                             <b> <span th:text="${daily.getDay()} + '/' + ${notification.getMonth()} "></span></b>
@@ -127,7 +126,7 @@
             </td>
         </tr>
         <tr>
-            <td bgcolor="#bbb" style="padding: 30px 30px 30px 30px;">
+            <td bgcolor="#bbb" style="padding: 20px 20px 20px 20px;">
                 <p th:text="${signature}"></p>
             </td>
         </tr>
@@ -135,12 +134,6 @@
 </main>
 <br/>
 <br/>
-<table border="0" cellpadding="0" cellspacing="0" style="width:460px">
-    <tbody>
-    <tr>
-        <td style="border-top:9px solid rgb(235,40,90); max-width:460px; width:460px"><img data-imagetype="External" src="https://letsignit.sqli.com/lsi/static/bb39a8fe1f234ec6a06b4d9a4b720b81/France/Campagne_signature_FR.gif" alt="" border="0" height="87" width="460" style="width:460px; height:87px; border-width:0px; border-style:solid"></td>
-    </tr>
-    </tbody>
-</table>
+<p>This is an automatically generated e-mail, please do not reply.</p>
 </body>
 </html>

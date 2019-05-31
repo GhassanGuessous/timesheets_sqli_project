@@ -12,6 +12,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +36,8 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
     private static final String WEEKLY_ACTUAL_EFFORT_COLUMN = "Weekly Actual Effort";
     private static final String MONTH = "Month";
     private static final String YEAR = "Year";
+
+    private final Logger log = LoggerFactory.getLogger(DefaultPpmcImputationConverterService.class);
 
     @Autowired
     private ImputationConverterUtilService imputationConverterUtilService;
@@ -175,11 +179,12 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
     private void createDailyImputationsForEachCollab(Set<String> ppmcIDs, List<CollabExcelImputationDTO> excelImputationDTOS, Imputation imputation) {
         Set<CollaboratorMonthlyImputation> monthlyImputations = new HashSet<>();
         ppmcIDs.forEach(ppmcId -> {
-            Correspondence correspondence = correspondenceRepository.findByIdPPMC(ppmcId).stream().findFirst().get();
-            if(isCorrespondenceNotExist(correspondence)){
+            Optional<Correspondence> correspondenceOptional = correspondenceRepository.findByIdPPMC(ppmcId).stream().findFirst();
+            if(!correspondenceOptional.isPresent()){
+                log.error("NO PPMC id for "+ppmcId);
                 return;
             }else{
-                Collaborator collaborator = correspondence.getCollaborator();
+                Collaborator collaborator = correspondenceOptional.get().getCollaborator();
                 CollaboratorMonthlyImputation monthlyImputation = imputationConverterUtilService.createMonthlyImputation(imputation, collaborator);
                 Set<CollaboratorDailyImputation> dailyImputations = new HashSet<>();
 

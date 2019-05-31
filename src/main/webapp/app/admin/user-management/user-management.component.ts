@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 
 import { ITEMS_PER_PAGE } from 'app/shared';
-import { AccountService, UserService, User } from 'app/core';
+import { AccountService, UserService, User, IUser } from 'app/core';
 import { UserMgmtDeleteDialogComponent } from 'app/admin';
 
 @Component({
@@ -26,6 +26,7 @@ export class UserMgmtComponent implements OnInit, OnDestroy {
     predicate: any;
     previousPage: any;
     reverse: any;
+    private searchedKey: string;
 
     constructor(
         private userService: UserService,
@@ -116,7 +117,7 @@ export class UserMgmtComponent implements OnInit, OnDestroy {
                 sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
             }
         });
-        this.loadAll();
+        this.searchedKey !== undefined ? this.findBySearchedKey() : this.loadAll();
     }
 
     deleteUser(user: User) {
@@ -130,6 +131,23 @@ export class UserMgmtComponent implements OnInit, OnDestroy {
                 // Left blank intentionally, nothing to do here
             }
         );
+    }
+
+    findBySearchedKey() {
+        if (this.searchedKey !== '') {
+            this.userService
+                .searchedQuery(this.searchedKey, {
+                    page: this.page - 1,
+                    size: this.itemsPerPage,
+                    sort: this.sort()
+                })
+                .subscribe(
+                    (res: HttpResponse<IUser[]>) => this.onSuccess(res.body, res.headers),
+                    (res: HttpResponse<any>) => this.onError(res.body)
+                );
+        } else {
+            this.loadAll();
+        }
     }
 
     private onSuccess(data, headers) {

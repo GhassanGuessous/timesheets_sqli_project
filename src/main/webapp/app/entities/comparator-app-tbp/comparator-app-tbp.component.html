@@ -47,8 +47,8 @@
     </div>
     <br/>
 
-    <div *ngIf="comparator">
-        <div class="table-responsive">
+    <div [ngSwitch]="comparator !== undefined">
+        <div class="table-responsive" *ngSwitchCase="true">
             <table class="table table-bordered table-hover table-sm">
                 <thead>
                 <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
@@ -78,6 +78,11 @@
                 </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="nothingToShow" *ngSwitchCase="false">
+            <span jhiTranslate="global.nothingToShow">There is nothing to show, please fill the form and submit.</span>
+            <br/>
+            <span><fa-icon icon="search"></fa-icon></span>
         </div>
     </div>
 

@@ -18,6 +18,8 @@ import { ImputationSqliHomeModule } from './home/home.module';
 import { ImputationSqliAccountModule } from './account/account.module';
 import { ImputationSqliEntityModule } from './entities/entity.module';
 import * as moment from 'moment';
+import { LoadingBarRouterModule } from '@ngx-loading-bar/router';
+import { LoadingBarHttpClientModule } from '@ngx-loading-bar/http-client';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 import { JhiMainComponent, NavbarComponent, FooterComponent, PageRibbonComponent, ActiveMenuDirective, ErrorComponent } from './layouts';
 
@@ -38,7 +40,9 @@ import { JhiMainComponent, NavbarComponent, FooterComponent, PageRibbonComponent
         ImputationSqliAccountModule,
         // jhipster-needle-angular-add-module JHipster will add new module here
         ImputationSqliEntityModule,
-        ImputationSqliAppRoutingModule
+        ImputationSqliAppRoutingModule,
+        LoadingBarRouterModule,
+        LoadingBarHttpClientModule
     ],
     declarations: [JhiMainComponent, NavbarComponent, ErrorComponent, PageRibbonComponent, ActiveMenuDirective, FooterComponent],
     providers: [

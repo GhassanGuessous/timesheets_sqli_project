@@ -8,6 +8,8 @@ import com.sqli.imputation.service.dto.ChargeCollaboratorDTO;
 import com.sqli.imputation.service.dto.ChargeTeamDTO;
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import com.sqli.imputation.service.util.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,8 @@ import java.util.*;
 
 @Service
 public class DefaultTbpImputationConverterService implements TbpImputationConverterService {
+
+    private final Logger log = LoggerFactory.getLogger(DefaultTbpImputationConverterService.class);
 
     @Autowired
     private ImputationConverterUtilService imputationConverterUtilService;
@@ -40,6 +44,7 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
                 imputationConverterUtilService.setTotalOfMonthlyImputation(monthlyImputation, Double.parseDouble(collaborateurDTO.getCharge()));
                 imputationConverterUtilService.addMonthlyImputationToImputation(imputation, monthlyImputation);
             }catch (Exception e){
+                log.error("NO TBP id for "+ collaborateurDTO.toString());
                 strings.add(collaborateurDTO.toString());
             }
 

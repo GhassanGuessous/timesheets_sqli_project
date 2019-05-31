@@ -2,6 +2,7 @@ package com.sqli.imputation.service;
 
 import com.sqli.imputation.domain.Notification;
 import com.sqli.imputation.service.dto.NotificationDTO;
+import com.sqli.imputation.service.dto.NotificationGapVariationDTO;
 import com.sqli.imputation.service.dto.StatisticsDTO;
 import com.sqli.imputation.service.dto.TeamYearDTO;
 
@@ -17,4 +18,6 @@ public interface NotificationService {
     List<Notification> getTeamNotifications(TeamYearDTO teamYearDTO);
 
     List<StatisticsDTO> getStatistics(TeamYearDTO teamYearDTO);
+
+    List<NotificationGapVariationDTO> getNotificationGapVariation(TeamYearDTO teamYearDTO);
 }
