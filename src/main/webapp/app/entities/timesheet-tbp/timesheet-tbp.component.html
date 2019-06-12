@@ -52,9 +52,9 @@
                     <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
                         <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
                         </th>
-                        <th jhiSortBy="month"><span>Collaborator</span>
+                        <th jhiTranslate="imputationSqliApp.imputation.collaborator"><span>Collaborator</span>
                         </th>
-                        <th jhiSortBy="year"><span>Total</span>
+                        <th jhiTranslate="imputationSqliApp.imputation.total"><span>Total</span>
                         </th>
                         <th *ngFor="let day of imputationDays.get(imputation)" [id]="day">{{day + '/' + imputation.month}}</th>
                     </tr>

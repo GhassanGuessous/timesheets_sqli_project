@@ -6,6 +6,7 @@ import com.sqli.imputation.domain.Notification;
 import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.service.NotificationService;
 import com.sqli.imputation.service.dto.*;
+import com.sqli.imputation.service.dto.jira.JiraImputationDTO;
 import com.sqli.imputation.service.util.DateUtil;
 import com.sqli.imputation.service.util.FileExtensionUtil;
 import com.sqli.imputation.service.util.JsonUtil;
@@ -217,6 +218,19 @@ public class ImputationResource {
             }
             return ResponseEntity.ok().body(ppmcImputation);
         }
+    }
+
+    /**
+     * POST  /imputations/jira : get jira imputation from webservice.
+     *
+     * @param requestBodyDTO the JIRA imputation request
+     * @return the ResponseEntity with imputation of type JIRA
+     */
+    @PostMapping("/imputations/jira")
+    public ResponseEntity<JiraImputationDTO> getJiraImputation(@RequestBody AppTbpRequestBodyDTO requestBodyDTO) {
+        log.debug("REST request to get JIRA Imputation : {}", requestBodyDTO);
+            JiraImputationDTO jiraImputation = imputationService.getJiraImputation(requestBodyDTO);
+            return ResponseEntity.ok().body(jiraImputation);
     }
 
     /**

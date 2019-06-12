@@ -1,5 +1,6 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { TimesheetJiraComponent } from './timesheet-jira/timesheet-jira.component';
 
 @NgModule({
     imports: [
@@ -66,6 +67,10 @@ import { RouterModule } from '@angular/router';
             {
                 path: 'timesheet-ppmc',
                 loadChildren: './timesheet-ppmc/timesheet-ppmc.module#ImputationSqliTimesheetPpmcModule'
+            },
+            {
+                path: 'timesheet-jira',
+                loadChildren: './timesheet-jira/timesheet-jira.module#ImputationSqliTimesheetJiraModule'
             },
             {
                 path: 'comparator-app-tbp',

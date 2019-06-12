@@ -109,7 +109,6 @@ export class GapVariationStatisticsComponent implements OnInit, AfterViewInit, O
         const valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
         valueAxis.title.text = 'Notification frequency';
         valueAxis.renderer.opposite = false;
-        valueAxis.baseValue = 0;
     }
 
     private getCategoryAxis(chart) {
@@ -118,8 +117,6 @@ export class GapVariationStatisticsComponent implements OnInit, AfterViewInit, O
         categoryAxis.title.text = 'Months';
         categoryAxis.renderer.minGridDistance = 50;
         categoryAxis.renderer.grid.template.location = 0.5;
-        categoryAxis.startLocation = 0.5;
-        categoryAxis.endLocation = 0.5;
     }
 
     // Create series

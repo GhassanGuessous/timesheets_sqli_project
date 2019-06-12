@@ -10,6 +10,8 @@
                 </th>
                 <th><span jhiTranslate="imputationSqliApp.team.name">Name</span>
                 </th>
+                <th><span jhiTranslate="imputationSqliApp.team.displayName">Display Name</span>
+                </th>
                 <th><span jhiTranslate="imputationSqliApp.team.agresso">Agresso</span>
                 </th>
                 <th><span jhiTranslate="imputationSqliApp.team.projectType">Project Type</span>
@@ -80,6 +82,9 @@
                     <th jhiSortBy="name"><span jhiTranslate="imputationSqliApp.team.name">Name</span>
                         <fa-icon [icon]="'sort'"></fa-icon>
                     </th>
+                    <th jhiSortBy="name"><span jhiTranslate="imputationSqliApp.team.displayName">Display Name</span>
+                        <fa-icon [icon]="'sort'"></fa-icon>
+                    </th>
                     <th jhiSortBy="agresso"><span jhiTranslate="imputationSqliApp.team.agresso">Agresso</span>
                         <fa-icon [icon]="'sort'"></fa-icon>
                     </th>
@@ -100,6 +105,7 @@
                 <tr *ngFor="let team of teams ;trackBy: trackId">
                     <td><a [routerLink]="['/team', team.id, 'view' ]">{{team.id}}</a></td>
                     <td>{{team.name}}</td>
+                    <td>{{team.displayName}}</td>
                     <td>{{team.agresso}}</td>
                     <td>{{team.idTbp}}</td>
                     <td>

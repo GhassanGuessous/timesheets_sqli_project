@@ -27,6 +27,9 @@ public class Team implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "displayName")
+    private String displayName;
+
     @Column(name = "agresso")
     private String agresso;
 
@@ -67,6 +70,19 @@ public class Team implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public Team displayName(String displayName) {
+        this.displayName = displayName;
+        return this;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public DeliveryCoordinator getDeliveryCoordinator() {
@@ -182,6 +198,7 @@ public class Team implements Serializable {
         return "Team{" +
             "id=" + id +
             ", name='" + name + '\'' +
+            ", displayName='" + displayName + '\'' +
             ", agresso='" + agresso + '\'' +
             ", idTbp='" + idTbp + '\'' +
             ", deliveryCoordinator=" + deliveryCoordinator +

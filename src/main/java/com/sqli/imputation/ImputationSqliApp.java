@@ -9,6 +9,8 @@ import com.sqli.imputation.domain.Team;
 import com.sqli.imputation.repository.CollaboratorRepository;
 import com.sqli.imputation.repository.CorrespondenceRepository;
 import com.sqli.imputation.repository.TeamRepository;
+import com.sqli.imputation.service.JiraResourceService;
+import com.sqli.imputation.service.dto.AppTbpRequestBodyDTO;
 import com.sqli.imputation.service.impl.DefaultDbPopulatorService;
 import io.github.jhipster.config.JHipsterConstants;
 
@@ -45,7 +47,8 @@ public class ImputationSqliApp {
     CorrespondenceRepository correspondenceRepository;
     @Autowired
     TeamRepository teamRepository;
-
+    @Autowired
+    JiraResourceService jiraResourceService;
     private static final Logger log = LoggerFactory.getLogger(ImputationSqliApp.class);
 
 
@@ -123,6 +126,13 @@ public class ImputationSqliApp {
     @Bean
     public CommandLineRunner run() throws Exception {
         return args -> {
+            AppTbpRequestBodyDTO appTbpRequestBodyDTO= new AppTbpRequestBodyDTO();
+            appTbpRequestBodyDTO.setMonth(5);
+            appTbpRequestBodyDTO.setYear(2019);
+            Team team= new Team();
+            team.setDisplayName("menara");
+            appTbpRequestBodyDTO.setTeam(team);
+            jiraResourceService.getAllStories(appTbpRequestBodyDTO);
 //            defaultDbPopulator.populate();
 
             // delete collabs with team is not nespresso

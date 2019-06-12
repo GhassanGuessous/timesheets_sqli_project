@@ -5,6 +5,7 @@
                 "appTitle": "APP Imputations",
                 "tbpTitle": "TBP Imputations",
                 "ppmcTitle": "PPMC Imputations",
+                "jiraTitle": "JIRA Imputations",
                 "APPvsTBP-title": "APP TBP Comparison",
                 "APPvsTBP-advanced-title": "Advanced APP TBP Comparison",
                 "createLabel": "Create a new Imputation",

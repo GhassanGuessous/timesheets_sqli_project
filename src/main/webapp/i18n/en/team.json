@@ -17,6 +17,7 @@
                 "title": "Team"
             },
             "name": "Name",
+            "displayName": "Display Name",
             "agresso": "Agresso",
             "projectType": "Project Type",
             "deliveryCoordinator": "Delivery Coordinator",

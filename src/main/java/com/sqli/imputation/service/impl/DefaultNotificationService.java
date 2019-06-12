@@ -54,6 +54,7 @@ public class DefaultNotificationService implements NotificationService {
 
     @Override
     public List<Notification> getTeamNotifications(TeamYearDTO teamYearDTO) {
+        if (teamYearDTO.getTeam() == null) return notificationRepository.findByYear(teamYearDTO.getYear());
         return notificationRepository.findByYearAndCollaborator_Team(teamYearDTO.getYear(), teamYearDTO.getTeam());
     }
 

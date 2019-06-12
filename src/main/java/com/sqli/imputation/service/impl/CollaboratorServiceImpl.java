@@ -71,14 +71,14 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     /**
      * Get the collaborators with a key.
      *
-     * @param key the key to base searching on
+     * @param key      the key to base searching on
      * @param pageable the pagination information
      * @return the list of entities
      */
     @Override
     @Transactional(readOnly = true)
     public Page<Collaborator> findByKey(String key, Pageable pageable) {
-        log.debug("Request to get all Collaborators with the key: "+ key);
+        log.debug("Request to get all Collaborators with the key: " + key);
         return collaboratorRepository.findByKey(key, pageable);
     }
 
@@ -91,6 +91,20 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     @Transactional(readOnly = true)
     public List<Collaborator> getAllWithNoCorrespondence() {
         return collaboratorRepository.findAllWithNoCorrespondence();
+    }
+
+    @Override
+    public Collaborator findByFirstnameAndLastname(String name) {
+        List<Collaborator> collaborators = collaboratorRepository.findAll();
+        Optional<Collaborator> optionalCollaborator = collaborators.stream().filter(collaborator -> CompareFullName(name, collaborator.getFirstname(), collaborator.getLastname()) || CompareFullName(name, collaborator.getLastname(), collaborator.getFirstname())).findFirst();
+        if (optionalCollaborator.isPresent()) {
+            return optionalCollaborator.get();
+        }
+        return null;
+    }
+
+    private boolean CompareFullName(String name, String firstname, String lastname) {
+        return name.equalsIgnoreCase(firstname + " " + lastname);
     }
 
     /**

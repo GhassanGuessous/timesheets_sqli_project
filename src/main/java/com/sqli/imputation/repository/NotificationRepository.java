@@ -21,4 +21,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     );
 
     List<Notification> findByYearAndCollaborator_Team(int year, Team team);
+
+    List<Notification> findByYear(int year);
 }

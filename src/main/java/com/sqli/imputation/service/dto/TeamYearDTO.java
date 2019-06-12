@@ -6,6 +6,7 @@ public class TeamYearDTO {
 
     private Team team;
     private int year;
+    private int month;
 
     public TeamYearDTO() {
     }
@@ -26,11 +27,20 @@ public class TeamYearDTO {
         this.year = year;
     }
 
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
     @Override
     public String toString() {
         return "TeamYearDTO{" +
             "team=" + team +
             ", year=" + year +
+            ", month=" + month +
             '}';
     }
 }

@@ -3,6 +3,7 @@ package com.sqli.imputation.service;
 import com.sqli.imputation.domain.Imputation;
 
 import com.sqli.imputation.service.dto.*;
+import com.sqli.imputation.service.dto.jira.JiraImputationDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -74,4 +75,6 @@ public interface ImputationService {
     List<ImputationComparatorDTO> getComparisonFromDB(AppRequestDTO appRequestDTO, String imputationType);
 
     List<ImputationComparatorAdvancedDTO> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO, String imputationType);
+
+    JiraImputationDTO getJiraImputation(AppTbpRequestBodyDTO requestBodyDTO);
 }

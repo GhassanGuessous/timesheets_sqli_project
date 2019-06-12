@@ -7,6 +7,7 @@ import com.sqli.imputation.security.SecurityUtils;
 import com.sqli.imputation.service.*;
 import com.sqli.imputation.repository.ImputationRepository;
 import com.sqli.imputation.service.dto.*;
+import com.sqli.imputation.service.dto.jira.JiraImputationDTO;
 import com.sqli.imputation.service.factory.RequestBodyFactory;
 import com.sqli.imputation.service.util.DateUtil;
 import org.slf4j.Logger;
@@ -58,6 +59,8 @@ public class ImputationServiceImpl implements ImputationService {
     private DefaultTbpImputationConverterService tbpImputationConverterService;
     @Autowired
     private TBPResourceService tbpResourceService;
+    @Autowired
+    private JiraResourceService jiraResourceService;
     @Autowired
     private TbpRequestComposerService tbpComposerService;
     @Autowired
@@ -281,6 +284,12 @@ public class ImputationServiceImpl implements ImputationService {
         return imputation;
     }
 
+    @Override
+    public JiraImputationDTO getJiraImputation(AppTbpRequestBodyDTO requestBodyDTO) {
+        return jiraResourceService.getAllStories(requestBodyDTO);
+    }
+
+
     /**
      * Get comparison of APP & TBP imputataions
      *
@@ -379,7 +388,7 @@ public class ImputationServiceImpl implements ImputationService {
     public void sendNotifications(List<NotificationDTO> notifications) {
         notifications.forEach(dto -> {
             Optional<Notification> notificationFromDB = notificationService.find(dto);
-            if(!notificationFromDB.isPresent()){
+            if (!notificationFromDB.isPresent()) {
                 Notification notification = notificationService.createFromDTO(dto);
                 notificationService.save(notification);
             }

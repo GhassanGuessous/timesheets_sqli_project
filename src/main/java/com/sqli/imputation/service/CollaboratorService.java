@@ -67,4 +67,6 @@ public interface CollaboratorService {
      * @return the list of entities
      */
     List<Collaborator> getAllWithNoCorrespondence();
+
+    Collaborator findByFirstnameAndLastname(String name);
 }

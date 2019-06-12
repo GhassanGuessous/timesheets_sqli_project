@@ -6,6 +6,7 @@ import { IProjectType } from 'app/shared/model/project-type.model';
 export interface ITeam {
     id?: number;
     name?: string;
+    displayName?: string;
     agresso?: string;
     projectType?: IProjectType;
     deliveryCoordinator?: IDeliveryCoordinator;
@@ -18,6 +19,7 @@ export class Team implements ITeam {
     constructor(
         public id?: number,
         public name?: string,
+        public displayName?: string,
         public deliveryCoordinator?: IDeliveryCoordinator,
         public collaborators?: ICollaborator[],
         public projects?: IProject[],
