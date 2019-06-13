@@ -85,7 +85,7 @@ import { RouterModule } from '@angular/router';
             },
             {
                 path: 'statistics',
-                loadChildren: './statistics/statistics.module#StatisticsModule'
+                loadChildren: './gap-per-team-statistics/gap-per-team-statistics.module#GapPerTeamStatisticsModule'
             },
             {
                 path: 'gap-variation-statistics',

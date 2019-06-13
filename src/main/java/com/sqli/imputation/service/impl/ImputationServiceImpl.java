@@ -9,6 +9,7 @@ import com.sqli.imputation.repository.ImputationRepository;
 import com.sqli.imputation.service.dto.*;
 import com.sqli.imputation.service.factory.RequestBodyFactory;
 import com.sqli.imputation.service.util.DateUtil;
+import com.sqli.imputation.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ public class ImputationServiceImpl implements ImputationService {
     private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
 
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
+    private static final String ENTITY_NAME = "imputation";
     private static final int SUCCESS_STATUS = 200;
     private static final int LIST_IMPUTATIONS_POSITION = 0;
     private static final int STATUS_POSITION = 1;
@@ -338,17 +340,21 @@ public class ImputationServiceImpl implements ImputationService {
      * # 1 : all good
      */
     @Override
-    public Object[] compareAppPpmc(MultipartFile file, AppRequestDTO appRequestDTO) {
+    public List<ImputationComparatorDTO> compareAppPpmc(MultipartFile file, AppRequestDTO appRequestDTO) {
         Optional<Imputation> ppmcImputation = getPpmcImputation(file, appRequestDTO.getAgresso());
-        if (ppmcImputation.isPresent()) {
+        if (!ppmcImputation.isPresent()) {
+            throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
+        } else {
             if (!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
-                return new Object[]{Collections.emptyList(), INCOMPATIBLE_MONTHS_STATUS};
+                throw new BadRequestAlertException("Different months", ENTITY_NAME, "differentMonths");
+//                return new Object[]{Collections.emptyList(), INCOMPATIBLE_MONTHS_STATUS};
             }
             Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
             List<ImputationComparatorDTO> comparatorDTOS = utilService.compareImputations(appImputation, ppmcImputation.get());
-            return new Object[]{comparatorDTOS, ALL_GOOD_STATUS};
+//            return new Object[]{comparatorDTOS, ALL_GOOD_STATUS};
+            return comparatorDTOS;
         }
-        return new Object[]{Collections.emptyList(), INVALID_FILE_STATUS};
+//        return new Object[]{Collections.emptyList(), INVALID_FILE_STATUS};
     }
 
     /**
@@ -362,17 +368,21 @@ public class ImputationServiceImpl implements ImputationService {
      * # 1 : all good
      */
     @Override
-    public Object[] compareAppPpmcAdvanced(MultipartFile file, AppRequestDTO appRequestDTO) {
+    public List<ImputationComparatorAdvancedDTO> compareAppPpmcAdvanced(MultipartFile file, AppRequestDTO appRequestDTO) {
         Optional<Imputation> ppmcImputation = getPpmcImputation(file, appRequestDTO.getAgresso());
-        if (ppmcImputation.isPresent()) {
+        if (!ppmcImputation.isPresent()) {
+            throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
+        } else {
             if (!ppmcImputation.get().getMonth().equals(appRequestDTO.getMonth())) {
-                return new Object[]{Collections.emptyList(), INCOMPATIBLE_MONTHS_STATUS};
+                throw new BadRequestAlertException("Different months", ENTITY_NAME, "differentMonths");
+//                return new Object[]{Collections.emptyList(), INCOMPATIBLE_MONTHS_STATUS};
             }
             Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
             List<ImputationComparatorAdvancedDTO> comparatorDTOS = utilService.compareImputationsAdvanced(appImputation, ppmcImputation.get());
-            return new Object[]{comparatorDTOS, ALL_GOOD_STATUS};
+            return comparatorDTOS;
+//            return new Object[]{comparatorDTOS, ALL_GOOD_STATUS};
         }
-        return new Object[]{Collections.emptyList(), INVALID_FILE_STATUS};
+//        return new Object[]{Collections.emptyList(), INVALID_FILE_STATUS};
     }
 
     @Override

@@ -4,19 +4,19 @@ import { JhiLanguageService } from 'ng-jhipster';
 import { JhiLanguageHelper } from 'app/core';
 
 import { ImputationSqliSharedModule } from 'app/shared';
-import { statisticsRoute } from 'app/entities/statistics/statistics.route';
-import { StatisticsComponent } from 'app/entities/statistics/statistics.component';
+import { gapPerTeamStatisticsRoute } from 'app/entities/gap-per-team-statistics/gap-per-team-statistics.route';
+import { GapPerTeamStatisticsComponent } from 'app/entities/gap-per-team-statistics/gap-per-team-statistics.component';
 
-const ENTITY_STATES = [...statisticsRoute];
+const ENTITY_STATES = [...gapPerTeamStatisticsRoute];
 
 @NgModule({
     imports: [ImputationSqliSharedModule, RouterModule.forChild(ENTITY_STATES)],
-    declarations: [StatisticsComponent],
-    entryComponents: [StatisticsComponent],
+    declarations: [GapPerTeamStatisticsComponent],
+    entryComponents: [GapPerTeamStatisticsComponent],
     providers: [{ provide: JhiLanguageService, useClass: JhiLanguageService }],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class StatisticsModule {
+export class GapPerTeamStatisticsModule {
     constructor(private languageService: JhiLanguageService, private languageHelper: JhiLanguageHelper) {
         this.languageHelper.language.subscribe((languageKey: string) => {
             if (languageKey !== undefined) {

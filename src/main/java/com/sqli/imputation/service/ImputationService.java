@@ -63,9 +63,9 @@ public interface ImputationService {
 
     Object[] compareAppAndTbpAdvanced(AppTbpRequestBodyDTO appTbpRequest);
 
-    Object[] compareAppPpmc(MultipartFile file, AppRequestDTO appRequestDTO);
+    List<ImputationComparatorDTO> compareAppPpmc(MultipartFile file, AppRequestDTO appRequestDTO);
 
-    Object[] compareAppPpmcAdvanced(MultipartFile file, AppRequestDTO appRequestDTO);
+    List<ImputationComparatorAdvancedDTO> compareAppPpmcAdvanced(MultipartFile file, AppRequestDTO appRequestDTO);
 
     void sendNotifications(List<NotificationDTO> notifications);
 

@@ -8,7 +8,7 @@ import { ITeamYearRequest } from 'app/shared/model/team-year-request.model';
 type EntityResponseType = HttpResponse<any>;
 
 @Injectable({ providedIn: 'root' })
-export class StatisticsService {
+export class GapPerTeamStatisticsService {
     public resourceStatisticsUrl = SERVER_API_URL + 'api/imputations/statistics';
     public resourceGapVariationUrl = SERVER_API_URL + 'api/imputations/gap-variation-statistics';
 

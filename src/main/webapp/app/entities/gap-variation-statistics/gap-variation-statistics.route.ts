@@ -4,12 +4,12 @@ import { JhiResolvePagingParams } from 'ng-jhipster';
 import { UserRouteAccessService } from 'app/core';
 import { Observable, of } from 'rxjs';
 import { INotificationModel, NotificationModel } from 'app/shared/model/notification.model';
-import { StatisticsService } from '../statistics/statistics.service';
+import { GapPerTeamStatisticsService } from '../gap-per-team-statistics/gap-per-team-statistics.service';
 import { GapVariationStatisticsComponent } from './gap-variation-statistics.component';
 
 @Injectable({ providedIn: 'root' })
 export class StatisticsResolve implements Resolve<INotificationModel> {
-    constructor(private service: StatisticsService) {}
+    constructor(private service: GapPerTeamStatisticsService) {}
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<INotificationModel> {
         const id = route.params['id'] ? route.params['id'] : null;
