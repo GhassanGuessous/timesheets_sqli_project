@@ -38,7 +38,9 @@
                 "newUpload": "Upload a new PPMC file",
                 "fileUploadedAlredy": "A PPMC file is already uploaded",
                 "authenticateToTbp": "Authenticate",
-                "TbpAuthTitle": "TBP Authentication"
+                "tbpAuthTitle": "TBP Authentication",
+                "statisticsPerTeam": "Team statistics",
+                "globalStatistics": "Global statistics"
             },
             "account": {
                 "main": "Account",
@@ -64,8 +66,8 @@
             },
             "language": "Language",
             "statistics": "Statistics",
-            "gapTeamStatistics": "Statistics per team",
-            "gapVariationStatistics": "global Statistics"
+            "gapTeamStatistics": "Per team",
+            "gapVariationStatistics": "global"
         },
         "form": {
             "username": "Username",

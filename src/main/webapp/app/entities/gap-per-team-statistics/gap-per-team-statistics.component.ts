@@ -7,16 +7,16 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 import { ITeamYearRequest, TeamYearRequest } from 'app/shared/model/team-year-request.model';
-import { StatisticsService } from 'app/entities/statistics/statistics.service';
+import { GapPerTeamStatisticsService } from 'app/entities/gap-per-team-statistics/gap-per-team-statistics.service';
 
 am4core.useTheme(am4themes_animated);
 
 @Component({
     selector: 'jhi-statistics',
-    templateUrl: './statistics.component.html',
+    templateUrl: './gap-per-team-statistics.component.html',
     styles: []
 })
-export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class GapPerTeamStatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('chartdiv') chartDiv: ElementRef;
 
     private chart: am4charts.XYChart;
@@ -32,7 +32,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     constructor(
         protected accountService: AccountService,
         protected teamService: TeamService,
-        protected statisticsService: StatisticsService,
+        protected statisticsService: GapPerTeamStatisticsService,
         private zone: NgZone
     ) {}
 
@@ -115,7 +115,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
         categoryAxis.dataFields.category = 'collaborator';
         categoryAxis.title.text = 'Collaborators';
         categoryAxis.renderer.grid.template.location = 0;
-        categoryAxis.renderer.minGridDistance = 0;
+        categoryAxis.renderer.minGridDistance = 20;
         categoryAxis.renderer.labels.template.rotation = 270;
     }
 

@@ -3,13 +3,13 @@ import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@a
 import { JhiPaginationUtil, JhiResolvePagingParams } from 'ng-jhipster';
 import { UserRouteAccessService } from 'app/core';
 import { Observable, of } from 'rxjs';
-import { StatisticsService } from './statistics.service';
-import { StatisticsComponent } from 'app/entities/statistics/statistics.component';
+import { GapPerTeamStatisticsService } from './gap-per-team-statistics.service';
+import { GapPerTeamStatisticsComponent } from 'app/entities/gap-per-team-statistics/gap-per-team-statistics.component';
 import { INotificationModel, NotificationModel } from 'app/shared/model/notification.model';
 
 @Injectable({ providedIn: 'root' })
 export class StatisticsResolve implements Resolve<INotificationModel> {
-    constructor(private service: StatisticsService) {}
+    constructor(private service: GapPerTeamStatisticsService) {}
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<INotificationModel> {
         const id = route.params['id'] ? route.params['id'] : null;
@@ -23,10 +23,10 @@ export class StatisticsResolve implements Resolve<INotificationModel> {
     }
 }
 
-export const statisticsRoute: Routes = [
+export const gapPerTeamStatisticsRoute: Routes = [
     {
         path: '',
-        component: StatisticsComponent,
+        component: GapPerTeamStatisticsComponent,
         resolve: {
             pagingParams: JhiResolvePagingParams
         },

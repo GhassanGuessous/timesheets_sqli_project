@@ -38,7 +38,9 @@
                 "newUpload": "Importer un nouveau fichier PPMC",
                 "fileUploadedAlredy": "Un fichier PPMC est déja impoté",
                 "authenticateToTbp": "S'authentifier",
-                "TbpAuthTitle": "Authentification TBP"
+                "tbpAuthTitle": "Authentification TBP",
+                "statisticsPerTeam": "Statistiques des équipes",
+                "globalStatistics": "Statistiques globales"
             },
             "account": {
                 "main": "Compte",
@@ -64,8 +66,8 @@
             },
             "language": "Langue",
             "statistics": "Statistiques",
-            "gapTeamStatistics": "Statistiques par équipe",
-            "gapVariationStatistics": "Statistiques globale"
+            "gapTeamStatistics": "Par équipe",
+            "gapVariationStatistics": "Globale"
         },
         "form": {
             "username": "Nom d'utilisateur",

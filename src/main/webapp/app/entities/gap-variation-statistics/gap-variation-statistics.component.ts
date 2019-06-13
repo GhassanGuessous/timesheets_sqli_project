@@ -3,7 +3,7 @@ import { ITeam } from 'app/shared/model/team.model';
 import { ITeamYearRequest, TeamYearRequest } from 'app/shared/model/team-year-request.model';
 import { AccountService } from 'app/core';
 import { TeamService } from 'app/entities/team';
-import { StatisticsService } from 'app/entities/statistics/statistics.service';
+import { GapPerTeamStatisticsService } from 'app/entities/gap-per-team-statistics/gap-per-team-statistics.service';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
@@ -31,7 +31,7 @@ export class GapVariationStatisticsComponent implements OnInit, AfterViewInit, O
     constructor(
         protected accountService: AccountService,
         protected teamService: TeamService,
-        protected statisticsService: StatisticsService,
+        protected statisticsService: GapPerTeamStatisticsService,
         private zone: NgZone
     ) {}
 

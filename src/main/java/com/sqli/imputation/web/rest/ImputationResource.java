@@ -172,7 +172,7 @@ public class ImputationResource {
             throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
         } else if (DateUtil.isDifferentYears(startDate, endDate)) {
             throw new BadRequestAlertException("Different years", ENTITY_NAME, "different_years");
-        } else if(isNotValidTBPCredentials(tbpRequestBodyDTO.getUsername(), tbpRequestBodyDTO.getPassword())){
+        } else if (isNotValidTBPCredentials(tbpRequestBodyDTO.getUsername(), tbpRequestBodyDTO.getPassword())) {
             throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
         } else {
             Object[] result = imputationService.getTbpImputation(tbpRequestBodyDTO);
@@ -327,21 +327,22 @@ public class ImputationResource {
     }
 
     private <T> ResponseEntity<List<T>> compareAppPpmc(MultipartFile file, AppRequestDTO appRequestDTO, boolean isAdvanced) {
-        Object[] result = isAdvanced ? imputationService.compareAppPpmcAdvanced(file, appRequestDTO) : imputationService.compareAppPpmc(file, appRequestDTO);
-        List<T> comparatorDTOS = (List<T>) result[LIST_DTOS_POSITION];
-        int status = (int) result[STATUS_POSITION];
-        if (comparatorDTOS.isEmpty()) {
-            if (isIncompatibleMonths(status)) {
-                throw new BadRequestAlertException("Different months", ENTITY_NAME, "differentMonths");
-            }
-            throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
-        }
+        List<T> comparatorDTOS = isAdvanced ?
+            (List<T>) imputationService.compareAppPpmcAdvanced(file, appRequestDTO) : (List<T>) imputationService.compareAppPpmc(file, appRequestDTO);
+//        List<T> comparatorDTOS = (List<T>) result[LIST_DTOS_POSITION];
+//        int status = (int) result[STATUS_POSITION];
+//        if (comparatorDTOS.isEmpty()) {
+//            if (isIncompatibleMonths(status)) {
+//                throw new BadRequestAlertException("Different months", ENTITY_NAME, "differentMonths");
+//            }
+//            throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
+//        }
         return ResponseEntity.ok().body(comparatorDTOS);
     }
 
-    private boolean isIncompatibleMonths(int status) {
-        return status == INCOMPATIBLE_MONTHS_STATUS;
-    }
+//    private boolean isIncompatibleMonths(int status) {
+//        return status == INCOMPATIBLE_MONTHS_STATUS;
+//    }
 
     /**
      * POST  /imputations/comparison-app-ppmc-database : comparison of APP and PPMC imputations from DB.

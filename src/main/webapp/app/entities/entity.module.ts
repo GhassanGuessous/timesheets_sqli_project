@@ -90,7 +90,7 @@ import { TimesheetJiraComponent } from './timesheet-jira/timesheet-jira.componen
             },
             {
                 path: 'statistics',
-                loadChildren: './statistics/statistics.module#StatisticsModule'
+                loadChildren: './gap-per-team-statistics/gap-per-team-statistics.module#GapPerTeamStatisticsModule'
             },
             {
                 path: 'gap-variation-statistics',
