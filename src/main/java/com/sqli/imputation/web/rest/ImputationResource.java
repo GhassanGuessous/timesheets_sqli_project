@@ -39,12 +39,6 @@ public class ImputationResource {
 
     private final Logger log = LoggerFactory.getLogger(ImputationResource.class);
 
-    private static final int LIST_IMPUTATIONS_POSITION = 0;
-    private static final int UNAUTHORIZED_STATUS = 401;
-    private static final int UNAUTHORIZED_AUTHORITY_STATUS = 405;
-    private static final int INCOMPATIBLE_MONTHS_STATUS = -1;
-    private static final int STATUS_POSITION = 1;
-    private static final int LIST_DTOS_POSITION = 0;
     private static final String AN_EMPTY_STRING = "";
     private static final String UPLOAD_A_PPMC_FILE_MESSAGE = "upload a ppmc file";
     private static final String NEW_UPLOAD = "newUpload";
@@ -175,9 +169,7 @@ public class ImputationResource {
         } else if (isNotValidTBPCredentials(tbpRequestBodyDTO.getUsername(), tbpRequestBodyDTO.getPassword())) {
             throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
         } else {
-            Object[] result = imputationService.getTbpImputation(tbpRequestBodyDTO);
-            List<Imputation> imputations = (List<Imputation>) result[LIST_IMPUTATIONS_POSITION];
-            throwTbpErrors((int) result[STATUS_POSITION]);
+            List<Imputation> imputations = imputationService.getTbpImputation(tbpRequestBodyDTO);
             return ResponseEntity.ok().body(imputations);
         }
     }
@@ -247,19 +239,8 @@ public class ImputationResource {
         } else if (isNotValidTBPCredentials(appTbpRequest.getUsername(), appTbpRequest.getPassword())) {
             throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
         } else {
-            Object[] result = imputationService.compareAppAndTbp(appTbpRequest);
-            List<ImputationComparatorDTO> comparatorDTOS = (List<ImputationComparatorDTO>) result[LIST_IMPUTATIONS_POSITION];
-            throwTbpErrors((int) result[STATUS_POSITION]);
+            List<ImputationComparatorDTO> comparatorDTOS = imputationService.compareAppAndTbp(appTbpRequest);
             return ResponseEntity.ok().body(comparatorDTOS);
-        }
-    }
-
-    private void throwTbpErrors(int status) {
-        if (status == UNAUTHORIZED_STATUS) {
-            throw new BadRequestAlertException("Tbp credentials", ENTITY_NAME, "tbp_bad_credentials");
-        }
-        if (status == UNAUTHORIZED_AUTHORITY_STATUS) {
-            throw new BadRequestAlertException("Tbp authority", ENTITY_NAME, "tbp_bad_authority");
         }
     }
 
@@ -277,9 +258,7 @@ public class ImputationResource {
         } else if (isNotValidTBPCredentials(appTbpRequest.getUsername(), appTbpRequest.getPassword())) {
             throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
         } else {
-            Object[] result = imputationService.compareAppAndTbpAdvanced(appTbpRequest);
-            List<ImputationComparatorAdvancedDTO> comparatorDTOS = (List<ImputationComparatorAdvancedDTO>) result[LIST_IMPUTATIONS_POSITION];
-            throwTbpErrors((int) result[STATUS_POSITION]);
+            List<ImputationComparatorAdvancedDTO> comparatorDTOS = imputationService.compareAppAndTbpAdvanced(appTbpRequest);
             return ResponseEntity.ok().body(comparatorDTOS);
         }
     }
@@ -329,20 +308,8 @@ public class ImputationResource {
     private <T> ResponseEntity<List<T>> compareAppPpmc(MultipartFile file, AppRequestDTO appRequestDTO, boolean isAdvanced) {
         List<T> comparatorDTOS = isAdvanced ?
             (List<T>) imputationService.compareAppPpmcAdvanced(file, appRequestDTO) : (List<T>) imputationService.compareAppPpmc(file, appRequestDTO);
-//        List<T> comparatorDTOS = (List<T>) result[LIST_DTOS_POSITION];
-//        int status = (int) result[STATUS_POSITION];
-//        if (comparatorDTOS.isEmpty()) {
-//            if (isIncompatibleMonths(status)) {
-//                throw new BadRequestAlertException("Different months", ENTITY_NAME, "differentMonths");
-//            }
-//            throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
-//        }
         return ResponseEntity.ok().body(comparatorDTOS);
     }
-
-//    private boolean isIncompatibleMonths(int status) {
-//        return status == INCOMPATIBLE_MONTHS_STATUS;
-//    }
 
     /**
      * POST  /imputations/comparison-app-ppmc-database : comparison of APP and PPMC imputations from DB.

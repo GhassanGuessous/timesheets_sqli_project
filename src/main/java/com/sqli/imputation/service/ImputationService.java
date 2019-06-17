@@ -56,13 +56,13 @@ public interface ImputationService {
      */
     List<Imputation> getAppImputation(AppRequestDTO appRequestDTO);
 
-    Object[] getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO);
+    List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO);
 
     Optional<Imputation> getPpmcImputation(MultipartFile file, String agresso);
 
-    Object[] compareAppAndTbp(AppTbpRequestBodyDTO appTbpRequest);
+    List<ImputationComparatorDTO> compareAppAndTbp(AppTbpRequestBodyDTO appTbpRequest);
 
-    Object[] compareAppAndTbpAdvanced(AppTbpRequestBodyDTO appTbpRequest);
+    List<ImputationComparatorAdvancedDTO> compareAppAndTbpAdvanced(AppTbpRequestBodyDTO appTbpRequest);
 
     List<ImputationComparatorDTO> compareAppPpmc(MultipartFile file, AppRequestDTO appRequestDTO);
 
