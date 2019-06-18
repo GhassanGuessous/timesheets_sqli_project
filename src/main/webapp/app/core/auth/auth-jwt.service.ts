@@ -48,6 +48,7 @@ export class AuthServerProvider {
             this.$sessionStorage.store('authenticationToken', jwt);
         }
         localStorage.setItem('isTbpAuthenticated', 'false');
+        localStorage.setItem('isJiraAuthenticated', 'false');
     }
 
     logout(): Observable<any> {
@@ -55,6 +56,7 @@ export class AuthServerProvider {
             this.$localStorage.clear('authenticationToken');
             this.$sessionStorage.clear('authenticationToken');
             localStorage.setItem('isTbpAuthenticated', 'false');
+            localStorage.setItem('isJiraAuthenticated', 'false');
             observer.complete();
         });
     }

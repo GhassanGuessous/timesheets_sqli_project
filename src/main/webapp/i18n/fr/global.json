@@ -39,6 +39,7 @@
                 "fileUploadedAlredy": "Un fichier PPMC est déja impoté",
                 "authenticateToTbp": "S'authentifier",
                 "tbpAuthTitle": "Authentification TBP",
+                "jiraAuthTitle": "Authentification JIRA",
                 "statisticsPerTeam": "Statistiques des équipes",
                 "globalStatistics": "Statistiques globales"
             },
@@ -177,7 +178,9 @@
         "differentMonths": "Désolé, le mois sélectionné et celui du ficher doivent être les mêmes!",
         "newUpload": "Aucun historique ne correspond a ces paramétres, veuillez uploader un nouveau fichier PPMC.",
         "tbp_bad_credentials": "Les identifiants TBP sont éronés!",
-        "tbp_invalid_inputs": "Les champs username & password sont obligatoires!"
+        "tbp_invalid_inputs": "Les champs username & password sont obligatoires!",
+        "jira_bad_credentials": "Les identifiants JIRA sont éronés!",
+        "jira_bad_url": "Url Jira n'existe pas!"
     },
     "footer": "©SQLI Maroc {{ year }} - Tous droits réservés"
 }

@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,8 @@ public class ImputationServiceImpl implements ImputationService {
     private static final int INCOMPATIBLE_MONTHS_STATUS = -1;
     private static final int ALL_GOOD_STATUS = 1;
     private static final int INVALID_FILE_STATUS = 0;
+    public static final int NOT_FOUND_STATUS = 400;
+    private static final int UNAUTHORIZED_STATUS = 401;
     private static final int APP_INDEX = 0;
     private static final int TBP_INDEX = 1;
     private static final int FIRST_ELEMENT_INDEX = 0;
@@ -287,8 +290,27 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     @Override
-    public JiraImputationDTO getJiraImputation(AppTbpRequestBodyDTO requestBodyDTO) {
-        return jiraResourceService.getAllStories(requestBodyDTO);
+    public List<JiraImputationDTO> getJiraImputation(TbpRequestBodyDTO requestBodyDTO) {
+        List<JiraImputationDTO> jiraImputations = new ArrayList<>();
+        Team team = teamRepository.findByIdTbpLike(requestBodyDTO.getIdTbp());
+        List<TbpRequestBodyDTO> requestBodies = tbpComposerService.divideTbpPeriod(requestBodyDTO);
+            requestBodies.forEach(requestBody -> {
+                try {
+                    jiraImputations.add(jiraResourceService.getJiraImputation(team,requestBody));
+                }catch (HttpClientErrorException e){
+                    throwJiraErrors(e.getStatusCode().value());
+                }
+            });
+        return jiraImputations;
+    }
+
+    private void throwJiraErrors(int statusCode) {
+        if (statusCode == UNAUTHORIZED_STATUS) {
+            throw new BadRequestAlertException("Jira credentials", ENTITY_NAME, "jira_bad_credentials");
+        }
+        if (statusCode == NOT_FOUND_STATUS) {
+            throw new BadRequestAlertException("JIRA bad url", ENTITY_NAME, "jira_bad_url");
+        }
     }
 
 

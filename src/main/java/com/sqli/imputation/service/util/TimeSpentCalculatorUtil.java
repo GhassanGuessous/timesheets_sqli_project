@@ -8,6 +8,7 @@ public class TimeSpentCalculatorUtil {
     public static final int NUMBRE_OF_MINUTES_IN_HOUR = 60;
     public static final int NUMBER_OF_HOURS_IN_DAY = 8;
     public static final int NUMBER_OF_DAYS_IN_WEEK = 5;
+    public static final int ZERO_HOURS = 0;
 
     public static TimeSpentDTO calculate(String timeSpent) {
         int numberOfHoursSpent = 0;
@@ -29,6 +30,9 @@ public class TimeSpentCalculatorUtil {
     }
 
     private static int getNumberOfHoursFromToken(String token) {
+        if (token.isEmpty()) {
+            return ZERO_HOURS;
+        }
         char timeIndicator = token.charAt(token.length() - 1);
         int timespent = Integer.parseInt(token.substring(0, token.indexOf(timeIndicator)));
         return getHours(timespent, timeIndicator);

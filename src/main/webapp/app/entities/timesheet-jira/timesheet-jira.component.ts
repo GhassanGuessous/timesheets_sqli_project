@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ITeam } from 'app/shared/model/team.model';
-import { AppTbpRequestBody, IAppTbpRequestBody } from 'app/shared/model/app-tbp-request-body';
 import { AccountService } from 'app/core';
 import { TeamService } from 'app/entities/team';
-import { AuthTbpModalService } from 'app/core/authTbp/auth-tbp-modal.service';
 import { TimesheetJiraService } from 'app/entities/timesheet-jira/timesheet-jira.service';
+import { DatePipe } from '@angular/common';
+import { ITbpRequestBody, TbpRequestBody } from 'app/shared/model/tbp-request-body';
+import { AuthJiraModalService } from 'app/core/authJira/auth-jira-modal.service';
 
 @Component({
     selector: 'jhi-timesheet-jira',
@@ -15,21 +16,18 @@ export class TimesheetJiraComponent implements OnInit {
     private currentAccount: any;
     private myTeam: ITeam;
     private allTeams: Array<ITeam>;
-    private currentYear: number = new Date().getFullYear();
-    private currentMonth: number = new Date().getMonth() + 1;
-    private years: Array<number> = [];
-    private months: Array<number>;
     private predicate: any;
     private reverse: any;
-    private jiraWorklog: any;
-    private appTbpRequestBody: IAppTbpRequestBody = new AppTbpRequestBody(null, this.currentYear, this.currentMonth);
+    private jiraWorklogs: any;
+    tbpRequestBody: ITbpRequestBody = new TbpRequestBody();
     private worklogDays: Map<any, Array<number>> = new Map<any, Array<number>>();
 
     constructor(
         protected service: TimesheetJiraService,
         protected accountService: AccountService,
         protected teamService: TeamService,
-        private authTbpModalService: AuthTbpModalService
+        private authJiraModalService: AuthJiraModalService,
+        private datePipe: DatePipe
     ) {}
 
     ngOnInit() {
@@ -53,7 +51,7 @@ export class TimesheetJiraComponent implements OnInit {
     loadDelcoTeam(id: bigint) {
         this.teamService.findByDelco(id).subscribe(data => {
             this.myTeam = data.body;
-            this.appTbpRequestBody.team = this.myTeam;
+            this.tbpRequestBody.idTbp = this.myTeam.displayName;
         });
     }
 
@@ -62,51 +60,44 @@ export class TimesheetJiraComponent implements OnInit {
     }
 
     private initialize() {
-        this.initializeYears();
-        this.initializeMonth();
+        this.today();
+        this.previousMonth();
     }
 
-    private initializeYears() {
-        const startImputationsYear = 2015;
-        for (let i = startImputationsYear; i <= this.currentYear; i++) {
-            this.years.push(i);
-        }
-    }
+    private previousMonth() {
+        const dateFormat = 'yyyy-MM-dd';
+        let fromDate: Date = new Date();
 
-    private initializeMonth() {
-        let lastMonthInYear = 12;
-        this.months = [];
-        if (this.appTbpRequestBody.year == this.currentYear) {
-            lastMonthInYear = this.currentMonth;
-        }
-        for (let i = 1; i <= lastMonthInYear; i++) {
-            this.months.push(i);
-        }
-    }
-
-    compare() {
-        // if (localStorage.getItem('isTbpAuthenticated') === 'false') {
-        //     this.authenticateThenCompare();
-        // } else {
-        this.getTimesheet();
-        // }
-    }
-
-    getColor(difference: number): string {
-        if (difference < 0) {
-            return 'red';
-        } else if (difference > 0) {
-            return 'orange';
+        if (fromDate.getMonth() === 0) {
+            fromDate = new Date(fromDate.getFullYear() - 1, 11, fromDate.getDate());
         } else {
-            return 'green';
+            fromDate = new Date(fromDate.getFullYear(), fromDate.getMonth() - 1, fromDate.getDate());
+        }
+
+        this.tbpRequestBody.startDate = this.datePipe.transform(fromDate, dateFormat);
+    }
+
+    private today() {
+        const dateFormat = 'yyyy-MM-dd';
+        // Today + 1 day - needed if the current day must be included
+        const today: Date = new Date();
+        today.setDate(today.getDate() + 1);
+        const date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        this.tbpRequestBody.endDate = this.datePipe.transform(date, dateFormat);
+    }
+
+    getTimesheet() {
+        if (localStorage.getItem('isJiraAuthenticated') === 'false') {
+            this.authenticateThenGetTimesheet();
+        } else {
+            this.getTimesheetWhenIsAlreadyAuthenticated();
         }
     }
 
-    private authenticateThenCompare() {
-        this.appTbpRequestBody.requestType = 'APP_TBP_COMPARATOR';
-        this.authTbpModalService.open(this.appTbpRequestBody).then(
+    private authenticateThenGetTimesheet() {
+        this.authJiraModalService.open(this.tbpRequestBody).then(
             result => {
-                this.jiraWorklog = result;
+                this.jiraWorklogs = result;
             },
             reason => {
                 console.log(reason);
@@ -114,13 +105,15 @@ export class TimesheetJiraComponent implements OnInit {
         );
     }
 
-    private getTimesheet() {
-        // this.appTbpRequestBody.username = localStorage.getItem('username');
-        // this.appTbpRequestBody.password = localStorage.getItem('password');
-        this.service.getTimesheet(this.appTbpRequestBody).subscribe(res => {
-            this.jiraWorklog = res.body;
+    private getTimesheetWhenIsAlreadyAuthenticated() {
+        this.tbpRequestBody.username = localStorage.getItem('jiraUsername');
+        this.tbpRequestBody.password = localStorage.getItem('jiraPassword');
+        this.service.getTimesheet(this.tbpRequestBody).subscribe(res => {
+            this.jiraWorklogs = res.body;
             console.log(res.body);
-            this.initializeDays(res.body);
+            for (let i = 0; i < this.jiraWorklogs.length; i++) {
+                this.initializeDays(this.jiraWorklogs[i]);
+            }
         });
     }
 
@@ -140,7 +133,7 @@ export class TimesheetJiraComponent implements OnInit {
     }
 
     private isFilledImputation(): boolean {
-        return this.jiraWorklog !== undefined;
+        return this.jiraWorklogs !== undefined;
     }
 
     getWorklogTimeSpent(timeSpent: any) {
@@ -150,5 +143,15 @@ export class TimesheetJiraComponent implements OnInit {
         timespent += timeSpent.hours === 0 ? '' : timeSpent.hours + 'h ';
         timespent += timeSpent.minutes === 0 ? '' : timeSpent.minutes + 'm';
         return timespent;
+    }
+
+    getColor(difference: number): string {
+        if (difference < 0) {
+            return 'red';
+        } else if (difference > 0) {
+            return 'orange';
+        } else {
+            return 'green';
+        }
     }
 }

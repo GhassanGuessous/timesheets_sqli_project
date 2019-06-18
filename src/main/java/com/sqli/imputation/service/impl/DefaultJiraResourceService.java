@@ -1,9 +1,10 @@
 package com.sqli.imputation.service.impl;
 
 import com.sqli.imputation.domain.Collaborator;
+import com.sqli.imputation.domain.Team;
 import com.sqli.imputation.service.CollaboratorService;
 import com.sqli.imputation.service.JiraResourceService;
-import com.sqli.imputation.service.dto.AppTbpRequestBodyDTO;
+import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import com.sqli.imputation.service.dto.jira.*;
 import com.sqli.imputation.service.util.DateUtil;
 import com.sqli.imputation.service.util.TimeSpentCalculatorUtil;
@@ -12,6 +13,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.TrustStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -34,30 +36,29 @@ public class DefaultJiraResourceService implements JiraResourceService {
 
     @Autowired
     private RestTemplate restTemplate;
-    @Autowired
-    private CollaboratorService collaboratorService;
 
     @Override
-    public JiraImputationDTO getAllStories(AppTbpRequestBodyDTO requestBodyDTO) {
-        List<IssueDTO> issueDTOS = new ArrayList<>();
-        JiraImputationDTO jiraImputationDTO = new JiraImputationDTO(requestBodyDTO.getYear(), requestBodyDTO.getMonth());
-        logIn("kraouin", "Ironm@n102019");
-        ResponseEntity<JiraIssuesResponseDTO> responseEntity = restTemplate.exchange("https://jira.nespresso.com/rest/api/2/search?jql=team=" + requestBodyDTO.getTeam().getDisplayName() + "+AND+issueFunction in workLogged('after " + DateUtil.getDateOfFirstDay(requestBodyDTO.getYear(), requestBodyDTO.getMonth()) + " before " + DateUtil.getDateOfLastDay(requestBodyDTO.getYear(), requestBodyDTO.getMonth()) + "')", HttpMethod.GET, getTbpHttpHeaders(), JiraIssuesResponseDTO.class);
-        responseEntity.getBody().getIssues().forEach(issueDTO -> {
-            IssueDTO issueDetails = getIssueDetails(issueDTO);
-            issueDTOS.add(issueDetails);
+    public JiraImputationDTO getJiraImputation(Team team, TbpRequestBodyDTO requestBodyDTO) {
+        JiraImputationDTO jiraImputationDTO = new JiraImputationDTO(DateUtil.getYear(requestBodyDTO.getStartDate()), DateUtil.getMonth(requestBodyDTO.getStartDate()));
+        logIn(requestBodyDTO.getUsername(), requestBodyDTO.getPassword());
+        team.getCollaborators().forEach(collaborator -> {
+            List<IssueDTO> issueDTOS = new ArrayList<>();
+            ResponseEntity<JiraIssuesResponseDTO> responseEntity = restTemplate.exchange("https://jira.nespresso.com/rest/api/2/search?jql=worklogAuthor='" + collaborator.getFirstname() + " " + collaborator.getLastname() + "'+AND+issueFunction in workLogged('after " + requestBodyDTO.getStartDate() + " before " + requestBodyDTO.getEndDate() + "')", HttpMethod.GET, getTbpHttpHeaders(), JiraIssuesResponseDTO.class);
+            responseEntity.getBody().getIssues().forEach(issueDTO -> {
+                IssueDTO issueDetails = getIssueDetails(issueDTO);
+                issueDTOS.add(issueDetails);
+            });
+            jiraImputationDTO.getCollaboratorWorklogs().add(getIssuesWorklogs(requestBodyDTO, issueDTOS, collaborator));
         });
-        jiraImputationDTO.setCollaboratorWorklogs(getIssuesWorklogs(requestBodyDTO, issueDTOS));
         return jiraImputationDTO;
     }
 
-    private List<JiraCollaboratorWorklog> getIssuesWorklogs(AppTbpRequestBodyDTO requestBodyDTO, List<IssueDTO> issueDTOS) {
-        List<JiraCollaboratorWorklog> worklogs = new ArrayList<>();
-        issueDTOS.forEach(issueDTO -> getWorklogOfIssue(requestBodyDTO, worklogs, issueDTO));
-        for (JiraCollaboratorWorklog worklog : worklogs) {
-            updateTotalTimeSpent(worklog);
-        }
-        return worklogs;
+    private JiraCollaboratorWorklog getIssuesWorklogs(TbpRequestBodyDTO requestBodyDTO, List<IssueDTO> issueDTOS, Collaborator collaborator) {
+        JiraCollaboratorWorklog collaboratorWorklog = new JiraCollaboratorWorklog();
+        collaboratorWorklog.setCollaborator(collaborator);
+        issueDTOS.forEach(issueDTO -> getWorklogOfIssue(collaboratorWorklog, requestBodyDTO, issueDTO));
+        updateTotalTimeSpent(collaboratorWorklog);
+        return collaboratorWorklog;
     }
 
     private void updateTotalTimeSpent(JiraCollaboratorWorklog worklog) {
@@ -66,23 +67,37 @@ public class DefaultJiraResourceService implements JiraResourceService {
         worklog.setTotalTimeSpent(TimeSpentCalculatorUtil.calculate(builder.toString()));
     }
 
-    private void getWorklogOfIssue(AppTbpRequestBodyDTO requestBodyDTO, List<JiraCollaboratorWorklog> worklogs, IssueDTO issueDTO) {
+    private void getWorklogOfIssue(JiraCollaboratorWorklog collaboratorWorklog, TbpRequestBodyDTO requestBodyDTO, IssueDTO issueDTO) {
         issueDTO.getFields().getWorklog().getWorklogs().forEach(worklogItemDTO -> {
-            if (DateUtil.getMonth(worklogItemDTO.getUpdated().split(TIME_DELIMITER)[DATE_POSITION]) != requestBodyDTO.getMonth())
+            if (!worklogItemIsValid(worklogItemDTO, collaboratorWorklog.getCollaborator(), requestBodyDTO)) {
                 return;
-            getCollaboratorWorklogs(worklogs, worklogItemDTO);
+            }
+            getCollaboratorWorklogs(collaboratorWorklog, worklogItemDTO);
         });
     }
 
-    private void getCollaboratorWorklogs(List<JiraCollaboratorWorklog> worklogs, WorklogItemDTO worklogItemDTO) {
-        Collaborator collaborator = collaboratorService.findByFirstnameAndLastname(worklogItemDTO.getAuthor().getDisplayName());
-        if (collaborator == null) {
-            collaborator = new Collaborator().firstname(worklogItemDTO.getAuthor().getDisplayName()).email(worklogItemDTO.getAuthor().getEmailAddress());
-        }
-        if (isWorklogAlreadyExistForCollab(worklogs, collaborator)) {
-            updateJiraWorklogForCollab(worklogs, worklogItemDTO, collaborator);
+    private boolean worklogItemIsValid(WorklogItemDTO worklogItemDTO, Collaborator collaborator, TbpRequestBodyDTO requestBodyDTO) {
+        return worklogItemDateIsValid(worklogItemDTO, requestBodyDTO) && isWorklogItemOfCollab(worklogItemDTO, collaborator);
+    }
+
+    private boolean isWorklogItemOfCollab(WorklogItemDTO worklogItemDTO, Collaborator collaborator) {
+        return compareFullName(worklogItemDTO.getAuthor().getDisplayName(), collaborator.getFirstname(), collaborator.getLastname())
+            || compareFullName(worklogItemDTO.getAuthor().getDisplayName(), collaborator.getLastname(), collaborator.getFirstname());
+    }
+
+    private boolean compareFullName(String name, String firstname, String lastname) {
+        return name.equalsIgnoreCase(firstname + " " + lastname);
+    }
+
+    private boolean worklogItemDateIsValid(WorklogItemDTO worklogItemDTO, TbpRequestBodyDTO requestBodyDTO) {
+        return DateUtil.isSameYearAndMonth(worklogItemDTO.getUpdated().split(TIME_DELIMITER)[DATE_POSITION], requestBodyDTO.getStartDate());
+    }
+
+    private void getCollaboratorWorklogs(JiraCollaboratorWorklog collaboratorWorklog, WorklogItemDTO worklogItemDTO) {
+        if (isDailyWorklogAlreadyExist(collaboratorWorklog.getJiraDailyWorklogs(), getWorklogDay(worklogItemDTO))) {
+            updateDailyWorklog(collaboratorWorklog.getJiraDailyWorklogs(), worklogItemDTO);
         } else {
-            addJiraWorklogForCollab(worklogs, worklogItemDTO, collaborator);
+            addDailyWorklog(worklogItemDTO, collaboratorWorklog);
         }
     }
 

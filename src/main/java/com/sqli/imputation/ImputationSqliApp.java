@@ -47,8 +47,6 @@ public class ImputationSqliApp {
     CorrespondenceRepository correspondenceRepository;
     @Autowired
     TeamRepository teamRepository;
-    @Autowired
-    JiraResourceService jiraResourceService;
     private static final Logger log = LoggerFactory.getLogger(ImputationSqliApp.class);
 
 
@@ -126,13 +124,6 @@ public class ImputationSqliApp {
     @Bean
     public CommandLineRunner run() throws Exception {
         return args -> {
-            AppTbpRequestBodyDTO appTbpRequestBodyDTO= new AppTbpRequestBodyDTO();
-            appTbpRequestBodyDTO.setMonth(5);
-            appTbpRequestBodyDTO.setYear(2019);
-            Team team= new Team();
-            team.setDisplayName("menara");
-            appTbpRequestBodyDTO.setTeam(team);
-            jiraResourceService.getAllStories(appTbpRequestBodyDTO);
 //            defaultDbPopulator.populate();
 
             // delete collabs with team is not nespresso

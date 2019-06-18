@@ -25,4 +25,6 @@ public interface CollaboratorRepository extends JpaRepository<Collaborator, Long
     List<Collaborator> findAllWithNoCorrespondence();
 
     Collaborator findByFirstnameAndLastname(String firstname, String lastname);
+
+    List<Collaborator> findByTeamIdTbp(String idTbp);
 }

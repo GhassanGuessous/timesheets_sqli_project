@@ -76,5 +76,5 @@ public interface ImputationService {
 
     List<ImputationComparatorAdvancedDTO> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO, String imputationType);
 
-    JiraImputationDTO getJiraImputation(AppTbpRequestBodyDTO requestBodyDTO);
+    List<JiraImputationDTO> getJiraImputation(TbpRequestBodyDTO requestBodyDTO);
 }
