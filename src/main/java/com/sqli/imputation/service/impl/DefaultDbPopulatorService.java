@@ -28,7 +28,7 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
     private static final String EXCEL_FILE_PATH = "C:\\Users\\aaitbassou\\Desktop\\Imputation_projet\\STG-Comparateur_imputations_APP_Vs_PPMC.xls";
 
     @Autowired
-    private TBPResourceService tbpResourceService;
+    private TbpResourceService tbpResourceService;
     @Autowired
     private ActivityPopulatorService activityPopulatorService;
     @Autowired

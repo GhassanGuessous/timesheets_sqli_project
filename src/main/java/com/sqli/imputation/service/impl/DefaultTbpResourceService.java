@@ -1,7 +1,7 @@
 package com.sqli.imputation.service.impl;
 
 import com.sqli.imputation.config.Constants;
-import com.sqli.imputation.service.TBPResourceService;
+import com.sqli.imputation.service.TbpResourceService;
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import com.sqli.imputation.service.dto.db_populator.Team.ChargeTeamRestResponse;
 import com.sqli.imputation.service.dto.db_populator.Team.TeamRestResponse;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class DefaultTBPResourceService implements TBPResourceService {
+public class DefaultTbpResourceService implements TbpResourceService {
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
@@ -73,7 +73,7 @@ public class DefaultTBPResourceService implements TBPResourceService {
     }
 
     private String composeTbpURL(TbpRequestBodyDTO requestBody){
-        StringBuilder stringBuilder = new StringBuilder(Constants.TBP_URL_WEB_SERVICE + PROJETS_URL + SLASH );
+        StringBuilder stringBuilder = new StringBuilder(Constants.TBP_URL_WEB_SERVICE + PROJETS_URL + SLASH);
 
         if(requestBody.getIdTbp() != null){
             stringBuilder.append(requestBody.getIdTbp());

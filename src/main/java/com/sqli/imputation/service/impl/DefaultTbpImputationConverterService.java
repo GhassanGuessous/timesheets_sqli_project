@@ -47,7 +47,6 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
                 log.error("NO TBP id for "+ collaborateurDTO.toString());
                 strings.add(collaborateurDTO.toString());
             }
-
         });
     }
 

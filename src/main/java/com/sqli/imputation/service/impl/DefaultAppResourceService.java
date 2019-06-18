@@ -24,27 +24,21 @@ public class DefaultAppResourceService implements AppResourceService {
     private AppParserService appParserService;
 
     @Override
-    public List<AppChargeDTO> getTeamCharges(AppRequestDTO requestBody) {
+    public List<AppChargeDTO> getTeamCharges(AppRequestDTO requestBody) throws IOException, SOAPException {
         return appParserService.parse(callSoapWebService(requestBody));
     }
 
-    private String callSoapWebService(AppRequestDTO requestBody) {
-        try {
-            SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
-            SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-            SOAPMessage soapResponse = soapConnection.call(createSOAPRequest(requestBody), APP_SOAP_ENDPOINT_URL);
+    private String callSoapWebService(AppRequestDTO requestBody) throws SOAPException, IOException {
+        SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+        SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+        SOAPMessage soapResponse = soapConnection.call(createSOAPRequest(requestBody), APP_SOAP_ENDPOINT_URL);
 
-            System.out.println("Response SOAP Message:");
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            soapResponse.writeTo(out);
-            String strMsg = new String(out.toByteArray());
-            soapConnection.close();
-            return strMsg;
-        } catch (Exception e) {
-            System.err.println("\nError occurred while sending SOAP Request to Server!\nMake sure you have the correct endpoint URL and SOAPAction!\n");
-            e.printStackTrace();
-        }
-        return "";
+        System.out.println("Response SOAP Message:");
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        soapResponse.writeTo(out);
+        String strMsg = new String(out.toByteArray());
+        soapConnection.close();
+        return strMsg;
     }
 
     private SOAPMessage createSOAPRequest(AppRequestDTO requestBody) throws SOAPException, IOException {

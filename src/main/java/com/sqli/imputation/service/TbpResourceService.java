@@ -8,7 +8,7 @@ import com.sqli.imputation.service.dto.db_populator.collaborator.CollaboratorRes
 import com.sqli.imputation.service.dto.db_populator.projectType.ProjectTypeRestResponse;
 import org.springframework.http.ResponseEntity;
 
-public interface TBPResourceService {
+public interface TbpResourceService {
 
     ResponseEntity<ActivityRestResponse> getAllActivities();
 

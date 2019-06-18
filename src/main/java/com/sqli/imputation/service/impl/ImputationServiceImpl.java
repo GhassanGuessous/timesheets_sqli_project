@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.soap.SOAPException;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,7 +58,7 @@ public class ImputationServiceImpl implements ImputationService {
     @Autowired
     private DefaultTbpImputationConverterService tbpImputationConverterService;
     @Autowired
-    private TBPResourceService tbpResourceService;
+    private TbpResourceService tbpResourceService;
     @Autowired
     private JiraResourceService jiraResourceService;
     @Autowired
@@ -179,11 +181,15 @@ public class ImputationServiceImpl implements ImputationService {
     private void updateDailyImputation(CollaboratorMonthlyImputation monthlyFromDB, CollaboratorDailyImputation dailyImputation) {
         CollaboratorDailyImputation dailyFromDB = utilService.findDailyImputationByDay(monthlyFromDB.getDailyImputations(), dailyImputation.getDay());
         if (!dailyFromDB.getCharge().equals(dailyImputation.getCharge())) {
-            utilService.setTotalOfMonthlyImputation(monthlyFromDB, dailyImputation.getCharge() - dailyFromDB.getCharge());
+            utilService.setTotalOfMonthlyImputation(monthlyFromDB, getDifferenceBetweenOldAndNewCharge(dailyImputation, dailyFromDB));
             dailyFromDB.setCharge(dailyImputation.getCharge());
             dailyImputationService.save(dailyFromDB);
             utilService.replaceDailyImputation(monthlyFromDB, dailyFromDB);
         }
+    }
+
+    private double getDifferenceBetweenOldAndNewCharge(CollaboratorDailyImputation dailyImputation, CollaboratorDailyImputation dailyFromDB) {
+        return dailyImputation.getCharge() - dailyFromDB.getCharge();
     }
 
     /**
@@ -197,17 +203,21 @@ public class ImputationServiceImpl implements ImputationService {
         List<Imputation> imputations = new ArrayList<>();
         List<AppRequestDTO> appRequestDTOS = appComposerService.divideAppPeriod(appRequestDTO);
         appRequestDTOS.forEach(dto -> {
-            try {
-                getAppImputationFromWS(imputations, dto);
-            } catch (HttpClientErrorException e) {
-                ImputationRequestDTO imputationRequestDTO = getImputationRequestDTO(dto, Constants.APP_IMPUTATION_TYPE);
-                getImputationFromDB(imputations, imputationRequestDTO);
-            }
+            getAppImputationByPeriod(imputations, dto);
         });
         return imputations;
     }
 
-    private void getAppImputationFromWS(List<Imputation> imputations, AppRequestDTO dto) {
+    private void getAppImputationByPeriod(List<Imputation> imputations, AppRequestDTO dto) {
+        try {
+            getAppImputationFromWS(imputations, dto);
+        } catch (HttpClientErrorException | IOException | SOAPException e) {
+            ImputationRequestDTO imputationRequestDTO = getImputationRequestDTO(dto, Constants.APP_IMPUTATION_TYPE);
+            getImputationFromDB(imputations, imputationRequestDTO);
+        }
+    }
+
+    private void getAppImputationFromWS(List<Imputation> imputations, AppRequestDTO dto) throws IOException, SOAPException {
         List<AppChargeDTO> appChargeDTOS = appResourceService.getTeamCharges(dto);
         Imputation imputation = appConverterService.convert(dto, appChargeDTOS);
         imputations.add(imputation);
@@ -226,12 +236,12 @@ public class ImputationServiceImpl implements ImputationService {
         Team team = teamRepository.findByIdTbpLike(tbpRequestBodyDTO.getIdTbp());
         List<TbpRequestBodyDTO> requestBodies = tbpComposerService.divideTbpPeriod(tbpRequestBodyDTO);
         requestBodies.forEach(requestBody -> {
-            getTbpImputationForTeam(imputations, team, requestBody);
+            getTbpImputationByPeriod(imputations, team, requestBody);
         });
         return imputations;
     }
 
-    private void getTbpImputationForTeam(List<Imputation> imputations, Team team, TbpRequestBodyDTO requestBody) {
+    private void getTbpImputationByPeriod(List<Imputation> imputations, Team team, TbpRequestBodyDTO requestBody) {
         try {
             getTbpImputationFromWS(imputations, requestBody);
         } catch (HttpClientErrorException e) {

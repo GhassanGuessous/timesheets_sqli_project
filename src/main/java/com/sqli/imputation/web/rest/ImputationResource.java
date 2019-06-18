@@ -151,6 +151,12 @@ public class ImputationResource {
         }
     }
 
+    /**
+     * POST  /imputations/tbp : get tbp imputation from webservice.
+     *
+     * @param tbpRequestBodyDTO
+     * @return
+     */
     @PostMapping("/imputations/tbp")
     public ResponseEntity<List<Imputation>> getTbpImputation(@RequestBody TbpRequestBodyDTO tbpRequestBodyDTO) {
         log.debug("REST request to get Imputation charge given a team and a date : {}", tbpRequestBodyDTO);
