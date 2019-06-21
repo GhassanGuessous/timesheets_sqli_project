@@ -70,7 +70,9 @@
                         <td class="text-center"><b>{{getWorklogTimeSpent(worklog.totalTimeSpent)}}</b></td>
                         <td class="text-center" *ngFor="let day of worklogDays.get(jiraWorklog)" [id]="day">
                         <span
-                            *ngFor="let dailyWorklog of worklog.jiraDailyWorklogs">{{day == dailyWorklog.day ? getWorklogTimeSpent(dailyWorklog.timeSpent) : ''}}</span>
+                            *ngFor="let dailyWorklog of worklog.jiraDailyWorklogs"
+                            [ngStyle]="{color: getColor(dailyWorklog.timeSpent.totalMinutes)}"
+                        >{{day == dailyWorklog.day ? getWorklogTimeSpent(dailyWorklog.timeSpent) : ''}}</span>
                         </td>
                     </tr>
                     </tbody>

@@ -6,9 +6,12 @@ import { ITeam } from 'app/shared/model/team.model';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
+import am4themes_dataviz from '@amcharts/amcharts4/themes/dataviz';
+import am4themes_moonrisekingdom from '@amcharts/amcharts4/themes/moonrisekingdom';
 import { ITeamYearRequest, TeamYearRequest } from 'app/shared/model/team-year-request.model';
 import { GapPerTeamStatisticsService } from 'app/entities/gap-per-team-statistics/gap-per-team-statistics.service';
 
+am4core.useTheme(am4themes_moonrisekingdom);
 am4core.useTheme(am4themes_animated);
 
 @Component({

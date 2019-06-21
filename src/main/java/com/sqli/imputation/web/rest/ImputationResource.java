@@ -7,6 +7,7 @@ import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.service.NotificationService;
 import com.sqli.imputation.service.dto.*;
 import com.sqli.imputation.service.dto.jira.JiraImputationDTO;
+import com.sqli.imputation.service.dto.jira.PpmcProjectWorklogDTO;
 import com.sqli.imputation.service.util.DateUtil;
 import com.sqli.imputation.service.util.FileExtensionUtil;
 import com.sqli.imputation.service.util.JsonUtil;
@@ -420,5 +421,11 @@ public class ImputationResource {
     public ResponseEntity<List<NotificationGapVariationDTO>> getTeamNotificationGapVariation(@RequestBody TeamYearDTO teamYearDTO) {
         List<NotificationGapVariationDTO> gapVariationDTOS = notificationService.getNotificationGapVariation(teamYearDTO);
         return ResponseEntity.ok().body(gapVariationDTOS);
+    }
+
+    @PostMapping("/imputations/ppmc-project-worklogs-statistics")
+    public ResponseEntity<List<PpmcProjectWorklogDTO>> getPpmcProjectWorkloged(@RequestBody TbpRequestBodyDTO requestBodyDTO) {
+        log.debug("request to Get Ppmc Project Workloged");
+        return ResponseEntity.ok().body(imputationService.getPpmcProjectWorkloged(requestBodyDTO));
     }
 }

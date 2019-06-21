@@ -95,6 +95,7 @@ export class TimesheetJiraComponent implements OnInit {
     }
 
     private authenticateThenGetTimesheet() {
+        this.tbpRequestBody.requestType = 'JIRA_TIME_SHEET';
         this.authJiraModalService.open(this.tbpRequestBody).then(
             result => {
                 this.jiraWorklogs = result;
@@ -145,10 +146,10 @@ export class TimesheetJiraComponent implements OnInit {
         return timespent;
     }
 
-    getColor(difference: number): string {
-        if (difference < 0) {
+    getColor(totalMinutes: number): string {
+        if (totalMinutes < 480) {
             return 'red';
-        } else if (difference > 0) {
+        } else if (totalMinutes > 480) {
             return 'orange';
         } else {
             return 'green';

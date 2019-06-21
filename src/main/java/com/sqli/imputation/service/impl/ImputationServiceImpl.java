@@ -8,6 +8,7 @@ import com.sqli.imputation.service.*;
 import com.sqli.imputation.repository.ImputationRepository;
 import com.sqli.imputation.service.dto.*;
 import com.sqli.imputation.service.dto.jira.JiraImputationDTO;
+import com.sqli.imputation.service.dto.jira.PpmcProjectWorklogDTO;
 import com.sqli.imputation.service.factory.RequestBodyFactory;
 import com.sqli.imputation.service.util.DateUtil;
 import com.sqli.imputation.web.rest.errors.BadRequestAlertException;
@@ -15,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -79,7 +79,8 @@ public class ImputationServiceImpl implements ImputationService {
     @Autowired
     private MailService mailService;
     @Autowired
-    private NotificationService notificationService;
+    private NotificationService notificationService;@Autowired
+    private JiraStatisticsService jiraStatisticsService;
 
     public ImputationServiceImpl(ImputationRepository imputationRepository) {
         this.imputationRepository = imputationRepository;
@@ -469,5 +470,10 @@ public class ImputationServiceImpl implements ImputationService {
         );
         imputation.setMonthlyImputations(monthlyImputations);
         return Optional.of(imputation);
+    }
+
+    @Override
+    public List<PpmcProjectWorklogDTO> getPpmcProjectWorkloged(TbpRequestBodyDTO requestBodyDTO) {
+        return jiraStatisticsService.getPpmcProjectWorkloged(requestBodyDTO);
     }
 }

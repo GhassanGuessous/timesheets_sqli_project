@@ -41,7 +41,8 @@
                 "tbpAuthTitle": "Authentification TBP",
                 "jiraAuthTitle": "Authentification JIRA",
                 "statisticsPerTeam": "Statistiques des équipes",
-                "globalStatistics": "Statistiques globales"
+                "globalStatistics": "Statistiques globales",
+                "ppmcProjectWorklogedStatistics": "Statistiques sur les journaux de travail des projets PPMC"
             },
             "account": {
                 "main": "Compte",
@@ -68,7 +69,8 @@
             "language": "Langue",
             "statistics": "Statistiques",
             "gapTeamStatistics": "Par équipe",
-            "gapVariationStatistics": "Globale"
+            "gapVariationStatistics": "Globale",
+            "ppmcProjectsWorlogs": "Journaux de travail des projets PPMC"
         },
         "form": {
             "username": "Nom d'utilisateur",

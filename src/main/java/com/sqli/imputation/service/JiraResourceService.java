@@ -7,4 +7,5 @@ import com.sqli.imputation.service.dto.jira.JiraImputationDTO;
 public interface JiraResourceService {
 
     JiraImputationDTO getJiraImputation(Team team, TbpRequestBodyDTO requestBodyDTO);
+
 }

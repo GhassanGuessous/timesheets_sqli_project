@@ -2,16 +2,26 @@ package com.sqli.imputation.service.dto.jira;
 
 public class TimeSpentDTO {
 
+    private int totalMinutes;
     private int minutes;
     private int hours;
     private int days;
     private int weeks;
 
-    public TimeSpentDTO(int minutes, int hours, int days, int weeks) {
+    public TimeSpentDTO(int totalMinutes, int minutes, int hours, int days, int weeks) {
+        this.totalMinutes = totalMinutes;
         this.minutes = minutes;
         this.hours = hours;
         this.days = days;
         this.weeks = weeks;
+    }
+
+    public int getTotalMinutes() {
+        return totalMinutes;
+    }
+
+    public void setTotalMinutes(int totalMinutes) {
+        this.totalMinutes = totalMinutes;
     }
 
     public int getMinutes() {
@@ -49,10 +59,20 @@ public class TimeSpentDTO {
     @Override
     public String toString() {
         return "TimeSpentDTO{" +
+            "totalMinutes=" + totalMinutes +
             "minutes=" + minutes +
             ", hours=" + hours +
             ", days=" + days +
             ", weeks=" + weeks +
             '}';
+    }
+
+    public String toCustomizedString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(weeks > 0 ? weeks + "w " : "");
+        builder.append(days > 0 ? days + "d " : "");
+        builder.append(hours > 0 ? hours + "h " : "");
+        builder.append(minutes > 0 ? minutes + "m " : "");
+        return builder.toString();
     }
 }
