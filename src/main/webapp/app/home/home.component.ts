@@ -51,7 +51,7 @@ export class HomeComponent implements OnInit {
     }
 
     private isDelco() {
-        return this.account.authorities.includes('ROLE_DELCO');
+        return this.account && this.account.authorities.includes('ROLE_DELCO');
     }
 
     login() {

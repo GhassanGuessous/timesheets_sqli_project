@@ -1,31 +1,25 @@
 import { Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
+import { ITbpRequestBody, TbpRequestBody } from 'app/shared/model/tbp-request-body';
 import { ITeam } from 'app/shared/model/team.model';
 import { AccountService } from 'app/core';
 import { TeamService } from 'app/entities/team';
-import * as am4core from '@amcharts/amcharts4/core';
-import { PpmcProjectsWorklogedStatisticsService } from 'app/entities/ppmc-projects-workloged-statistics/ppmc-projects-workloged-statistics.service';
 import { AuthJiraModalService } from 'app/core/authJira/auth-jira-modal.service';
-import { ITbpRequestBody, TbpRequestBody } from 'app/shared/model/tbp-request-body';
 import { DatePipe } from '@angular/common';
-import am4themes_animated from '@amcharts/amcharts4/themes/animated';
-import am4themes_dataviz from '@amcharts/amcharts4/themes/dataviz';
-import am4themes_moonrisekingdom from '@amcharts/amcharts4/themes/moonrisekingdom';
-
-// am4core.useTheme(am4themes_dataviz);
-am4core.useTheme(am4themes_animated);
+import * as am4core from '@amcharts/amcharts4/core';
+import { IssueTypeStatisticsService } from 'app/entities/issue-type-statistics/issue-type-statistics.service';
 
 @Component({
-    selector: 'jhi-ppmc-prjects-workloged-statistics',
-    templateUrl: './ppmc-projects-workloged-statistics.component.html',
+    selector: 'jhi-issue-type-statistics',
+    templateUrl: './issue-type-statistics.component.html',
     styles: []
 })
-export class PpmcProjectsWorklogedStatisticsComponent implements OnInit, OnDestroy {
-    @ViewChild('worklogsChart') worklogsChart: ElementRef;
+export class IssueTypeStatisticsComponent implements OnInit, OnDestroy {
+    @ViewChild('issueTypeChart') issueTypeChart: ElementRef;
     @ViewChild('frequancyChart') frequancyChart: ElementRef;
 
     private chart: am4charts.XYChart;
-    private ppmcProjectsWorklog: any;
+    private issueTypeWorklog: any;
     requestBody: ITbpRequestBody = new TbpRequestBody();
     private currentAccount: any;
     private allTeams: ITeam[];
@@ -34,7 +28,7 @@ export class PpmcProjectsWorklogedStatisticsComponent implements OnInit, OnDestr
     constructor(
         protected accountService: AccountService,
         protected teamService: TeamService,
-        protected ppmcPrjectsWorklogedStatisticsService: PpmcProjectsWorklogedStatisticsService,
+        protected issueTypeStatisticsService: IssueTypeStatisticsService,
         private authJiraModalService: AuthJiraModalService,
         private zone: NgZone,
         private datePipe: DatePipe
@@ -111,13 +105,13 @@ export class PpmcProjectsWorklogedStatisticsComponent implements OnInit, OnDestr
     }
 
     private authenticateThenGetStatistics() {
-        this.requestBody.requestType = 'JIRA_PPMC_PROJECT_WORKLOGED_STATISTICS';
+        this.requestBody.requestType = 'JIRA_ISSUE_TYPE_STATISTICS';
         this.authJiraModalService.open(this.requestBody).then(
             result => {
-                this.ppmcProjectsWorklog = result;
+                this.issueTypeWorklog = result;
                 console.log(result);
                 this.zone.runOutsideAngular(() => {
-                    this.createCharts(this.ppmcProjectsWorklog);
+                    this.createCharts(this.issueTypeWorklog);
                 });
             },
             reason => {
@@ -129,17 +123,17 @@ export class PpmcProjectsWorklogedStatisticsComponent implements OnInit, OnDestr
     private getStatisticsWhenIsAlreadyAuthenticated() {
         this.requestBody.username = localStorage.getItem('jiraUsername');
         this.requestBody.password = localStorage.getItem('jiraPassword');
-        this.ppmcProjectsWorklog = this.ppmcPrjectsWorklogedStatisticsService.getPpmcProjetctsWorklog(this.requestBody).subscribe(data => {
-            this.ppmcProjectsWorklog = data.body;
+        this.issueTypeWorklog = this.issueTypeStatisticsService.getIssueTypeStatistics(this.requestBody).subscribe(data => {
+            this.issueTypeWorklog = data.body;
             console.log(data.body);
             this.zone.runOutsideAngular(() => {
-                this.createCharts(this.ppmcProjectsWorklog);
+                this.createCharts(this.issueTypeWorklog);
             });
         });
     }
 
     private createWorklogChart(data) {
-        const htmlElement = this.worklogsChart.nativeElement;
+        const htmlElement = this.issueTypeChart.nativeElement;
         const chart = am4core.create(htmlElement, am4charts.PieChart);
         chart.data = data;
 
@@ -148,14 +142,12 @@ export class PpmcProjectsWorklogedStatisticsComponent implements OnInit, OnDestr
 
         const series = chart.series.push(new am4charts.PieSeries());
         series.dataFields.value = 'totalMinutes';
-        series.dataFields.category = 'ppmcProject';
-        series.labels.template.text = '';
-        series.ticks.template.disabled = true;
-        series.labels.template.tooltipText = '{ppmcProject}';
+        series.dataFields.category = 'issueType';
+        series.labels.template.text = '{issueType}s: {timeSpent}';
+        series.labels.template.tooltipText = '{timeSpent}';
         series.slices.template.tooltipText = '{category}: {timeSpent}';
-        series.legendSettings.labelText = '[bold {color}]{timeSpent}[/]';
+        series.legendSettings.labelText = '[bold {color}]{issueType}[/]';
     }
-
     private createFrequancyChart(data) {
         const htmlElement = this.frequancyChart.nativeElement;
         const chart = am4core.create(htmlElement, am4charts.PieChart);
@@ -170,12 +162,11 @@ export class PpmcProjectsWorklogedStatisticsComponent implements OnInit, OnDestr
 
         const series = chart.series.push(new am4charts.PieSeries());
         series.dataFields.value = 'frequency';
-        series.dataFields.category = 'ppmcProject';
-        series.labels.template.text = '';
-        series.ticks.template.disabled = true;
-        series.labels.template.tooltipText = '{ppmcProject}';
+        series.dataFields.category = 'issueType';
+        series.labels.template.text = '{issueType}s';
+        series.labels.template.tooltipText = '{frequency} {issueType}s';
         series.slices.template.tooltipText = '{category}: {frequency}';
-        series.legendSettings.labelText = '[bold font-size:10px {color}]{ppmcProject}[/]';
+        series.legendSettings.labelText = '[bold {color}]{issueType}[/]';
 
         series.slices.template.cornerRadius = 7;
         series.slices.template.innerCornerRadius = 4;

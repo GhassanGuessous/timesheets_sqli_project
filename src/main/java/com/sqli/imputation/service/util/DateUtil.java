@@ -119,4 +119,8 @@ public class DateUtil {
     public static boolean isSameYearAndMonth(String date, String comparedDate) {
         return getYear(date) == getYear(comparedDate) && getMonth(date) == getMonth(comparedDate);
     }
+
+    public static boolean isDateBetween(String date, String startDate, String endDate) {
+        return date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0;
+    }
 }

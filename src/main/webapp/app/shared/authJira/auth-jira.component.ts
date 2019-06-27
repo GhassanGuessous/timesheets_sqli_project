@@ -5,6 +5,7 @@ import { JhiEventManager } from 'ng-jhipster';
 import { StateStorageService } from 'app/core/auth/state-storage.service';
 import { TimesheetJiraService } from 'app/entities/timesheet-jira/timesheet-jira.service';
 import { PpmcProjectsWorklogedStatisticsService } from 'app/entities/ppmc-projects-workloged-statistics/ppmc-projects-workloged-statistics.service';
+import { IssueTypeStatisticsService } from 'app/entities/issue-type-statistics/issue-type-statistics.service';
 
 @Component({
     selector: 'jhi-auth-jira-modal',
@@ -21,7 +22,8 @@ export class AuthJiraModalComponent {
         private stateStorageService: StateStorageService,
         public activeModal: NgbActiveModal,
         private timesheetJiraService: TimesheetJiraService,
-        private ppmcProjectsWorklogedStatisticsService: PpmcProjectsWorklogedStatisticsService
+        private ppmcProjectsWorklogedStatisticsService: PpmcProjectsWorklogedStatisticsService,
+        private issueTypeStatisticsService: IssueTypeStatisticsService
     ) {}
 
     authenticateToJiraAndGetImputations() {
@@ -47,6 +49,8 @@ export class AuthJiraModalComponent {
     private sendRequest() {
         if (this.requestBody.requestType === 'JIRA_TIME_SHEET') {
             return this.timesheetJiraService.getTimesheet(this.requestBody);
+        } else if (this.requestBody.requestType === 'JIRA_ISSUE_TYPE_STATISTICS') {
+            return this.issueTypeStatisticsService.getIssueTypeStatistics(this.requestBody);
         } else {
             return this.ppmcProjectsWorklogedStatisticsService.getPpmcProjetctsWorklog(this.requestBody);
         }

@@ -11,7 +11,7 @@ import am4themes_moonrisekingdom from '@amcharts/amcharts4/themes/moonrisekingdo
 import { ITeamYearRequest, TeamYearRequest } from 'app/shared/model/team-year-request.model';
 import { GapPerTeamStatisticsService } from 'app/entities/gap-per-team-statistics/gap-per-team-statistics.service';
 
-am4core.useTheme(am4themes_moonrisekingdom);
+// am4core.useTheme(am4themes_moonrisekingdom);
 am4core.useTheme(am4themes_animated);
 
 @Component({

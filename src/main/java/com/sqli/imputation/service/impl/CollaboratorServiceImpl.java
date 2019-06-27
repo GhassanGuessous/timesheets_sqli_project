@@ -92,6 +92,11 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     }
 
     @Override
+    public List<Collaborator> findByTeamIdTbp(String idTbp) {
+        return collaboratorRepository.findByTeamIdTbp(idTbp);
+    }
+
+    @Override
     public Collaborator findByFirstnameAndLastname(String name) {
         List<Collaborator> collaborators = collaboratorRepository.findAll();
         Optional<Collaborator> optionalCollaborator = collaborators.stream().filter(collaborator -> compareFullName(name, collaborator.getFirstname(), collaborator.getLastname()) || compareFullName(name, collaborator.getLastname(), collaborator.getFirstname())).findFirst();

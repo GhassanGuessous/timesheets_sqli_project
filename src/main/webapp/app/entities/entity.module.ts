@@ -99,6 +99,10 @@ import { RouterModule } from '@angular/router';
                 path: 'ppmc-projects-workloged-statistics',
                 loadChildren:
                     './ppmc-projects-workloged-statistics/ppmc-projects-workloged-statistics.module#PpmcProjectsWorklogedStatisticsModule'
+            },
+            {
+                path: 'issue-type-statistics',
+                loadChildren: './issue-type-statistics/issue-type-statistics.module#IssueTypeStatisticsModule'
             }
         ])
     ],

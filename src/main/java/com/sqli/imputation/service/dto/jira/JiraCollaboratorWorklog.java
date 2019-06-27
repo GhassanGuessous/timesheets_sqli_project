@@ -12,6 +12,10 @@ public class JiraCollaboratorWorklog {
     private List<JiraDailyWorklog> jiraDailyWorklogs;
     private TimeSpentDTO totalTimeSpent;
 
+    public JiraCollaboratorWorklog(Collaborator collaborator) {
+        this.collaborator = collaborator;
+    }
+
     public Collaborator getCollaborator() {
         return collaborator;
     }

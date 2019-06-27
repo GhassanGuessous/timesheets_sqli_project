@@ -7,6 +7,7 @@ import com.sqli.imputation.security.SecurityUtils;
 import com.sqli.imputation.service.*;
 import com.sqli.imputation.repository.ImputationRepository;
 import com.sqli.imputation.service.dto.*;
+import com.sqli.imputation.service.dto.jira.IssueTypeStatisticsDTO;
 import com.sqli.imputation.service.dto.jira.JiraImputationDTO;
 import com.sqli.imputation.service.dto.jira.PpmcProjectWorklogDTO;
 import com.sqli.imputation.service.factory.RequestBodyFactory;
@@ -79,8 +80,11 @@ public class ImputationServiceImpl implements ImputationService {
     @Autowired
     private MailService mailService;
     @Autowired
-    private NotificationService notificationService;@Autowired
+    private NotificationService notificationService;
+    @Autowired
     private JiraStatisticsService jiraStatisticsService;
+    @Autowired
+    private CollaboratorService collaboratorService;
 
     public ImputationServiceImpl(ImputationRepository imputationRepository) {
         this.imputationRepository = imputationRepository;
@@ -293,15 +297,14 @@ public class ImputationServiceImpl implements ImputationService {
     @Override
     public List<JiraImputationDTO> getJiraImputation(TbpRequestBodyDTO requestBodyDTO) {
         List<JiraImputationDTO> jiraImputations = new ArrayList<>();
-        Team team = teamRepository.findByIdTbpLike(requestBodyDTO.getIdTbp());
         List<TbpRequestBodyDTO> requestBodies = tbpComposerService.divideTbpPeriod(requestBodyDTO);
-            requestBodies.forEach(requestBody -> {
-                try {
-                    jiraImputations.add(jiraResourceService.getJiraImputation(team,requestBody));
-                }catch (HttpClientErrorException e){
-                    throwJiraErrors(e.getStatusCode().value());
-                }
-            });
+        requestBodies.forEach(requestBody -> {
+            try {
+                jiraImputations.add(jiraResourceService.getJiraImputation(collaboratorService.findByTeamIdTbp(requestBodyDTO.getIdTbp()), requestBody));
+            } catch (HttpClientErrorException e) {
+                throwJiraErrors(e.getStatusCode().value());
+            }
+        });
         return jiraImputations;
     }
 
@@ -474,6 +477,31 @@ public class ImputationServiceImpl implements ImputationService {
 
     @Override
     public List<PpmcProjectWorklogDTO> getPpmcProjectWorkloged(TbpRequestBodyDTO requestBodyDTO) {
-        return jiraStatisticsService.getPpmcProjectWorkloged(requestBodyDTO);
+        List<PpmcProjectWorklogDTO> ppmcProjectWorklogDTOS = new ArrayList<>();
+        try {
+            if (requestBodyDTO.getIdTbp() == null || requestBodyDTO.getIdTbp().isEmpty()) {
+                ppmcProjectWorklogDTOS = jiraStatisticsService.getPpmcProjectWorkloged(collaboratorService.findAll(), requestBodyDTO);
+            }else{
+                ppmcProjectWorklogDTOS = jiraStatisticsService.getPpmcProjectWorkloged(collaboratorService.findByTeamIdTbp(requestBodyDTO.getIdTbp()), requestBodyDTO);
+            }
+        } catch (HttpClientErrorException e) {
+            throwJiraErrors(e.getStatusCode().value());
+        }
+        return ppmcProjectWorklogDTOS;
+    }
+
+    @Override
+    public List<IssueTypeStatisticsDTO> getissueTypeStatistics(TbpRequestBodyDTO requestBodyDTO) {
+        List<IssueTypeStatisticsDTO> issueTypeStatisticsDTOS = new ArrayList<>();
+        try {
+            if (requestBodyDTO.getIdTbp() == null || requestBodyDTO.getIdTbp().isEmpty()) {
+                issueTypeStatisticsDTOS = jiraStatisticsService.getIssueTypeWorkloged(collaboratorService.findAll(), requestBodyDTO);
+            }else{
+                issueTypeStatisticsDTOS = jiraStatisticsService.getIssueTypeWorkloged(collaboratorService.findByTeamIdTbp(requestBodyDTO.getIdTbp()), requestBodyDTO);
+            }
+        } catch (HttpClientErrorException e) {
+            throwJiraErrors(e.getStatusCode().value());
+        }
+        return issueTypeStatisticsDTOS;
     }
 }

@@ -1,24 +1,28 @@
 package com.sqli.imputation.service.dto.jira;
 
-public class PpmcProjectWorklogDTO {
+public class IssueTypeStatisticsDTO {
 
     public static final int FREQUANCY_STEP = 1;
-    private String ppmcProject;
+    private String issueType;
     private String timeSpent;
     private int totalMinutes;
     private int frequency;
 
-    public PpmcProjectWorklogDTO(String ppmcProject, int frequancy) {
-        this.ppmcProject = ppmcProject;
-        this.frequency = frequancy;
+    public IssueTypeStatisticsDTO(String issueType) {
+        this.issueType = issueType;
+        this.frequency = FREQUANCY_STEP;
     }
 
-    public String getPpmcProject() {
-        return ppmcProject;
+    public static int getFrequancyStep() {
+        return FREQUANCY_STEP;
     }
 
-    public void setPpmcProject(String ppmcProject) {
-        this.ppmcProject = ppmcProject;
+    public String getIssueType() {
+        return issueType;
+    }
+
+    public void setIssueType(String issueType) {
+        this.issueType = issueType;
     }
 
     public String getTimeSpent() {
@@ -51,8 +55,8 @@ public class PpmcProjectWorklogDTO {
 
     @Override
     public String toString() {
-        return "PpmcProjectWorklogDTO{" +
-            "ppmcProject='" + ppmcProject + '\'' +
+        return "IssueTypeStatisticsDTO{" +
+            "issueType='" + issueType + '\'' +
             ", timeSpent='" + timeSpent + '\'' +
             ", totalMinutes=" + totalMinutes +
             ", frequency=" + frequency +

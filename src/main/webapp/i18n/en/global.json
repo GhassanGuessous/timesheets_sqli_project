@@ -42,7 +42,8 @@
                 "jiraAuthTitle": "JIRA Authentication",
                 "statisticsPerTeam": "Team statistics",
                 "globalStatistics": "Global statistics",
-                "ppmcProjectWorklogedStatistics": "PPMC Projects Worklogs Statistics"
+                "ppmcProjectWorklogedStatistics": "PPMC Projects Worklogs Statistics",
+                "issueTypeStatistics": "Issue types Statistics"
             },
             "account": {
                 "main": "Account",
@@ -70,7 +71,8 @@
             "statistics": "Statistics",
             "gapTeamStatistics": "Per team",
             "gapVariationStatistics": "global",
-            "ppmcProjectsWorlogs": "PPMC Project Worklogs"
+            "ppmcProjectsWorlogs": "PPMC Project Worklogs",
+            "issueTypeStatistics": "Issue Types"
         },
         "form": {
             "username": "Username",
