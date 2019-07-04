@@ -56,11 +56,11 @@ public class DateUtil {
      * this function return a map representing months
      * of the TbpPeriodDTO (input) as follow :
      * 1 :
-     *      start : 01
-     *      end : 30
+     * start : 01
+     * end : 30
      * 2 :
-     *      start : 01
-     *      end : 28
+     * start : 01
+     * end : 28
      *
      * @param tbpPeriodDTO
      * @return
@@ -114,5 +114,13 @@ public class DateUtil {
 
     public static boolean isNotValidDates(String startDate, String endDate) {
         return (startDate == null || endDate == null) || (startDate.isEmpty() || endDate.isEmpty());
+    }
+
+    public static boolean isSameYearAndMonth(String date, String comparedDate) {
+        return getYear(date) == getYear(comparedDate) && getMonth(date) == getMonth(comparedDate);
+    }
+
+    public static boolean isDateBetween(String date, String startDate, String endDate) {
+        return date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0;
     }
 }

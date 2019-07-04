@@ -1,0 +1,52 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="global.menu.entities.ppmcProjectWorklogedStatistics">PPPM Project Worklog Statistics</span>
+    </h2>
+    <div class="row justify-content-center" *ngIf="allTeams || myTeam">
+        <div>
+            <jhi-alert-error></jhi-alert-error>
+            <form class="form-inline" name="appImputationForm" role="form" novalidate
+                  [ngSwitch]="isAdmin()" (ngSubmit)="getStatistics()">
+                <div class="form-group tbp-import-form" *ngSwitchCase="true">
+                    <label class="form-control-label"
+                           for="field_code_project_admin" jhiTranslate="imputationSqliApp.imputation.project_code">Project</label>
+                    <select class="form-control" id="field_code_project_admin" name="code_project"
+                            [(ngModel)]="requestBody.idTbp">
+                        <option *ngFor="let team of allTeams" [ngValue]="team.idTbp">{{team.name}}</option>
+                    </select>
+                </div>
+                <div class="form-group tbp-import-form" *ngSwitchCase="false">
+                    <span id="field_code_project_delco"><b>{{myTeam.name}}</b></span>
+                </div>
+                <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.start_date"
+                       for="field_start_date">Start Date</label>
+                <input type="date" id="field_start_date" class="form-control" name="start" [(ngModel)]="requestBody.startDate" required/>
+
+                <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.end_date"
+                       for="field_end_date">Start Date</label>
+                <input type="date" id="field_end_date" class="form-control" name="end" [(ngModel)]="requestBody.endDate" required/>
+                <div class="form-group tbp-import-form">
+                    <button type="submit" id="tbp-timesheet-import-button" class="btn btn-primary float-right">
+                        <span jhiTranslate="global.menu.statistics">
+                            Statistics
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <br>
+        <br>
+        <br>
+    </div>
+    <div class="row">
+        <!-- statistics -->
+        <div class="col-6 card">
+            <p>PPPM Projects Work log</p>
+            <div #worklogsChart style="width: 100%;min-height: 700px; max-height: 1000px"></div>
+        </div>
+        <div class="col-6 card">
+            <p>PPPM Projects Frequency</p>
+            <div #frequancyChart style="width: 100%;min-height: 700px; max-height: 1000px"></div>
+        </div>
+    </div>
+</div>

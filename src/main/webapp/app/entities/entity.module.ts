@@ -1,6 +1,5 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { TimesheetJiraComponent } from './timesheet-jira/timesheet-jira.component';
 
 @NgModule({
     imports: [
@@ -95,6 +94,15 @@ import { TimesheetJiraComponent } from './timesheet-jira/timesheet-jira.componen
             {
                 path: 'gap-variation-statistics',
                 loadChildren: './gap-variation-statistics/gap-variation-statistics.module#GapVariationStatisticsModule'
+            },
+            {
+                path: 'ppmc-projects-workloged-statistics',
+                loadChildren:
+                    './ppmc-projects-workloged-statistics/ppmc-projects-workloged-statistics.module#PpmcProjectsWorklogedStatisticsModule'
+            },
+            {
+                path: 'issue-type-statistics',
+                loadChildren: './issue-type-statistics/issue-type-statistics.module#IssueTypeStatisticsModule'
             }
         ])
     ],

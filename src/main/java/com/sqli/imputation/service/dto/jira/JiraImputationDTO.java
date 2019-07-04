@@ -1,5 +1,6 @@
 package com.sqli.imputation.service.dto.jira;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JiraImputationDTO {
@@ -30,6 +31,9 @@ public class JiraImputationDTO {
     }
 
     public List<JiraCollaboratorWorklog> getCollaboratorWorklogs() {
+        if (collaboratorWorklogs == null) {
+            collaboratorWorklogs = new ArrayList<>();
+        }
         return collaboratorWorklogs;
     }
 

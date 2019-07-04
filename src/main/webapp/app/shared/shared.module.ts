@@ -4,12 +4,13 @@ import { NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateMomentAdapter } from './util/datepicker-adapter';
 import { ImputationSqliSharedLibsModule, ImputationSqliSharedCommonModule, JhiLoginModalComponent, HasAnyAuthorityDirective } from './';
 import { AuthTbpModalComponent } from 'app/shared/authTbp/auth-tbp.component';
+import { AuthJiraModalComponent } from 'app/shared/authJira/auth-jira.component';
 
 @NgModule({
     imports: [ImputationSqliSharedLibsModule, ImputationSqliSharedCommonModule],
-    declarations: [JhiLoginModalComponent, HasAnyAuthorityDirective, AuthTbpModalComponent],
+    declarations: [JhiLoginModalComponent, HasAnyAuthorityDirective, AuthTbpModalComponent, AuthJiraModalComponent],
     providers: [{ provide: NgbDateAdapter, useClass: NgbDateMomentAdapter }],
-    entryComponents: [JhiLoginModalComponent, AuthTbpModalComponent],
+    entryComponents: [JhiLoginModalComponent, AuthTbpModalComponent, AuthJiraModalComponent],
     exports: [ImputationSqliSharedCommonModule, JhiLoginModalComponent, HasAnyAuthorityDirective],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

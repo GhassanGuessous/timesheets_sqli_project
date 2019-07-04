@@ -5,7 +5,14 @@ public class JiraDailyWorklog {
     private String date;
     private int day;
     private TimeSpentDTO timeSpent;
-    private  String worklogTimeSpent;
+    private String worklogTimeSpent;
+
+    public JiraDailyWorklog(int day, String date, String worklogTimeSpent, TimeSpentDTO timeSpent) {
+        this.day = day;
+        this.date = date;
+        this.worklogTimeSpent = worklogTimeSpent;
+        this.timeSpent = timeSpent;
+    }
 
     public String getDate() {
         return date;

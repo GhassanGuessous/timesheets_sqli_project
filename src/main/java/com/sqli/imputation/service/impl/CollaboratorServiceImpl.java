@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,16 +92,21 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     }
 
     @Override
+    public List<Collaborator> findByTeamIdTbp(String idTbp) {
+        return collaboratorRepository.findByTeamIdTbp(idTbp);
+    }
+
+    @Override
     public Collaborator findByFirstnameAndLastname(String name) {
         List<Collaborator> collaborators = collaboratorRepository.findAll();
-        Optional<Collaborator> optionalCollaborator = collaborators.stream().filter(collaborator -> CompareFullName(name, collaborator.getFirstname(), collaborator.getLastname()) || CompareFullName(name, collaborator.getLastname(), collaborator.getFirstname())).findFirst();
+        Optional<Collaborator> optionalCollaborator = collaborators.stream().filter(collaborator -> compareFullName(name, collaborator.getFirstname(), collaborator.getLastname()) || compareFullName(name, collaborator.getLastname(), collaborator.getFirstname())).findFirst();
         if (optionalCollaborator.isPresent()) {
             return optionalCollaborator.get();
         }
         return null;
     }
 
-    private boolean CompareFullName(String name, String firstname, String lastname) {
+    private boolean compareFullName(String name, String firstname, String lastname) {
         return name.equalsIgnoreCase(firstname + " " + lastname);
     }
 

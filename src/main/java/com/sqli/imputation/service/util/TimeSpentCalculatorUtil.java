@@ -8,33 +8,38 @@ public class TimeSpentCalculatorUtil {
     public static final int NUMBRE_OF_MINUTES_IN_HOUR = 60;
     public static final int NUMBER_OF_HOURS_IN_DAY = 8;
     public static final int NUMBER_OF_DAYS_IN_WEEK = 5;
+    public static final int ZERO_MINUTES = 0;
 
     public static TimeSpentDTO calculate(String timeSpent) {
-        int numberOfHoursSpent = 0;
+        int numberOfMinutesSpent = 0;
         String[] timeSpentTokens = timeSpent.split(TIME_SPENT_SEPARATOR);
         for (String token : timeSpentTokens
         ) {
 
-            numberOfHoursSpent += getNumberOfHoursFromToken(token);
+            numberOfMinutesSpent += getNumberOfMinutesFromToken(token);
         }
-        return getTimeSpent(numberOfHoursSpent);
+        return getTimeSpent(numberOfMinutesSpent);
     }
 
-    private static TimeSpentDTO getTimeSpent(int numberOfHoursSpent) {
+    private static TimeSpentDTO getTimeSpent(int numberOfMinutesSpent) {
         return new TimeSpentDTO(
-            numberOfHoursSpent % NUMBRE_OF_MINUTES_IN_HOUR,
-            numberOfHoursSpent / NUMBRE_OF_MINUTES_IN_HOUR % NUMBER_OF_HOURS_IN_DAY,
-            numberOfHoursSpent / NUMBER_OF_HOURS_IN_DAY / NUMBRE_OF_MINUTES_IN_HOUR % NUMBER_OF_DAYS_IN_WEEK,
-            (numberOfHoursSpent / NUMBER_OF_HOURS_IN_DAY / NUMBRE_OF_MINUTES_IN_HOUR) / NUMBER_OF_DAYS_IN_WEEK);
+            numberOfMinutesSpent,
+            numberOfMinutesSpent % NUMBRE_OF_MINUTES_IN_HOUR,
+            numberOfMinutesSpent / NUMBRE_OF_MINUTES_IN_HOUR % NUMBER_OF_HOURS_IN_DAY,
+            numberOfMinutesSpent / NUMBER_OF_HOURS_IN_DAY / NUMBRE_OF_MINUTES_IN_HOUR % NUMBER_OF_DAYS_IN_WEEK,
+            (numberOfMinutesSpent / NUMBER_OF_HOURS_IN_DAY / NUMBRE_OF_MINUTES_IN_HOUR) / NUMBER_OF_DAYS_IN_WEEK);
     }
 
-    private static int getNumberOfHoursFromToken(String token) {
+    private static int getNumberOfMinutesFromToken(String token) {
+        if (token.isEmpty()) {
+            return ZERO_MINUTES;
+        }
         char timeIndicator = token.charAt(token.length() - 1);
         int timespent = Integer.parseInt(token.substring(0, token.indexOf(timeIndicator)));
-        return getHours(timespent, timeIndicator);
+        return getMinutes(timespent, timeIndicator);
     }
 
-    private static int getHours(int timespent, char timeIndicator) {
+    private static int getMinutes(int timespent, char timeIndicator) {
         switch (timeIndicator) {
             case 'h':
                 return timespent * NUMBRE_OF_MINUTES_IN_HOUR;

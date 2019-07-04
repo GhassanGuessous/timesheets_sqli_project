@@ -7,6 +7,7 @@ public class WorklogItemDTO {
     private AuthorDTO updateAuthor;
     private String created;
     private String updated;
+    private String started;
     private String timeSpent;
 
     public String getId() {
@@ -49,6 +50,14 @@ public class WorklogItemDTO {
         this.updated = updated;
     }
 
+    public String getStarted() {
+        return started;
+    }
+
+    public void setStarted(String started) {
+        this.started = started;
+    }
+
     public String getTimeSpent() {
         return timeSpent;
     }
@@ -65,6 +74,7 @@ public class WorklogItemDTO {
             ", updateAuthor=" + updateAuthor +
             ", created='" + created + '\'' +
             ", updated='" + updated + '\'' +
+            ", started='" + started + '\'' +
             ", timeSpent='" + timeSpent + '\'' +
             '}';
     }

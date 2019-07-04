@@ -39,8 +39,11 @@
                 "fileUploadedAlredy": "A PPMC file is already uploaded",
                 "authenticateToTbp": "Authenticate",
                 "tbpAuthTitle": "TBP Authentication",
+                "jiraAuthTitle": "JIRA Authentication",
                 "statisticsPerTeam": "Team statistics",
-                "globalStatistics": "Global statistics"
+                "globalStatistics": "Global statistics",
+                "ppmcProjectWorklogedStatistics": "PPMC Projects Worklogs Statistics",
+                "issueTypeStatistics": "Issue types Statistics"
             },
             "account": {
                 "main": "Account",
@@ -67,7 +70,9 @@
             "language": "Language",
             "statistics": "Statistics",
             "gapTeamStatistics": "Per team",
-            "gapVariationStatistics": "global"
+            "gapVariationStatistics": "global",
+            "ppmcProjectsWorlogs": "PPMC Project Worklogs",
+            "issueTypeStatistics": "Issue Types"
         },
         "form": {
             "username": "Username",
@@ -178,7 +183,9 @@
         "differentMonths": "Sorry, the selected month and the month of the file must be the same!",
         "newUpload": "No PPMC history for these params, you should upload a new PPMC file.",
         "tbp_bad_credentials": "Bad TBP Credentials!",
-        "tbp_invalid_inputs": "TBP username & password are required"
+        "tbp_invalid_inputs": "TBP username & password are required",
+        "jira_bad_credentials": "Bad JIRA Credentials!",
+        "jira_bad_url": "Jira url does not exist!"
     },
     "footer": "©SQLI Maroc {{ year }} - All rights reserved"
 }

@@ -5,7 +5,9 @@ import com.sqli.imputation.domain.Imputation;
 import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.service.NotificationService;
 import com.sqli.imputation.service.dto.*;
+import com.sqli.imputation.service.dto.jira.IssueTypeStatisticsDTO;
 import com.sqli.imputation.service.dto.jira.JiraImputationDTO;
+import com.sqli.imputation.service.dto.jira.PpmcProjectWorklogDTO;
 import com.sqli.imputation.service.util.DateUtil;
 import com.sqli.imputation.service.util.FileExtensionUtil;
 import com.sqli.imputation.service.util.JsonUtil;
@@ -224,10 +226,24 @@ public class ImputationResource {
      * @return the ResponseEntity with imputation of type JIRA
      */
     @PostMapping("/imputations/jira")
-    public ResponseEntity<JiraImputationDTO> getJiraImputation(@RequestBody AppTbpRequestBodyDTO requestBodyDTO) {
+    public ResponseEntity<List<JiraImputationDTO>> getJiraImputation(@RequestBody TbpRequestBodyDTO requestBodyDTO) {
         log.debug("REST request to get JIRA Imputation : {}", requestBodyDTO);
-            JiraImputationDTO jiraImputation = imputationService.getJiraImputation(requestBodyDTO);
-            return ResponseEntity.ok().body(jiraImputation);
+
+        String startDate = requestBodyDTO.getStartDate();
+        String endDate = requestBodyDTO.getEndDate();
+
+        if (requestBodyDTO.getIdTbp() == null) {
+            throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
+        } else if (DateUtil.isNotValidDates(startDate, endDate)) {
+            throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
+        } else if (DateUtil.isDatesOrderNotValid(startDate, endDate)) {
+            throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
+        } else if (isNotValidTBPCredentials(requestBodyDTO.getUsername(), requestBodyDTO.getPassword())) {
+            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
+        } else {
+            List<JiraImputationDTO> jiraImputations = imputationService.getJiraImputation(requestBodyDTO);
+            return ResponseEntity.ok().body(jiraImputations);
+        }
     }
 
     /**
@@ -378,5 +394,40 @@ public class ImputationResource {
     public ResponseEntity<List<NotificationGapVariationDTO>> getTeamNotificationGapVariation(@RequestBody TeamYearDTO teamYearDTO) {
         List<NotificationGapVariationDTO> gapVariationDTOS = notificationService.getNotificationGapVariation(teamYearDTO);
         return ResponseEntity.ok().body(gapVariationDTOS);
+    }
+
+    @PostMapping("/imputations/ppmc-project-worklogs-statistics")
+    public ResponseEntity<List<PpmcProjectWorklogDTO>> getPpmcProjectWorkloged(@RequestBody TbpRequestBodyDTO requestBodyDTO) {
+
+        String startDate = requestBodyDTO.getStartDate();
+        String endDate = requestBodyDTO.getEndDate();
+
+        if (DateUtil.isNotValidDates(startDate, endDate)) {
+            throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
+        } else if (DateUtil.isDatesOrderNotValid(startDate, endDate)) {
+            throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
+        } else if (isNotValidTBPCredentials(requestBodyDTO.getUsername(), requestBodyDTO.getPassword())) {
+            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
+        } else {
+            log.debug("request to Get Ppmc Project Workloged");
+            return ResponseEntity.ok().body(imputationService.getPpmcProjectWorkloged(requestBodyDTO));
+        }
+    }
+    @PostMapping("/imputations/issue-type-statistics")
+    public ResponseEntity<List<IssueTypeStatisticsDTO>> getIssueTypeStatistics(@RequestBody TbpRequestBodyDTO requestBodyDTO) {
+
+        String startDate = requestBodyDTO.getStartDate();
+        String endDate = requestBodyDTO.getEndDate();
+
+        if (DateUtil.isNotValidDates(startDate, endDate)) {
+            throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
+        } else if (DateUtil.isDatesOrderNotValid(startDate, endDate)) {
+            throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
+        } else if (isNotValidTBPCredentials(requestBodyDTO.getUsername(), requestBodyDTO.getPassword())) {
+            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
+        } else {
+            log.debug("request to Get Ppmc Project Workloged");
+            return ResponseEntity.ok().body(imputationService.getissueTypeStatistics(requestBodyDTO));
+        }
     }
 }

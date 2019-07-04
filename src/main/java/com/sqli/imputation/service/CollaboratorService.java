@@ -68,5 +68,7 @@ public interface CollaboratorService {
      */
     List<Collaborator> getAllWithNoCorrespondence();
 
-    Collaborator findByFirstnameAndLastname(String name);
+    List<Collaborator> findByTeamIdTbp(String idTbp);
+
+    Collaborator findByFirstnameAndLastname(String displayName);
 }
