@@ -63,7 +63,7 @@ public class DefaultNotificationService implements NotificationService {
         List<Notification> notifications = getTeamNotifications(teamYearDTO);
         List<StatisticsDTO> statisticsDTOS = new ArrayList<>();
         notifications.forEach(notification -> {
-            if (isStatisticIsExistForCollab(statisticsDTOS, notification.getCollaborator())) {
+            if (isStatisticExistForCollab(statisticsDTOS, notification.getCollaborator())) {
                 editStatistic(statisticsDTOS, notification);
             } else {
                 addStatistic(statisticsDTOS, notification);
@@ -106,7 +106,7 @@ public class DefaultNotificationService implements NotificationService {
         return type.equals(APP_VS_PPMC);
     }
 
-    private boolean isStatisticIsExistForCollab(List<StatisticsDTO> statisticsDTOS, Collaborator collaborator) {
+    private boolean isStatisticExistForCollab(List<StatisticsDTO> statisticsDTOS, Collaborator collaborator) {
         return statisticsDTOS.stream().anyMatch(dto -> dto.getCollaborator().equals(collaborator.getFirstname() + " " + collaborator.getLastname()));
     }
 

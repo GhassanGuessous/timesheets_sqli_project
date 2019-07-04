@@ -2,7 +2,6 @@ package com.sqli.imputation.web.rest;
 
 import com.sqli.imputation.config.Constants;
 import com.sqli.imputation.domain.Imputation;
-import com.sqli.imputation.domain.Notification;
 import com.sqli.imputation.service.ImputationService;
 import com.sqli.imputation.service.NotificationService;
 import com.sqli.imputation.service.dto.*;
