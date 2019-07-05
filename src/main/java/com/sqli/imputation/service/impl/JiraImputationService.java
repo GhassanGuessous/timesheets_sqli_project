@@ -17,11 +17,15 @@ import java.util.List;
 
 @Service
 public class JiraImputationService {
-    private final Logger log = LoggerFactory.getLogger(JiraImputationService.class);
 
+    private final Logger log = LoggerFactory.getLogger(JiraImputationService.class);
+    public static final String JIRA_NESPRESSO_URL = "https://jira.nespresso.com/rest/api/2/search?jql=";
+    public static final String SINGLE_QUOTE = "'";
+    public static final String OPEN_PARENTHESIS = "(";
+    public static final String CLOSED_PARENTHESIS = ")";
+    public static final String COMMA = ",";
     public static final int EMPTY_STRING_LENGTH = 0;
     private static final String EPMTY_STRING = "";
-    private static final String TIME_SPENT_SEPARATOR = " ";
     private static final String TIME_DELIMITER = "T";
     private static final int DATE_POSITION = 0;
     private static final String SPACE = " ";
@@ -47,13 +51,17 @@ public class JiraImputationService {
     public String initializeWorklogAuthors(List<Collaborator> collaborators) {
         getEmptyStringBuilder();
         Iterator<Collaborator> collaboratorIterator = collaborators.iterator();
-        stringBuilder.append("(");
+        stringBuilder.append(OPEN_PARENTHESIS);
         while (collaboratorIterator.hasNext()) {
             Collaborator collaborator = collaboratorIterator.next();
-            stringBuilder.append("'").append(collaborator.getFirstname().toLowerCase()).append(SPACE).append(collaborator.getLastname().toLowerCase()).append("'");
-            if (collaboratorIterator.hasNext()) stringBuilder.append(",");
+            stringBuilder.append(SINGLE_QUOTE)
+                .append(collaborator.getFirstname().toLowerCase())
+                .append(SPACE)
+                .append(collaborator.getLastname().toLowerCase())
+                .append(SINGLE_QUOTE);
+            if (collaboratorIterator.hasNext()) stringBuilder.append(COMMA);
         }
-        stringBuilder.append(")");
+        stringBuilder.append(CLOSED_PARENTHESIS);
         return stringBuilder.toString();
     }
 
@@ -72,12 +80,12 @@ public class JiraImputationService {
 
     private ResponseEntity<JiraIssuesResponseDTO> getIssuesWithPagination(TbpRequestBodyDTO requestBodyDTO, int startAt, int maxResult) {
         log.debug("JiraImputationService.getCollaboratorIssuesWithPagination: request to get issues from JIRA");
-        return jiraRestService.getStories("https://jira.nespresso.com/rest/api/2/search?jql=worklogAuthor in" + worklogAuthors + " +AND+ issueFunction in workLogged('after " + requestBodyDTO.getStartDate() + " before " + requestBodyDTO.getEndDate() + "')&startAt=" + startAt + "&maxResults=" + maxResult + "&fields=worklog,customfield_10841,issuetype");
+        return jiraRestService.getStories(JIRA_NESPRESSO_URL + "worklogAuthor in" + worklogAuthors + " +AND+ issueFunction in workLogged('after " + requestBodyDTO.getStartDate() + " before " + requestBodyDTO.getEndDate() + "')&startAt=" + startAt + "&maxResults=" + maxResult + "&fields=worklog,customfield_10841,issuetype");
     }
 
     private ResponseEntity<JiraIssuesResponseDTO> getCollaboratorsIssues(TbpRequestBodyDTO requestBodyDTO) {
         log.debug("JiraImputationService.getCollaboratorIssues: request to get issues from JIRA");
-        return jiraRestService.getStories("https://jira.nespresso.com/rest/api/2/search?jql=worklogAuthor in" + worklogAuthors + "+AND+ issueFunction in workLogged('after " + requestBodyDTO.getStartDate() + " before " + requestBodyDTO.getEndDate() + "')&fields=worklog,customfield_10841,issuetype");
+        return jiraRestService.getStories(JIRA_NESPRESSO_URL + "worklogAuthor in" + worklogAuthors + "+AND+ issueFunction in workLogged('after " + requestBodyDTO.getStartDate() + " before " + requestBodyDTO.getEndDate() + "')&fields=worklog,customfield_10841,issuetype");
     }
 
     public TimeSpentDTO getWorklogsTimeSpentDTO(IssueDTO issueDTO, String timeSpent, TbpRequestBodyDTO requestBodyDTO) {
@@ -92,7 +100,7 @@ public class JiraImputationService {
         stringBuilder.append(timeSpent == null ? EPMTY_STRING : timeSpent);
         issueDTO.getFields().getWorklog().getWorklogs().stream()
             .filter(worklogItemDTO -> isValidWorklogItem(worklogItemDTO, requestBodyDTO))
-            .forEach(worklogItem -> stringBuilder.append(worklogItem.getTimeSpent()).append(TIME_SPENT_SEPARATOR));
+            .forEach(worklogItem -> stringBuilder.append(worklogItem.getTimeSpent()).append(SPACE));
         return stringBuilder.toString();
     }
 
