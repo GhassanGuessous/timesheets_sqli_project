@@ -82,5 +82,5 @@ public interface ImputationService {
 
     List<PpmcProjectWorklogDTO> getPpmcProjectWorkloged(TbpRequestBodyDTO requestBodyDTO);
 
-    List<IssueTypeStatisticsDTO> getissueTypeStatistics(TbpRequestBodyDTO requestBodyDTO);
+    List<IssueTypeStatisticsDTO> getIssueTypeStatistics(TbpRequestBodyDTO requestBodyDTO);
 }

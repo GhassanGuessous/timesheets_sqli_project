@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface JiraResourceService {
 
-    JiraImputationDTO getJiraImputation(List<Collaborator> collaboratorList, TbpRequestBodyDTO requestBodyDTO);
+    JiraImputationDTO getJiraImputation(List<Collaborator> collaborators, TbpRequestBodyDTO requestBodyDTO);
 
 }

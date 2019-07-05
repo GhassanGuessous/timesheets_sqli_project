@@ -21,8 +21,8 @@ import java.util.List;
 public class DefaultJiraResourceService implements JiraResourceService {
     private final Logger log = LoggerFactory.getLogger(DefaultJiraResourceService.class);
 
+    public static final String JIRA_NESPRESSO_URL = "https://jira.nespresso.com/rest/api/2/search?jql=";
     private static final String SPACE = " ";
-    private static final String TIME_SPENT_SEPARATOR = " ";
 
 
     @Autowired
@@ -32,13 +32,15 @@ public class DefaultJiraResourceService implements JiraResourceService {
     @Autowired
     private JiraImputationService jiraImputationService;
     private String worklogAuthors;
-    private List<Collaborator> collaboratorList;
+    private List<Collaborator> collaborators;
 
     @Override
-    public JiraImputationDTO getJiraImputation(List<Collaborator> collaboratorList, TbpRequestBodyDTO requestBodyDTO) {
-        this.collaboratorList = collaboratorList;
-        worklogAuthors = jiraImputationService.initializeWorklogAuthors(collaboratorList);
-        JiraImputationDTO jiraImputationDTO = jiraImputationFactory.createJiraImputationDTO(DateUtil.getYear(requestBodyDTO.getStartDate()), DateUtil.getMonth(requestBodyDTO.getStartDate()));
+    public JiraImputationDTO getJiraImputation(List<Collaborator> collaborators, TbpRequestBodyDTO requestBodyDTO) {
+        this.collaborators = collaborators;
+        worklogAuthors = jiraImputationService.initializeWorklogAuthors(collaborators);
+        int year = DateUtil.getYear(requestBodyDTO.getStartDate());
+        int month = DateUtil.getMonth(requestBodyDTO.getStartDate());
+        JiraImputationDTO jiraImputationDTO = jiraImputationFactory.createJiraImputationDTO(year, month);
         jiraRestService.logIn(requestBodyDTO.getUsername(), requestBodyDTO.getPassword());
         getIssuesForTeamCollabs(requestBodyDTO, jiraImputationDTO);
         return jiraImputationDTO;
@@ -54,20 +56,22 @@ public class DefaultJiraResourceService implements JiraResourceService {
         jiraImputationDTO.setCollaboratorWorklogs(getIssuesWorklogs(requestBodyDTO, issueDTOS));
     }
 
-    private ResponseEntity<JiraIssuesResponseDTO> getCollaboratorsIssuesWithPagination(TbpRequestBodyDTO requestBodyDTO, int startAt, int maxResult) {
-        log.debug("DefaultJiraResourceService.getCollaboratorIssuesWithPagination: request to get issues from JIRA");
-        return jiraRestService.getStories("https://jira.nespresso.com/rest/api/2/search?jql=worklogAuthor=" + worklogAuthors + "+AND+issueFunction in workLogged('after " + requestBodyDTO.getStartDate() + " before " + requestBodyDTO.getEndDate() + "')&startAt=" + startAt + "&maxResults=" + maxResult + "&fields=worklog");
-    }
-
     private ResponseEntity<JiraIssuesResponseDTO> getCollaboratorsIssues(TbpRequestBodyDTO requestBodyDTO) {
         log.debug("DefaultJiraResourceService.getCollaboratorIssues: request to get issues from JIRA");
-        return jiraRestService.getStories("https://jira.nespresso.com/rest/api/2/search?jql=worklogAuthor in " + worklogAuthors + "+AND+issueFunction in workLogged('after " + requestBodyDTO.getStartDate() + " before " + requestBodyDTO.getEndDate() + "')&fields=worklog");
+        return jiraRestService.getStories(JIRA_NESPRESSO_URL + "worklogAuthor in " + worklogAuthors + "+AND+issueFunction in workLogged('after " + requestBodyDTO.getStartDate() + " before " + requestBodyDTO.getEndDate() + "')&fields=worklog");
+    }
+
+    private ResponseEntity<JiraIssuesResponseDTO> getCollaboratorsIssuesWithPagination(TbpRequestBodyDTO requestBodyDTO, int startAt, int maxResult) {
+        log.debug("DefaultJiraResourceService.getCollaboratorIssuesWithPagination: request to get issues from JIRA");
+        return jiraRestService.getStories(JIRA_NESPRESSO_URL + "worklogAuthor in " + worklogAuthors + "+AND+issueFunction in workLogged('after " + requestBodyDTO.getStartDate() + " before " + requestBodyDTO.getEndDate() + "')&startAt=" + startAt + "&maxResults=" + maxResult + "&fields=worklog");
     }
 
     private List<JiraCollaboratorWorklog> getIssuesWorklogs(TbpRequestBodyDTO requestBodyDTO, List<IssueDTO> issueDTOS) {
         log.debug("DefaultJiraResourceService.getIssuesWorklogs: fetching issues for Collaborator");
         List<JiraCollaboratorWorklog> collaboratorWorklogs = new ArrayList<>();
-        issueDTOS.stream().filter(this::isValidIssue).forEach(issueDTO -> getWorklogOfIssue(requestBodyDTO, issueDTO, collaboratorWorklogs));
+        issueDTOS.stream().filter(this::isValidIssue).forEach(
+            issueDTO -> getWorklogOfIssue(requestBodyDTO, issueDTO, collaboratorWorklogs)
+        );
         collaboratorWorklogs.forEach(this::updateTotalTimeSpent);
         return collaboratorWorklogs;
     }
@@ -105,7 +109,8 @@ public class DefaultJiraResourceService implements JiraResourceService {
     }
 
     private boolean worklogItemDateIsValid(WorklogItemDTO worklogItemDTO, TbpRequestBodyDTO requestBodyDTO) {
-        return DateUtil.isSameYearAndMonth(jiraImputationService.getWorklogDate(worklogItemDTO.getStarted()), requestBodyDTO.getStartDate()) && worklogItemDayIsRequested(worklogItemDTO, requestBodyDTO);
+        String worklogDate = jiraImputationService.getWorklogDate(worklogItemDTO.getStarted());
+        return DateUtil.isSameYearAndMonth(worklogDate, requestBodyDTO.getStartDate()) && worklogItemDayIsRequested(worklogItemDTO, requestBodyDTO);
     }
 
     private boolean worklogItemDayIsRequested(WorklogItemDTO worklogItemDTO, TbpRequestBodyDTO requestBodyDTO) {
@@ -122,7 +127,9 @@ public class DefaultJiraResourceService implements JiraResourceService {
     }
 
     private void addDailyWorklog(WorklogItemDTO worklogItemDTO, JiraCollaboratorWorklog collaborartorWorklog) {
-        JiraDailyWorklog jiraDailyWorklog = jiraImputationFactory.createJiraDailyWorklog(getWorklogDay(worklogItemDTO), worklogItemDTO.getStarted(), worklogItemDTO.getTimeSpent(), TimeSpentCalculatorUtil.calculate(worklogItemDTO.getTimeSpent()));
+        int worklogDay = getWorklogDay(worklogItemDTO);
+        TimeSpentDTO timeSpentDTO = TimeSpentCalculatorUtil.calculate(worklogItemDTO.getTimeSpent());
+        JiraDailyWorklog jiraDailyWorklog = jiraImputationFactory.createJiraDailyWorklog(worklogDay, worklogItemDTO.getStarted(), worklogItemDTO.getTimeSpent(), timeSpentDTO);
         collaborartorWorklog.getJiraDailyWorklogs().add(jiraDailyWorklog);
     }
 
@@ -133,7 +140,7 @@ public class DefaultJiraResourceService implements JiraResourceService {
     private void updateDailyWorklog(List<JiraDailyWorklog> jiraDailyWorklogs, WorklogItemDTO worklogItemDTO) {
         JiraDailyWorklog jiraDailyWorklog = findDailyWorklog(jiraDailyWorklogs, getWorklogDay(worklogItemDTO));
         jiraDailyWorklog.setDate(worklogItemDTO.getStarted());
-        jiraDailyWorklog.setWorklogTimeSpent(jiraDailyWorklog.getWorklogTimeSpent() + TIME_SPENT_SEPARATOR + worklogItemDTO.getTimeSpent());
+        jiraDailyWorklog.setWorklogTimeSpent(jiraDailyWorklog.getWorklogTimeSpent() + SPACE + worklogItemDTO.getTimeSpent());
         jiraDailyWorklog.setTimeSpent(TimeSpentCalculatorUtil.calculate(jiraDailyWorklog.getWorklogTimeSpent()));
     }
 
@@ -153,7 +160,10 @@ public class DefaultJiraResourceService implements JiraResourceService {
     }
 
     private Collaborator findCollaboratorByFirstAndLastName(String displayName) {
-        return collaboratorList.stream().filter(collaborator -> compareFullName(displayName, collaborator.getFirstname(), collaborator.getLastname()) || compareFullName(displayName, collaborator.getLastname(), collaborator.getFirstname())).findFirst().get();
+        return collaborators.stream().filter(
+            collaborator -> compareFullName(displayName, collaborator.getFirstname(), collaborator.getLastname())
+                || compareFullName(displayName, collaborator.getLastname(), collaborator.getFirstname())
+        ).findFirst().get();
     }
 
     private boolean compareFullName(String name, String firstname, String lastname) {

@@ -427,7 +427,7 @@ public class ImputationResource {
             throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
         } else {
             log.debug("request to Get Ppmc Project Workloged");
-            return ResponseEntity.ok().body(imputationService.getissueTypeStatistics(requestBodyDTO));
+            return ResponseEntity.ok().body(imputationService.getIssueTypeStatistics(requestBodyDTO));
         }
     }
 }
