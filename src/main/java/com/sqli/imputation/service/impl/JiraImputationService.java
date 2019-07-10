@@ -99,16 +99,16 @@ public class JiraImputationService {
         getEmptyStringBuilder();
         stringBuilder.append(timeSpent == null ? EPMTY_STRING : timeSpent);
         issueDTO.getFields().getWorklog().getWorklogs().stream()
-            .filter(worklogItemDTO -> isValidWorklogItem(worklogItemDTO, requestBodyDTO))
+            .filter(worklogItemDTO -> isValidWorklogItem(worklogItemDTO, requestBodyDTO, worklogAuthors))
             .forEach(worklogItem -> stringBuilder.append(worklogItem.getTimeSpent()).append(SPACE));
         return stringBuilder.toString();
     }
 
-    private boolean isValidWorklogItem(WorklogItemDTO worklogItemDTO, TbpRequestBodyDTO requestBodyDTO) {
-        return worklogItemDateIsValid(worklogItemDTO, requestBodyDTO) && worklogItemAuthorIsValid(worklogItemDTO);
+    public boolean isValidWorklogItem(WorklogItemDTO worklogItemDTO, TbpRequestBodyDTO requestBodyDTO, String worklogAuthors) {
+        return worklogItemDateIsValid(worklogItemDTO, requestBodyDTO) && worklogItemAuthorIsValid(worklogItemDTO, worklogAuthors);
     }
 
-    private boolean worklogItemAuthorIsValid(WorklogItemDTO worklogItemDTO) {
+    private boolean worklogItemAuthorIsValid(WorklogItemDTO worklogItemDTO, String worklogAuthors) {
         return worklogAuthors.contains(worklogItemDTO.getAuthor().getDisplayName().toLowerCase());
     }
 

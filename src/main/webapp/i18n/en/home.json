@@ -1,6 +1,7 @@
 {
     "home": {
         "title": "Welcome",
+        "appTitle": "Imputation gaps detection system",
         "subtitle": "This is your homepage",
         "logged": {
             "message": "You are logged in as user \"{{username}}\"."
