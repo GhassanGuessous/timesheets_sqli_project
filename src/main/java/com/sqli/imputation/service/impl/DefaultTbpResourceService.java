@@ -25,6 +25,7 @@ public class DefaultTbpResourceService implements TbpResourceService {
 
     @Autowired
     private RestTemplate restTemplate;
+
     private static final String PROJETS_URL = "projets";
     private static final String PROJETS_TYPES_URL = "projets/types";
     private static final String COLLABORATEURS_URL = "collaborateurs";

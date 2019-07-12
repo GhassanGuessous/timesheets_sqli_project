@@ -8,7 +8,7 @@
         <renameColumn columnDataType="int"
                       newColumnName="year"
                       oldColumnName="jhi_year"
-                      schemaName="imputation__sqli_db"
+                      schemaName="imputation_sqli_db"
                       tableName="imputation"/>
     </changeSet>
 </databaseChangeLog>

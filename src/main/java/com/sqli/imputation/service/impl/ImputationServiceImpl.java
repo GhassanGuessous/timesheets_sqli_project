@@ -38,13 +38,13 @@ public class ImputationServiceImpl implements ImputationService {
 
     private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
 
-    public static final String APP = "app";
-    public static final String TBP = "tbp";
+    private static final String APP = "app";
+    private static final String TBP = "tbp";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private static final String ENTITY_NAME = "imputation";
     private static final int UNAUTHORIZED_STATUS = 401;
     private static final int UNAUTHORIZED_AUTHORITY_STATUS = 405;
-    public static final int NOT_FOUND_STATUS = 400;
+    private static final int NOT_FOUND_STATUS = 400;
     private static final int FIRST_ELEMENT_INDEX = 0;
 
     private final ImputationRepository imputationRepository;
@@ -289,7 +289,7 @@ public class ImputationServiceImpl implements ImputationService {
      * @return
      */
     @Override
-    public Optional<Imputation> getPpmcImputation(MultipartFile file, String agresso) {
+    public Optional<Imputation> getPpmcImputation(String agresso, MultipartFile file) {
         Team team = teamRepository.findByAgressoLike(agresso);
         Optional<Imputation> ppmcImputation = ppmcImputationConverterService.getPpmcImputationFromExcelFile(file, team);
         if (ppmcImputation.isPresent()) {
@@ -390,7 +390,7 @@ public class ImputationServiceImpl implements ImputationService {
      */
     @Override
     public List<ImputationComparatorDTO> compareAppPpmc(MultipartFile file, AppRequestDTO appRequestDTO) {
-        Optional<Imputation> ppmcImputation = getPpmcImputation(file, appRequestDTO.getAgresso());
+        Optional<Imputation> ppmcImputation = getPpmcImputation(appRequestDTO.getAgresso(), file);
         if (!ppmcImputation.isPresent()) {
             throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
         } else {
@@ -411,7 +411,7 @@ public class ImputationServiceImpl implements ImputationService {
      */
     @Override
     public List<ImputationComparatorAdvancedDTO> compareAppPpmcAdvanced(MultipartFile file, AppRequestDTO appRequestDTO) {
-        Optional<Imputation> ppmcImputation = getPpmcImputation(file, appRequestDTO.getAgresso());
+        Optional<Imputation> ppmcImputation = getPpmcImputation(appRequestDTO.getAgresso(), file);
         if (!ppmcImputation.isPresent()) {
             throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
         } else {

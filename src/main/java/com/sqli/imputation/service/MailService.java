@@ -1,6 +1,5 @@
 package com.sqli.imputation.service;
 
-import com.sqli.imputation.domain.Collaborator;
 import com.sqli.imputation.domain.User;
 
 import com.sqli.imputation.service.dto.NotificationDTO;

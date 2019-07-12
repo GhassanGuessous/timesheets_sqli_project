@@ -60,7 +60,7 @@ public interface ImputationService {
 
     List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO);
 
-    Optional<Imputation> getPpmcImputation(MultipartFile file, String agresso);
+    Optional<Imputation> getPpmcImputation(String agresso, MultipartFile file);
 
     List<ImputationComparatorDTO> compareAppAndTbp(AppTbpRequestBodyDTO appTbpRequest);
 

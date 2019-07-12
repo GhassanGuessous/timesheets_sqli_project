@@ -30,6 +30,6 @@
     <include file="config/liquibase/changelog/20190321141220_add_id_TBP_to_entity_team.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190321141220_add_project_type_to_entity_Team.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190321141220_add_project_type_to_entity_Team_constraint.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190321141230_rename_column_year_imputation.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190321141231_create_table_notification.xml" relativeToChangelogFile="false"/>
+    <!--<include file="config/liquibase/changelog/20190321141230_rename_column_year_imputation.xml" relativeToChangelogFile="false"/>-->
+    <!--<include file="config/liquibase/changelog/20190321141231_create_table_notification.xml" relativeToChangelogFile="false"/>-->
 </databaseChangeLog>
