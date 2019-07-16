@@ -19,6 +19,7 @@
             "name": "Name",
             "displayName": "Display Name",
             "agresso": "Agresso",
+            "idTbp": "Id TBP",
             "projectType": "Project Type",
             "deliveryCoordinator": "Delivery Coordinator",
             "collaborator": "Collaborator",

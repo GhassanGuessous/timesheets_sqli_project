@@ -120,7 +120,6 @@ public class ImputationSqliApp {
             env.getActiveProfiles());
     }
 
-
     @Bean
     public CommandLineRunner run() throws Exception {
         return args -> {
@@ -159,6 +158,4 @@ public class ImputationSqliApp {
         Correspondence correspondence= correspondenceRepository.findByCollaboratorId(collaborator.getId());
         correspondenceRepository.delete(correspondence);
     }
-
-
 }

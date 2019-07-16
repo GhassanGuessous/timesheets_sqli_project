@@ -37,7 +37,9 @@ public class DefaultTeamPopulatorService implements TeamPopulatorService {
 
     private ProjectType findProjectType(String id) {
         Long idDTO = Long.valueOf(Integer.parseInt(id));
-        return projectTypeRepository.findByNameLike(findProjectTypeByIdFromWs(idDTO).getLibelle());
+        ProjectTypeDTO projectTypeDTO = findProjectTypeByIdFromWs(idDTO);
+        ProjectType projectType = projectTypeRepository.findByNameLike(projectTypeDTO.getLibelle());
+        return projectType;
     }
 
     private ProjectTypeDTO findProjectTypeByIdFromWs(Long id) {

@@ -42,9 +42,13 @@ public class Team implements Serializable {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "team")
     private Set<Collaborator> collaborators = new HashSet<>();
+
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "teams")
     @JsonIgnore
     private Set<Project> projects = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "team")
+    private Set<AppTbpIdentifier> appTbpIdentifiers = new HashSet<>();
 
     @ManyToOne
     @JsonIgnoreProperties("teams")
@@ -154,6 +158,14 @@ public class Team implements Serializable {
     public Team projects(Set<Project> projects) {
         this.projects = projects;
         return this;
+    }
+
+    public Set<AppTbpIdentifier> getAppTbpIdentifiers() {
+        return appTbpIdentifiers;
+    }
+
+    public void setAppTbpIdentifiers(Set<AppTbpIdentifier> appTbpIdentifiers) {
+        this.appTbpIdentifiers = appTbpIdentifiers;
     }
 
     public Team addProject(Project project) {

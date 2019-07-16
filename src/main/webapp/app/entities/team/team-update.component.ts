@@ -10,6 +10,7 @@ import { IDeliveryCoordinator } from 'app/shared/model/delivery-coordinator.mode
 import { DeliveryCoordinatorService } from 'app/entities/delivery-coordinator';
 import { IProject } from 'app/shared/model/project.model';
 import { ProjectService } from 'app/entities/project';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
     selector: 'jhi-team-update',
@@ -18,23 +19,29 @@ import { ProjectService } from 'app/entities/project';
 export class TeamUpdateComponent implements OnInit {
     team: ITeam;
     isSaving: boolean;
-
     deliverycoordinators: IDeliveryCoordinator[];
-
     projects: IProject[];
+
+    public editForm: FormGroup;
+    public appTbpIdentifiersList: FormArray;
 
     constructor(
         protected jhiAlertService: JhiAlertService,
         protected teamService: TeamService,
         protected deliveryCoordinatorService: DeliveryCoordinatorService,
         protected projectService: ProjectService,
-        protected activatedRoute: ActivatedRoute
+        protected activatedRoute: ActivatedRoute,
+        private formBuilder: FormBuilder
     ) {}
 
     ngOnInit() {
+        this.initAppTbpIdentifiersForm([this.createAppTbpIdentifier()]);
         this.isSaving = false;
         this.activatedRoute.data.subscribe(({ team }) => {
             this.team = team;
+            if (this.team.id !== undefined) {
+                this.fillAppTbpIdentifiersFormGroup();
+            }
         });
         this.deliveryCoordinatorService
             .query({ filter: 'team-is-null' })
@@ -70,13 +77,63 @@ export class TeamUpdateComponent implements OnInit {
             .subscribe((res: IProject[]) => (this.projects = res), (res: HttpErrorResponse) => this.onError(res.message));
     }
 
+    private fillAppTbpIdentifiersFormGroup() {
+        if (this.team.appTbpIdentifiers.length !== 0) {
+            this.initMultipleAppTbpIdentifiersForm(this.team.appTbpIdentifiers.length);
+        }
+        this.fromTeamToForm();
+    }
+
+    initMultipleAppTbpIdentifiersForm(numberOfIdentifiers: number) {
+        const identifiersFormGroup = this.createMultipleAppTbpIdentifiers(numberOfIdentifiers);
+        this.initAppTbpIdentifiersForm(identifiersFormGroup);
+    }
+
+    private createMultipleAppTbpIdentifiers(numberOfIdentifiers: number) {
+        const identifiersFormGroup = [];
+        for (let i = 0; i < numberOfIdentifiers; i++) {
+            identifiersFormGroup.push(this.createAppTbpIdentifier());
+        }
+        return identifiersFormGroup;
+    }
+
+    initAppTbpIdentifiersForm(formGroupArray) {
+        this.editForm = this.formBuilder.group({
+            id: [''],
+            name: [''],
+            displayName: [''],
+            deliveryCoordinator: [''],
+            appTbpIdentifiers: this.formBuilder.array(formGroupArray)
+        });
+
+        this.appTbpIdentifiersList = this.editForm.get('appTbpIdentifiers') as FormArray;
+    }
+
+    private fromTeamToForm() {
+        this.editForm.setValue({
+            id: this.team.id,
+            name: this.team.name,
+            displayName: this.team.displayName,
+            deliveryCoordinator: this.team.deliveryCoordinator,
+            appTbpIdentifiers:
+                this.team.appTbpIdentifiers === undefined
+                    ? this.formBuilder.array([this.createAppTbpIdentifier()]).value
+                    : this.formBuilder.array(this.team.appTbpIdentifiers).value
+        });
+    }
+
+    get appTbpIdentifiersFormGroup() {
+        return this.editForm.get('appTbpIdentifiers') as FormArray;
+    }
+
     previousState() {
         window.history.back();
     }
 
     save() {
+        this.team = this.editForm.value;
         this.isSaving = true;
-        if (this.team.id !== undefined) {
+        if (this.team.id) {
             this.subscribeToSaveResponse(this.teamService.update(this.team));
         } else {
             this.subscribeToSaveResponse(this.teamService.create(this.team));
@@ -104,18 +161,25 @@ export class TeamUpdateComponent implements OnInit {
         return item.id;
     }
 
-    trackProjectById(index: number, item: IProject) {
-        return item.id;
+    createAppTbpIdentifier(): FormGroup {
+        return this.formBuilder.group({
+            id: [''],
+            mission: ['', Validators.compose([Validators.required])],
+            agresso: ['', Validators.compose([Validators.required])],
+            idTbp: ['', Validators.compose([Validators.required])]
+        });
     }
 
-    getSelected(selectedVals: Array<any>, option: any) {
-        if (selectedVals) {
-            for (let i = 0; i < selectedVals.length; i++) {
-                if (option.id === selectedVals[i].id) {
-                    return selectedVals[i];
-                }
-            }
-        }
-        return option;
+    addAppTbpIdentifier() {
+        this.appTbpIdentifiersList.push(this.createAppTbpIdentifier());
+    }
+
+    removeAppTbpIdentifier(index) {
+        this.appTbpIdentifiersList.removeAt(index);
+    }
+
+    getAppTbpIdentifiersFormGroup(index): FormGroup {
+        const formGroup = this.appTbpIdentifiersList.controls[index] as FormGroup;
+        return formGroup;
     }
 }

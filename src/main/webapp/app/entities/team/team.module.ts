@@ -13,11 +13,12 @@ import {
     teamRoute,
     teamPopupRoute
 } from './';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const ENTITY_STATES = [...teamRoute, ...teamPopupRoute];
 
 @NgModule({
-    imports: [ImputationSqliSharedModule, RouterModule.forChild(ENTITY_STATES)],
+    imports: [ImputationSqliSharedModule, RouterModule.forChild(ENTITY_STATES), ReactiveFormsModule],
     declarations: [TeamComponent, TeamDetailComponent, TeamUpdateComponent, TeamDeleteDialogComponent, TeamDeletePopupComponent],
     entryComponents: [TeamComponent, TeamUpdateComponent, TeamDeleteDialogComponent, TeamDeletePopupComponent],
     providers: [{ provide: JhiLanguageService, useClass: JhiLanguageService }],

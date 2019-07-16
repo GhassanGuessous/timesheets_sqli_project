@@ -57,12 +57,12 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
 
     @Override
     public void populate() {
-        if (isDbEmpty()) {
+//        if (isDbEmpty()) {
             hitTbpWebService();
             persist();
-            composeTeams();
-            matcherService.match(correspondenceRepository.findAll(), EXCEL_FILE_PATH);
-        }
+//            composeTeams();
+//            matcherService.match(correspondenceRepository.findAll(), EXCEL_FILE_PATH);
+//        }
     }
 
     /**
@@ -77,10 +77,10 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
 
     private void hitTbpWebService() {
         try {
-            setActivities();
+//            setActivities();
             setProjectTypes();
             setTeams();
-            setCollaborators();
+//            setCollaborators();
         } catch (Exception e) {
             throw new TBPBadAuthentificationException(BAD_TBP_CREDENTIALS);
         }
@@ -95,10 +95,10 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
     }
 
     private void persist() {
-        persistActivities();
-        persistProjectTypes();
+//        persistActivities();
+//        persistProjectTypes();
         persistTeams();
-        persistCollaborators();
+//        persistCollaborators();
     }
 
     private void composeTeams() {

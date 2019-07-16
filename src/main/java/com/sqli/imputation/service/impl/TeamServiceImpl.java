@@ -1,11 +1,13 @@
 package com.sqli.imputation.service.impl;
 
+import com.sqli.imputation.service.AppTbpIdentifierService;
 import com.sqli.imputation.service.TeamService;
 import com.sqli.imputation.domain.Team;
 import com.sqli.imputation.repository.TeamRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,9 @@ public class TeamServiceImpl implements TeamService {
 
     private final TeamRepository teamRepository;
 
+    @Autowired
+    private AppTbpIdentifierService appTbpIdentifierService;
+
     public TeamServiceImpl(TeamRepository teamRepository) {
         this.teamRepository = teamRepository;
     }
@@ -38,6 +43,10 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Team save(Team team) {
         log.debug("Request to save Team : {}", team);
+        team.getAppTbpIdentifiers().forEach(appTbpIdentifier -> {
+            appTbpIdentifier.setTeam(team);
+            appTbpIdentifierService.save(appTbpIdentifier);
+        });
         return teamRepository.save(team);
     }
 
