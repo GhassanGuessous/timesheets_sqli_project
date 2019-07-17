@@ -82,6 +82,8 @@ public class ImputationServiceImpl implements ImputationService {
     private JiraStatisticsService jiraStatisticsService;
     @Autowired
     private CollaboratorService collaboratorService;
+    @Autowired
+    private AppTbpIdentifierService appTbpIdentifierService;
 
     public ImputationServiceImpl(ImputationRepository imputationRepository) {
         this.imputationRepository = imputationRepository;
@@ -240,23 +242,23 @@ public class ImputationServiceImpl implements ImputationService {
     @Override
     public List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
         List<Imputation> imputations = new ArrayList<>();
-        Team team = teamRepository.findByIdTbpLike(tbpRequestBodyDTO.getIdTbp());
+//        Team team = appTbpIdentifierService.findByIdTbp(tbpRequestBodyDTO.getIdTbp()).getTeam();
         List<TbpRequestBodyDTO> requestBodies = tbpComposerService.divideTbpPeriod(tbpRequestBodyDTO);
         requestBodies.forEach(requestBody -> {
-            getTbpImputationByPeriod(imputations, team, requestBody);
+            getTbpImputationByPeriod(imputations, tbpRequestBodyDTO.getIdTbp(), requestBody);
         });
         return imputations;
     }
 
-    private void getTbpImputationByPeriod(List<Imputation> imputations, Team team, TbpRequestBodyDTO requestBody) {
+    private void getTbpImputationByPeriod(List<Imputation> imputations, String idTbp, TbpRequestBodyDTO requestBody) {
         try {
             getTbpImputationFromWS(imputations, requestBody);
         } catch (HttpClientErrorException e) {
             throwTbpErrors(e.getStatusCode().value());
             ImputationRequestDTO imputationRequestDTO = new ImputationRequestDTO(
-                team.getAgresso(), DateUtil.getMonth(requestBody.getStartDate()), DateUtil.getYear(requestBody.getStartDate()), Constants.TBP_IMPUTATION_TYPE
+                idTbp, DateUtil.getMonth(requestBody.getStartDate()), DateUtil.getYear(requestBody.getStartDate()), Constants.TBP_IMPUTATION_TYPE
             );
-            getImputationFromDB(imputations, imputationRequestDTO);
+            getTbpImputationFromDB(imputations, imputationRequestDTO);
         }
     }
 
@@ -282,6 +284,11 @@ public class ImputationServiceImpl implements ImputationService {
         imputationOptional.ifPresent(imputations::add);
     }
 
+    private void getTbpImputationFromDB(List<Imputation> imputations, ImputationRequestDTO imputationRequestDTO) {
+        Optional<Imputation> imputationOptional = findByTeamTbp(imputationRequestDTO);
+        imputationOptional.ifPresent(imputations::add);
+    }
+
     /**
      * Get PPMC imputations from Excel file.
      *
@@ -290,7 +297,7 @@ public class ImputationServiceImpl implements ImputationService {
      */
     @Override
     public Optional<Imputation> getPpmcImputation(String agresso, MultipartFile file) {
-        Team team = teamRepository.findByAgressoLike(agresso);
+        Team team = appTbpIdentifierService.findByAgresso(agresso).getTeam();
         Optional<Imputation> ppmcImputation = ppmcImputationConverterService.getPpmcImputationFromExcelFile(file, team);
         if (ppmcImputation.isPresent()) {
             update(ppmcImputation.get());
@@ -465,6 +472,15 @@ public class ImputationServiceImpl implements ImputationService {
     @Override
     public Optional<Imputation> findByTeam(ImputationRequestDTO imputationRequestDTO) {
         Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByImputationAndTeam(imputationRequestDTO);
+        if (!monthlyImputations.isEmpty()) {
+            return createImputation(imputationRequestDTO, monthlyImputations);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Imputation> findByTeamTbp(ImputationRequestDTO imputationRequestDTO) {
+        Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByImputationAndTeamTbp(imputationRequestDTO);
         if (!monthlyImputations.isEmpty()) {
             return createImputation(imputationRequestDTO, monthlyImputations);
         }

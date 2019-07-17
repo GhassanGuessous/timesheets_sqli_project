@@ -141,7 +141,9 @@
             "edit": "Edit",
             "open": "Open",
             "save": "Save",
-            "view": "View"
+            "view": "View",
+            "removeAppTbpIdentifier": "Remove",
+            "addAppTbpIdentifier": "Add"
         },
         "detail": {
             "field": "Field",

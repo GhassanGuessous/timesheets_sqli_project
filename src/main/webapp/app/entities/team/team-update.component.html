@@ -37,7 +37,7 @@
 
                 <div formArrayName="appTbpIdentifiers" class="row">
                     <div class="col-6" *ngFor="let identifier of appTbpIdentifiersFormGroup.controls; let i = index;">
-                        <div class="card" style="margin-bottom: 20px;">
+                        <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">APP-TBP Identifier {{i+1}}</h5>
                                 <div [formGroupName]="i">
@@ -76,7 +76,7 @@
                                     <div class="form-group col-12 text-right">
                                         <button class="btn btn-danger" type="button"
                                                 (click)="removeAppTbpIdentifier(i)">
-                                            Remove
+                                            <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.removeAppTbpIdentifier">Remove</span>
                                         </button>
                                     </div>
                                 </div>
@@ -85,7 +85,9 @@
                     </div>
                 </div>
 
-                <button class="btn btn-primary m-1" type="button" (click)="addAppTbpIdentifier()">Add</button>
+                <button class="btn btn-primary m-1" type="button" (click)="addAppTbpIdentifier()">
+                    <fa-icon [icon]="'plus'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.addAppTbpIdentifier">Add</span>
+                </button>
             </div>
             <div>
                 <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">

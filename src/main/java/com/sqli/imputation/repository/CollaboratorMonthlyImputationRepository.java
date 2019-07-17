@@ -16,15 +16,28 @@ import java.util.Set;
 public interface CollaboratorMonthlyImputationRepository extends JpaRepository<CollaboratorMonthlyImputation, Long> {
 
     @Query(value =
-        "SELECT m from CollaboratorMonthlyImputation m, Collaborator c " +
+        "SELECT m from CollaboratorMonthlyImputation m, Collaborator c, AppTbpIdentifier i " +
             "WHERE m.collaborator.id = c.id " +
-            "AND m.collaborator.team.agresso LIKE :agresso " +
+            "AND c.team.id = i.team.id " +
+            "AND i.agresso LIKE :agresso " +
             "AND m.imputation.imputationType.name LIKE :type " +
             "AND m.imputation.year = :year " +
             "AND m.imputation.month = :month " +
             "ORDER BY m.total ASC"
     )
     Set<CollaboratorMonthlyImputation> findByImputationAndTeam(@Param("agresso") String agresso, @Param("month") int month, @Param("year") int year, @Param("type") String imputationType);
+
+    @Query(value =
+        "SELECT m from CollaboratorMonthlyImputation m, Collaborator c, AppTbpIdentifier i " +
+            "WHERE m.collaborator.id = c.id " +
+            "AND c.team.id = i.team.id " +
+            "AND i.idTbp LIKE :idTbp " +
+            "AND m.imputation.imputationType.name LIKE :type " +
+            "AND m.imputation.year = :year " +
+            "AND m.imputation.month = :month " +
+            "ORDER BY m.total ASC"
+    )
+    Set<CollaboratorMonthlyImputation> findByImputationAndTeamTbp(@Param("idTbp") String idTbp, @Param("month") int month, @Param("year") int year, @Param("type") String imputationType);
 
     @Query(value =
         "SELECT m from CollaboratorMonthlyImputation m " +

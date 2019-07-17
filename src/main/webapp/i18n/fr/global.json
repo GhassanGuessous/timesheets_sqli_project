@@ -141,7 +141,9 @@
             "delete": "Supprimer",
             "open": "Ouvrir",
             "save": "Sauvegarder",
-            "view": "Voir"
+            "view": "Voir",
+            "removeAppTbpIdentifier": "Remove",
+            "addAppTbpIdentifier": "Add"
         },
         "detail": {
             "field": "Champs",

@@ -94,6 +94,11 @@ public class CollaboratorMonthlyImputationServiceImpl implements CollaboratorMon
     }
 
     @Override
+    public Set<CollaboratorMonthlyImputation> findByImputationAndTeamTbp(ImputationRequestDTO imputationRequestDTO) {
+        return collaboratorMonthlyImputationRepository.findByImputationAndTeamTbp(imputationRequestDTO.getAgresso(), imputationRequestDTO.getMonth(), imputationRequestDTO.getYear(), imputationRequestDTO.getType());
+    }
+
+    @Override
     public Set<CollaboratorMonthlyImputation> findByImputationParams(Imputation imputation) {
         return collaboratorMonthlyImputationRepository.findByImputationParams(imputation.getMonth(),imputation.getYear(),imputation.getImputationType().getName());
     }

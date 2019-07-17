@@ -16,4 +16,14 @@ public class AppTbpIdentifierServiceImp implements AppTbpIdentifierService {
     public AppTbpIdentifier save(AppTbpIdentifier appTbpIdentifier) {
         return appTbpIdentifierRepository.save(appTbpIdentifier);
     }
+
+    @Override
+    public AppTbpIdentifier findByAgresso(String agresso) {
+        return appTbpIdentifierRepository.findByAgresso(agresso);
+    }
+
+    @Override
+    public AppTbpIdentifier findByIdTbp(String idTbp) {
+        return appTbpIdentifierRepository.findByIdTbp(idTbp);
+    }
 }

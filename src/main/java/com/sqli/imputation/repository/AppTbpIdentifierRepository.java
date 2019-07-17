@@ -11,4 +11,8 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unused")
 @Repository
 public interface AppTbpIdentifierRepository extends JpaRepository<AppTbpIdentifier, Long> {
+
+    AppTbpIdentifier findByAgresso(String agresso);
+
+    AppTbpIdentifier findByIdTbp(String idTbp);
 }

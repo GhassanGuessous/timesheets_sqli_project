@@ -8,4 +8,8 @@ import com.sqli.imputation.domain.AppTbpIdentifier;
 public interface AppTbpIdentifierService {
 
     AppTbpIdentifier save(AppTbpIdentifier appTbpIdentifier);
+
+    AppTbpIdentifier findByAgresso(String agresso);
+
+    AppTbpIdentifier findByIdTbp(String idTbp);
 }

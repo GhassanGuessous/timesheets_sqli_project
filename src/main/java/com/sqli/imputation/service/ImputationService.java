@@ -74,6 +74,8 @@ public interface ImputationService {
 
     Optional<Imputation> findByTeam(ImputationRequestDTO imputationRequestDTO);
 
+    Optional<Imputation> findByTeamTbp(ImputationRequestDTO imputationRequestDTO);
+
     List<ImputationComparatorDTO> getComparisonFromDB(AppRequestDTO appRequestDTO, String imputationType);
 
     List<ImputationComparatorAdvancedDTO> getAdvancedComparisonFromDB(AppRequestDTO appRequestDTO, String imputationType);
