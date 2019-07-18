@@ -8,8 +8,6 @@ import { ITeam } from 'app/shared/model/team.model';
 import { TeamService } from './team.service';
 import { IDeliveryCoordinator } from 'app/shared/model/delivery-coordinator.model';
 import { DeliveryCoordinatorService } from 'app/entities/delivery-coordinator';
-import { IProject } from 'app/shared/model/project.model';
-import { ProjectService } from 'app/entities/project';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -20,7 +18,6 @@ export class TeamUpdateComponent implements OnInit {
     team: ITeam;
     isSaving: boolean;
     deliverycoordinators: IDeliveryCoordinator[];
-    projects: IProject[];
 
     public editForm: FormGroup;
     public appTbpIdentifiersList: FormArray;
@@ -29,7 +26,6 @@ export class TeamUpdateComponent implements OnInit {
         protected jhiAlertService: JhiAlertService,
         protected teamService: TeamService,
         protected deliveryCoordinatorService: DeliveryCoordinatorService,
-        protected projectService: ProjectService,
         protected activatedRoute: ActivatedRoute,
         private formBuilder: FormBuilder
     ) {}
@@ -68,13 +64,6 @@ export class TeamUpdateComponent implements OnInit {
                 },
                 (res: HttpErrorResponse) => this.onError(res.message)
             );
-        this.projectService
-            .query()
-            .pipe(
-                filter((mayBeOk: HttpResponse<IProject[]>) => mayBeOk.ok),
-                map((response: HttpResponse<IProject[]>) => response.body)
-            )
-            .subscribe((res: IProject[]) => (this.projects = res), (res: HttpErrorResponse) => this.onError(res.message));
     }
 
     private fillAppTbpIdentifiersFormGroup() {

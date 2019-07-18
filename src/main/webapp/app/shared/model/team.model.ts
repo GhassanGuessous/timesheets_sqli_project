@@ -1,6 +1,5 @@
 import { IDeliveryCoordinator } from 'app/shared/model/delivery-coordinator.model';
 import { ICollaborator } from 'app/shared/model/collaborator.model';
-import { IProject } from 'app/shared/model/project.model';
 import { IProjectType } from 'app/shared/model/project-type.model';
 import { IAppTbpIdentifiers } from 'app/shared/model/app-tbp-identifiers.model';
 
@@ -12,7 +11,6 @@ export interface ITeam {
     projectType?: IProjectType;
     deliveryCoordinator?: IDeliveryCoordinator;
     collaborators?: ICollaborator[];
-    projects?: IProject[];
     idTbp?: string;
     appTbpIdentifiers?: IAppTbpIdentifiers[];
 }
@@ -24,7 +22,6 @@ export class Team implements ITeam {
         public displayName?: string,
         public deliveryCoordinator?: IDeliveryCoordinator,
         public collaborators?: ICollaborator[],
-        public projects?: IProject[],
         public projectType?: IProjectType,
         public idTbp?: string,
         public appTbpIdentifiers?: IAppTbpIdentifiers[]

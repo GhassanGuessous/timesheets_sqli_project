@@ -17,10 +17,6 @@ import { RouterModule } from '@angular/router';
                 loadChildren: './team/team.module#ImputationSqliTeamModule'
             },
             {
-                path: 'project',
-                loadChildren: './project/project.module#ImputationSqliProjectModule'
-            },
-            {
                 path: 'project-type',
                 loadChildren: './project-type/project-type.module#ImputationSqliProjectTypeModule'
             },

@@ -43,10 +43,6 @@ public class Team implements Serializable {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "team")
     private Set<Collaborator> collaborators = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "teams")
-    @JsonIgnore
-    private Set<Project> projects = new HashSet<>();
-
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "team")
     private Set<AppTbpIdentifier> appTbpIdentifiers = new HashSet<>();
 
@@ -127,10 +123,6 @@ public class Team implements Serializable {
         this.collaborators = collaborators;
     }
 
-    public Set<Project> getProjects() {
-        return projects;
-    }
-
     public String getAgresso() {
         return agresso;
     }
@@ -155,33 +147,12 @@ public class Team implements Serializable {
         this.projectType = projectType;
     }
 
-    public Team projects(Set<Project> projects) {
-        this.projects = projects;
-        return this;
-    }
-
     public Set<AppTbpIdentifier> getAppTbpIdentifiers() {
         return appTbpIdentifiers;
     }
 
     public void setAppTbpIdentifiers(Set<AppTbpIdentifier> appTbpIdentifiers) {
         this.appTbpIdentifiers = appTbpIdentifiers;
-    }
-
-    public Team addProject(Project project) {
-        this.projects.add(project);
-        project.getTeams().add(this);
-        return this;
-    }
-
-    public Team removeProject(Project project) {
-        this.projects.remove(project);
-        project.getTeams().remove(this);
-        return this;
-    }
-
-    public void setProjects(Set<Project> projects) {
-        this.projects = projects;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
@@ -215,7 +186,6 @@ public class Team implements Serializable {
             ", idTbp='" + idTbp + '\'' +
             ", deliveryCoordinator=" + deliveryCoordinator +
             ", collaborators=" + collaborators +
-            ", projects=" + projects +
             ", projectType=" + projectType +
             '}';
     }
