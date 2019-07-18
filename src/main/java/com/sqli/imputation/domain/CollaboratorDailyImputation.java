@@ -12,7 +12,7 @@ import java.util.Objects;
  * A CollaboratorDailyImputation.
  */
 @Entity
-@Table(name = "collaborator_daily_imputation")
+@Table(name = "daily_imputation")
 public class CollaboratorDailyImputation implements Serializable {
 
     private static final long serialVersionUID = 1L;
