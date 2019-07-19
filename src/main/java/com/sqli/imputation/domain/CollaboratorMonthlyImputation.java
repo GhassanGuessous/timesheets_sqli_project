@@ -36,7 +36,7 @@ public class CollaboratorMonthlyImputation implements Serializable {
 
     @OneToMany(mappedBy = "collaboratorMonthlyImputation")
     private Set<CollaboratorDailyImputation> dailyImputations = new HashSet<>();
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
     public Long getId() {
         return id;
     }
@@ -108,7 +108,6 @@ public class CollaboratorMonthlyImputation implements Serializable {
     public void setDailyImputations(Set<CollaboratorDailyImputation> collaboratorDailyImputations) {
         this.dailyImputations = collaboratorDailyImputations;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

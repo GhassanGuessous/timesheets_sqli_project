@@ -25,7 +25,7 @@ public class Activity implements Serializable {
 
     @OneToMany(mappedBy = "activity")
     private Set<Collaborator> collaborators = new HashSet<>();
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
     public Long getId() {
         return id;
     }
@@ -71,7 +71,6 @@ public class Activity implements Serializable {
     public void setCollaborators(Set<Collaborator> collaborators) {
         this.collaborators = collaborators;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

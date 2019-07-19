@@ -18,6 +18,7 @@
             },
             "name": "Nom",
             "displayName": "Nom court",
+            "mission": "Mission",
             "agresso": "Agresso",
             "idTbp": "Id TBP",
             "projectType": "Type du projet",

@@ -10,15 +10,14 @@
                 </th>
                 <th><span jhiTranslate="imputationSqliApp.team.name">Name</span>
                 </th>
-                <th><span jhiTranslate="imputationSqliApp.team.displayName">Display Name</span>
+                <th><span jhiTranslate="imputationSqliApp.team.mission">Mission</span>
                 </th>
                 <th><span jhiTranslate="imputationSqliApp.team.agresso">Agresso</span>
                 </th>
+                <th><span jhiTranslate="imputationSqliApp.team.idTbp">Id TBP</span>
+                </th>
                 <th><span jhiTranslate="imputationSqliApp.team.projectType">Project Type</span>
                 </th>
-                <!--<th jhiSortBy="deliveryCoordinator.id"><span jhiTranslate="imputationSqliApp.team.deliveryCoordinator">Delivery Coordinator</span>-->
-                <!--<fa-icon [icon]="'sort'"></fa-icon>-->
-                <!--</th>-->
                 <th></th>
             </tr>
             </thead>
@@ -26,19 +25,12 @@
             <tr>
                 <td><a [routerLink]="['/team', myTeam.id, 'view' ]">{{myTeam.id}}</a></td>
                 <td>{{myTeam.name}}</td>
-                <td>{{myTeam.agresso}}</td>
+                <td><span *ngFor="let identifier of myTeam.appTbpIdentifiers">{{identifier.mission}}<br/></span></td>
+                <td><span *ngFor="let identifier of myTeam.appTbpIdentifiers">{{identifier.agresso}}<br/></span></td>
+                <td><span *ngFor="let identifier of myTeam.appTbpIdentifiers">{{identifier.idTbp}}<br/></span></td>
                 <td>
-                    <div *ngIf="myTeam.projectType">
-                        <a
-                            [routerLink]="['../project-type', myTeam.projectType?.id, 'view' ]">{{myTeam.projectType?.name}}</a>
-                    </div>
+                    <span *ngIf="myTeam.projectType">{{myTeam.projectType?.name}}</span>
                 </td>
-                <!--<td>-->
-                <!--<div *ngIf="myTeam.deliveryCoordinator">-->
-                <!--&lt;!&ndash;<a [routerLink]="['/admin/user-management', myTeam.deliveryCoordinator?.login, 'view' ]">{{myTeam.deliveryCoordinator?.firstName}} {{myTeam.deliveryCoordinator?.lastName}}</a>&ndash;&gt;-->
-                <!--<a routerLink="/admin/user-management/{{myTeam.deliveryCoordinator?.login}}/view">{{myTeam.deliveryCoordinator?.firstName}} {{myTeam.deliveryCoordinator?.lastName}}</a>-->
-                <!--</div>-->
-                <!--</td>-->
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit" [routerLink]="['/team', myTeam.id, 'view' ]"
