@@ -23,6 +23,10 @@ export class ProjectTypeService {
         return this.http.put<IProjectType>(this.resourceUrl, projectType, { observe: 'response' });
     }
 
+    findAll(): Observable<EntityArrayResponseType> {
+        return this.http.get<IProjectType[]>(this.resourceUrl, { observe: 'response' });
+    }
+
     find(id: number): Observable<EntityResponseType> {
         return this.http.get<IProjectType>(`${this.resourceUrl}/${id}`, { observe: 'response' });
     }

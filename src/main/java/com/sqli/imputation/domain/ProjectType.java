@@ -23,7 +23,6 @@ public class ProjectType implements Serializable {
 
     @Column(name = "name")
     private String name;
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     @OneToMany(mappedBy = "projectType")
     private Set<Team> teams = new HashSet<>();
@@ -56,7 +55,6 @@ public class ProjectType implements Serializable {
     public void setTeams(Set<Team> teams) {
         this.teams = teams;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

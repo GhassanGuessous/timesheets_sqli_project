@@ -34,6 +34,16 @@
                         </option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="imputationSqliApp.team.projectType"
+                           for="field_projectType">Project Type</label>
+                    <select class="form-control" id="field_projectType" formControlName="projectType">
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="projectType.id == team.projectType?.id ? team.projectType : projectType"
+                                *ngFor="let projectType of projectTypes">{{projectType.name}}
+                        </option>
+                    </select>
+                </div>
 
                 <div formArrayName="appTbpIdentifiers" class="row">
                     <div class="col-6" *ngFor="let identifier of appTbpIdentifiersFormGroup.controls; let i = index;">

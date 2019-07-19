@@ -18,6 +18,7 @@
             },
             "name": "Name",
             "displayName": "Display Name",
+            "mission": "Mission",
             "agresso": "Agresso",
             "idTbp": "Id TBP",
             "projectType": "Project Type",

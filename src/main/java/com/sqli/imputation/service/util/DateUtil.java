@@ -98,17 +98,17 @@ public class DateUtil {
 
     public static String getDateOfFirstDay(int year, int month) {
         StringBuilder builder = new StringBuilder();
-        builder.append(year).append(DELIMITER).append(toTwoDidit(month)).append(DELIMITER).append(toTwoDidit(FIRST_DAY_OF_MONTH));
+        builder.append(year).append(DELIMITER).append(toTwoDigits(month)).append(DELIMITER).append(toTwoDigits(FIRST_DAY_OF_MONTH));
         return builder.toString();
     }
 
     public static String getDateOfLastDay(int year, int month) {
         StringBuilder builder = new StringBuilder();
-        builder.append(year).append(DELIMITER).append(toTwoDidit(month)).append(DELIMITER).append(getLastDayOfMonth(year, month));
+        builder.append(year).append(DELIMITER).append(toTwoDigits(month)).append(DELIMITER).append(getLastDayOfMonth(year, month));
         return builder.toString();
     }
 
-    public static String toTwoDidit(int number) {
+    public static String toTwoDigits(int number) {
         return String.format(TWO_DIGITS_FORMAT, number);
     }
 

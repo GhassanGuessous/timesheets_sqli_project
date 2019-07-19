@@ -255,6 +255,9 @@ public class ImputationServiceImpl implements ImputationService {
             getTbpImputationFromWS(imputations, requestBody);
         } catch (HttpClientErrorException e) {
             throwTbpErrors(e.getStatusCode().value());
+            //I set idTbp instead of agresso (the dto has agresso and not id tbp)
+            //because we should find the team by idd tbp
+            //and because both idTbp and agresso are strings
             ImputationRequestDTO imputationRequestDTO = new ImputationRequestDTO(
                 idTbp, DateUtil.getMonth(requestBody.getStartDate()), DateUtil.getYear(requestBody.getStartDate()), Constants.TBP_IMPUTATION_TYPE
             );
@@ -372,8 +375,8 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     private Map<String, Imputation> getImputationToCompare(AppTbpRequestBodyDTO appTbpRequest) {
-        AppRequestDTO appRequestDTO = requestBodyFactory.createAppRequestDTO(appTbpRequest.getTeam().getAgresso(), appTbpRequest.getYear(), appTbpRequest.getMonth());
-        TbpRequestBodyDTO tbpRequestBodyDTO = requestBodyFactory.createTbpRequestBodyDTO(appTbpRequest.getTeam().getIdTbp(), appTbpRequest.getYear(), appTbpRequest.getMonth());
+        AppRequestDTO appRequestDTO = requestBodyFactory.createAppRequestDTO(appTbpRequest.getAppTbpIdentifier().getAgresso(), appTbpRequest.getYear(), appTbpRequest.getMonth());
+        TbpRequestBodyDTO tbpRequestBodyDTO = requestBodyFactory.createTbpRequestBodyDTO(appTbpRequest.getAppTbpIdentifier().getIdTbp(), appTbpRequest.getYear(), appTbpRequest.getMonth());
         setRequestBodyCredentials(appTbpRequest, tbpRequestBodyDTO);
 
         Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);

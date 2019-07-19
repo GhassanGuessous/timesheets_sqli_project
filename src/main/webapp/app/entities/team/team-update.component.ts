@@ -9,6 +9,8 @@ import { TeamService } from './team.service';
 import { IDeliveryCoordinator } from 'app/shared/model/delivery-coordinator.model';
 import { DeliveryCoordinatorService } from 'app/entities/delivery-coordinator';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ProjectTypeService } from 'app/entities/project-type';
+import { IProjectType } from 'app/shared/model/project-type.model';
 
 @Component({
     selector: 'jhi-team-update',
@@ -18,6 +20,7 @@ export class TeamUpdateComponent implements OnInit {
     team: ITeam;
     isSaving: boolean;
     deliverycoordinators: IDeliveryCoordinator[];
+    projectTypes: IProjectType[];
 
     public editForm: FormGroup;
     public appTbpIdentifiersList: FormArray;
@@ -27,7 +30,8 @@ export class TeamUpdateComponent implements OnInit {
         protected teamService: TeamService,
         protected deliveryCoordinatorService: DeliveryCoordinatorService,
         protected activatedRoute: ActivatedRoute,
-        private formBuilder: FormBuilder
+        private formBuilder: FormBuilder,
+        protected projectTypeService: ProjectTypeService
     ) {}
 
     ngOnInit() {
@@ -64,6 +68,9 @@ export class TeamUpdateComponent implements OnInit {
                 },
                 (res: HttpErrorResponse) => this.onError(res.message)
             );
+        this.projectTypeService.findAll().subscribe(projectTypes => {
+            this.projectTypes = projectTypes.body;
+        });
     }
 
     private fillAppTbpIdentifiersFormGroup() {
@@ -92,6 +99,7 @@ export class TeamUpdateComponent implements OnInit {
             name: [''],
             displayName: [''],
             deliveryCoordinator: [''],
+            projectType: [''],
             appTbpIdentifiers: this.formBuilder.array(formGroupArray)
         });
 
@@ -103,6 +111,7 @@ export class TeamUpdateComponent implements OnInit {
             id: this.team.id,
             name: this.team.name,
             displayName: this.team.displayName,
+            projectType: this.team.projectType,
             deliveryCoordinator: this.team.deliveryCoordinator,
             appTbpIdentifiers:
                 this.team.appTbpIdentifiers === undefined
@@ -121,6 +130,7 @@ export class TeamUpdateComponent implements OnInit {
 
     save() {
         this.team = this.editForm.value;
+        console.log(this.team);
         this.isSaving = true;
         if (this.team.id) {
             this.subscribeToSaveResponse(this.teamService.update(this.team));

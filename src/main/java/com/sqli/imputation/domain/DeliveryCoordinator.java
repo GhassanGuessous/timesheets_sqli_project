@@ -1,7 +1,5 @@
 package com.sqli.imputation.domain;
 
-
-
 import javax.persistence.*;
 
 /**

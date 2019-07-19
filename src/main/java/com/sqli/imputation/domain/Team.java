@@ -1,7 +1,5 @@
 package com.sqli.imputation.domain;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -43,14 +41,13 @@ public class Team implements Serializable {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "team")
     private Set<Collaborator> collaborators = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "team")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "team", cascade = CascadeType.REMOVE)
     private Set<AppTbpIdentifier> appTbpIdentifiers = new HashSet<>();
 
     @ManyToOne
     @JsonIgnoreProperties("teams")
     private ProjectType projectType;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -154,7 +151,6 @@ public class Team implements Serializable {
     public void setAppTbpIdentifiers(Set<AppTbpIdentifier> appTbpIdentifiers) {
         this.appTbpIdentifiers = appTbpIdentifiers;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

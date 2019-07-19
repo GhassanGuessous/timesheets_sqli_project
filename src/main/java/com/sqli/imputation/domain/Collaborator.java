@@ -1,6 +1,5 @@
 package com.sqli.imputation.domain;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -46,7 +45,6 @@ public class Collaborator implements Serializable {
     @JsonIgnoreProperties("collaborators")
     private Activity activity;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -144,7 +142,6 @@ public class Collaborator implements Serializable {
     public void setActivity(Activity activity) {
         this.activity = activity;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

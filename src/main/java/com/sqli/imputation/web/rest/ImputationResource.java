@@ -413,6 +413,7 @@ public class ImputationResource {
             return ResponseEntity.ok().body(imputationService.getPpmcProjectWorkloged(requestBodyDTO));
         }
     }
+
     @PostMapping("/imputations/issue-type-statistics")
     public ResponseEntity<List<IssueTypeStatisticsDTO>> getIssueTypeStatistics(@RequestBody TbpRequestBodyDTO requestBodyDTO) {
 

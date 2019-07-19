@@ -35,6 +35,7 @@ export class HomeComponent implements OnInit {
     loadDelcoTeam() {
         this.teamService.findByDelco(this.account.id).subscribe(data => {
             this.myTeam = data.body;
+            console.log(this.myTeam);
         });
     }
 
