@@ -2,30 +2,30 @@ package com.sqli.imputation.service.dto;
 
 public class CorrespondenceDTO {
 
-    private String id_ppmc;
-    private String id_app;
+    private String idPpmc;
+    private String idApp;
 
-    public String getId_ppmc() {
-        return id_ppmc;
+    public String getIdPpmc() {
+        return idPpmc;
     }
 
-    public void setId_ppmc(String id_ppmc) {
-        this.id_ppmc = id_ppmc;
+    public void setIdPpmc(String idPpmc) {
+        this.idPpmc = idPpmc;
     }
 
-    public String getId_app() {
-        return id_app;
+    public String getIdApp() {
+        return idApp;
     }
 
-    public void setId_app(String id_app) {
-        this.id_app = id_app;
+    public void setIdApp(String idApp) {
+        this.idApp = idApp;
     }
 
     @Override
     public String toString() {
         return "CorrespondenceDTO{" +
-            "id_ppmc='" + id_ppmc + '\'' +
-            ", id_app='" + id_app + '\'' +
+            "idPpmc='" + idPpmc + '\'' +
+            ", idApp='" + idApp + '\'' +
             '}';
     }
 }

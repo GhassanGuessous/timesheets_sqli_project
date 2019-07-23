@@ -1,4 +1,4 @@
-package com.sqli.imputation.service.dto.db_populator.projectType;
+package com.sqli.imputation.service.dto.dbpopulator.projecttype;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sqli.imputation.service.dto.ProjectTypeDTO;

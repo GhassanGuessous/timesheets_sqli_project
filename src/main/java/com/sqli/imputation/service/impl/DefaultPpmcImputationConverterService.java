@@ -185,7 +185,7 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
         ppmcIDs.forEach(ppmcId -> {
             Optional<Correspondence> correspondenceOptional = correspondenceRepository.findByIdPPMC(ppmcId).stream().findFirst();
             if(!correspondenceOptional.isPresent()){
-                log.error("NO PPMC id for "+ppmcId);
+                log.error("NO PPMC id for {}", ppmcId);
                 return;
             }else{
                 Collaborator collaborator = correspondenceOptional.get().getCollaborator();
@@ -222,7 +222,9 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
         double oldCharge = dailyImputations.stream().filter(
             daily -> daily.getDay().equals(day)
         ).findFirst().get().getCharge();
-        dailyImputations.stream().filter(daily -> daily.getDay().equals(day)).findFirst().get().setCharge(oldCharge + charge);
+        dailyImputations.stream()
+            .filter(daily -> daily.getDay().equals(day))
+            .findFirst().get().setCharge(oldCharge + charge);
     }
 
     private void setTotalOfMonthlyImputation(CollaboratorMonthlyImputation monthlyImputation) {

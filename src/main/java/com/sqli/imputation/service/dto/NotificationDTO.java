@@ -10,6 +10,7 @@ public class NotificationDTO {
     private GapDTO comparedGap;
 
     public NotificationDTO() {
+        //default constructor
     }
 
     public Collaborator getCollaborator() {

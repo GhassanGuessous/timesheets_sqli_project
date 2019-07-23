@@ -3,6 +3,8 @@ package com.sqli.imputation.service.impl;
 import com.sqli.imputation.service.AppResourceService;
 import com.sqli.imputation.service.dto.AppChargeDTO;
 import com.sqli.imputation.service.dto.AppRequestDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +16,13 @@ import java.util.List;
 @Service
 public class DefaultAppResourceService implements AppResourceService {
 
-    private final String REQUEST_ACTION = "getAllImputProjetMonth";
-    private final String APP_SOAP_ENDPOINT_URL = "https://sqli.steering-project.com/sdp/administration/imputation_cra.php";
-    private final String APP_SOAP_ACTION = "https://sqli.steering-project.com/sdp/administration/imputation_cra.php/getAllImputProjetMonth";
-    private final String NAME_SPACE = "ns1";
-    private final String NAME_SPACE_URL = "http://webservice";
+    private final Logger log = LoggerFactory.getLogger(DefaultAppImputationConverterService.class);
+
+    private static final String REQUEST_ACTION = "getAllImputProjetMonth";
+    private static final String APP_SOAP_ENDPOINT_URL = "https://sqli.steering-project.com/sdp/administration/imputation_cra.php";
+    private static final String APP_SOAP_ACTION = "https://sqli.steering-project.com/sdp/administration/imputation_cra.php/getAllImputProjetMonth";
+    private static final String NAME_SPACE = "ns1";
+    private static final String NAME_SPACE_URL = "http://webservice";
 
     @Autowired
     private AppParserService appParserService;
@@ -33,7 +37,7 @@ public class DefaultAppResourceService implements AppResourceService {
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage soapResponse = soapConnection.call(createSOAPRequest(requestBody), APP_SOAP_ENDPOINT_URL);
 
-        System.out.println("Response SOAP Message:");
+        log.debug("Response SOAP Message:");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         soapResponse.writeTo(out);
         String strMsg = new String(out.toByteArray());
@@ -52,7 +56,7 @@ public class DefaultAppResourceService implements AppResourceService {
 
         soapMessage.saveChanges();
 
-        System.out.println("Request SOAP Message:");
+        log.debug("Request SOAP Message:");
         soapMessage.writeTo(System.out);
         System.out.println("\n");
 

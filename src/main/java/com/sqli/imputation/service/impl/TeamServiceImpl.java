@@ -110,7 +110,7 @@ public class TeamServiceImpl implements TeamService {
      */
     @Override
     public Page<Team> findByKey(String key, Pageable pageable) {
-        log.debug("Request to get all Teams with key: "+ key);
+        log.debug("Request to get all Teams with key: {} ", key);
         return teamRepository.findByKey(key, pageable);
     }
 }

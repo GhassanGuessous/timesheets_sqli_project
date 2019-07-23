@@ -1,12 +1,12 @@
-package com.sqli.imputation.service.dto.db_populator.activity;
+package com.sqli.imputation.service.dto.dbpopulator.collaborator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ActivityRestResponse {
+public class CollaboratorRestResponse {
 
     private int code;
-    private ActivityResponseData data;
+    private CollaboratorResponseData data;
 
     public int getCode() {
         return code;
@@ -16,17 +16,17 @@ public class ActivityRestResponse {
         this.code = code;
     }
 
-    public ActivityResponseData getData() {
+    public CollaboratorResponseData getData() {
         return data;
     }
 
-    public void setData(ActivityResponseData data) {
+    public void setData(CollaboratorResponseData data) {
         this.data = data;
     }
 
     @Override
     public String toString() {
-        return "ActivityRestResponse{" +
+        return "CollaboratorRestResponse{" +
             "code=" + code +
             ", data=" + data +
             '}';

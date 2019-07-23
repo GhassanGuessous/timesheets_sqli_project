@@ -9,11 +9,11 @@ import com.sqli.imputation.repository.CorrespondenceRepository;
 import com.sqli.imputation.repository.TeamRepository;
 import com.sqli.imputation.service.*;
 import com.sqli.imputation.service.dto.*;
-import com.sqli.imputation.service.dto.db_populator.Team.ChargeTeamRestResponse;
-import com.sqli.imputation.service.dto.db_populator.Team.TeamRestResponse;
-import com.sqli.imputation.service.dto.db_populator.activity.ActivityRestResponse;
-import com.sqli.imputation.service.dto.db_populator.collaborator.CollaboratorRestResponse;
-import com.sqli.imputation.service.dto.db_populator.projectType.ProjectTypeRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.team.ChargeTeamRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.team.TeamRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.activity.ActivityRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.collaborator.CollaboratorRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.projecttype.ProjectTypeRestResponse;
 import com.sqli.imputation.web.rest.errors.TBPBadAuthentificationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -57,12 +57,12 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
 
     @Override
     public void populate() {
-//        if (isDbEmpty()) {
+        if (isDbEmpty()) {
             hitTbpWebService();
             persist();
-//            composeTeams();
-//            matcherService.match(correspondenceRepository.findAll(), EXCEL_FILE_PATH);
-//        }
+            composeTeams();
+            matcherService.match(correspondenceRepository.findAll(), EXCEL_FILE_PATH);
+        }
     }
 
     /**
@@ -77,10 +77,10 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
 
     private void hitTbpWebService() {
         try {
-//            setActivities();
+            setActivities();
             setProjectTypes();
             setTeams();
-//            setCollaborators();
+            setCollaborators();
         } catch (Exception e) {
             throw new TBPBadAuthentificationException(BAD_TBP_CREDENTIALS);
         }
@@ -95,10 +95,10 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
     }
 
     private void persist() {
-//        persistActivities();
-//        persistProjectTypes();
+        persistActivities();
+        persistProjectTypes();
         persistTeams();
-//        persistCollaborators();
+        persistCollaborators();
     }
 
     private void composeTeams() {
@@ -110,9 +110,7 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
     }
 
     private void loopThroughChargeTeam(Team team) {
-        chargeTeamRestResponse.getBody().getData().getCharge().forEach(chargeTeamDTO -> {
-            loopThroughCollabs(team, chargeTeamDTO);
-        });
+        chargeTeamRestResponse.getBody().getData().getCharge().forEach(chargeTeamDTO -> loopThroughCollabs(team, chargeTeamDTO));
     }
 
     private void loopThroughCollabs(Team team, ChargeTeamDTO chargeTeamDTO) {
@@ -137,11 +135,7 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
     }
 
     private boolean isNotAlreadyMemberOfTeam(Collaborator collaborator, Team team) {
-        if (collaborator.getTeam() != null
-            && collaborator.getTeam().getId().equals(team.getId())) {
-            return false;
-        }
-        return true;
+        return collaborator.getTeam() != null && collaborator.getTeam().getId().equals(team.getId());
     }
 
     private void setActivities() {
@@ -165,27 +159,19 @@ public class DefaultDbPopulatorService implements DbPopulatorService {
     }
 
     private void persistActivities() {
-        activityRestResponse.getBody().getData().getActivites().forEach(activityDTO -> {
-            activityPopulatorService.populateDatabase(activityDTO);
-        });
+        activityRestResponse.getBody().getData().getActivites().forEach(activityDTO -> activityPopulatorService.populateDatabase(activityDTO));
     }
 
     private void persistProjectTypes() {
-        projectTypeRestResponse.getBody().getData().getTypes().forEach(projectTypeDTO -> {
-            projectTypePopulatorService.populateDatabase(projectTypeDTO);
-        });
+        projectTypeRestResponse.getBody().getData().getTypes().forEach(projectTypeDTO -> projectTypePopulatorService.populateDatabase(projectTypeDTO));
     }
 
     private void persistTeams() {
-        teamRestResponse.getBody().getData().getProjets().forEach(teamDTO -> {
-            teamPopulatorService.populateDatabase(teamDTO);
-        });
+        teamRestResponse.getBody().getData().getProjets().forEach(teamDTO -> teamPopulatorService.populateDatabase(teamDTO));
     }
 
     private void persistCollaborators() {
-        collaboratorRestResponse.getBody().getData().getCollaborateurs().forEach(collaboratorDTO -> {
-            collaboratorPopulatorService.populateDatabase(collaboratorDTO);
-        });
+        collaboratorRestResponse.getBody().getData().getCollaborateurs().forEach(collaboratorDTO -> collaboratorPopulatorService.populateDatabase(collaboratorDTO));
     }
 
     public List<ProjectTypeDTO> getProjectTypes() {

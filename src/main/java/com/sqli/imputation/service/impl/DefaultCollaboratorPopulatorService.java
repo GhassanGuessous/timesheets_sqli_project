@@ -56,10 +56,10 @@ public class DefaultCollaboratorPopulatorService implements CollaboratorPopulato
         return collaborator;
     }
 
-    private void saveCorrespondenceTBP(Collaborator collaborator, String id_tbp) {
+    private void saveCorrespondenceTBP(Collaborator collaborator, String idTbp) {
         Correspondence correspondence = new Correspondence();
         correspondence.setCollaborator(collaborator);
-        correspondence.setIdTBP(id_tbp);
+        correspondence.setIdTBP(idTbp);
         correspondence.setIdAPP(getAPPIdFromEmail(collaborator.getEmail()));
         correspondenceService.save(correspondence);
     }

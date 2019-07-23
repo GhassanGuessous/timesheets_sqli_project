@@ -1,11 +1,11 @@
 package com.sqli.imputation.service;
 
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
-import com.sqli.imputation.service.dto.db_populator.Team.ChargeTeamRestResponse;
-import com.sqli.imputation.service.dto.db_populator.Team.TeamRestResponse;
-import com.sqli.imputation.service.dto.db_populator.activity.ActivityRestResponse;
-import com.sqli.imputation.service.dto.db_populator.collaborator.CollaboratorRestResponse;
-import com.sqli.imputation.service.dto.db_populator.projectType.ProjectTypeRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.team.ChargeTeamRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.team.TeamRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.activity.ActivityRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.collaborator.CollaboratorRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.projecttype.ProjectTypeRestResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface TbpResourceService {

@@ -49,10 +49,10 @@ public class DefaultCorrespondenceMatcherService implements CorrespondenceMatche
                 for (int j = row.getFirstCellNum(); j <= row.getLastCellNum(); j++) {
                     Cell cell = row.getCell(j);
                     if (j == PPMC_ID_COLUMN) {
-                        correspondenceDTO.setId_ppmc(cell.getStringCellValue());
+                        correspondenceDTO.setIdPpmc(cell.getStringCellValue());
                     }
                     if (j == APP_ID_COLUMN) {
-                        correspondenceDTO.setId_app(cell.getStringCellValue());
+                        correspondenceDTO.setIdApp(cell.getStringCellValue());
                     }
                 }
                 correspondenceDTOS.add(correspondenceDTO);
@@ -61,7 +61,7 @@ public class DefaultCorrespondenceMatcherService implements CorrespondenceMatche
             return correspondenceDTOS;
         } catch (Exception e) {
             e.printStackTrace();
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 
@@ -71,20 +71,20 @@ public class DefaultCorrespondenceMatcherService implements CorrespondenceMatche
         correspondences.forEach(correspondence -> {
             Collaborator collaborator = correspondence.getCollaborator();
             correspondenceDTOS.forEach(dto -> {
-                if(dto.getId_app() != null && isAppIdsAreEqual(collaborator, dto)){
-                    setAPP_PPMC_Ids(correspondence, dto);
+                if(dto.getIdApp() != null && isAppIdsAreEqual(collaborator, dto)){
+                    setAppPpmcIds(correspondence, dto);
                 }
             });
         });
     }
 
-    private void setAPP_PPMC_Ids(Correspondence correspondence, CorrespondenceDTO dto) {
-        correspondence.setIdAPP(dto.getId_app());
-        correspondence.setIdPPMC(dto.getId_ppmc());
+    private void setAppPpmcIds(Correspondence correspondence, CorrespondenceDTO dto) {
+        correspondence.setIdAPP(dto.getIdApp());
+        correspondence.setIdPPMC(dto.getIdPpmc());
         correspondenceRepository.save(correspondence);
     }
 
     private boolean isAppIdsAreEqual(Collaborator collaborator, CorrespondenceDTO dto) {
-        return dto.getId_app().equals(collaboratorPopulatorService.getAPPIdFromEmail(collaborator.getEmail()));
+        return dto.getIdApp().equals(collaboratorPopulatorService.getAPPIdFromEmail(collaborator.getEmail()));
     }
 }

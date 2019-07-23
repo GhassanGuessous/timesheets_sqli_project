@@ -3,10 +3,11 @@ package com.sqli.imputation.service.dto;
 public class StatisticsDTO {
 
     private String collaborator;
-    private int app_vs_ppmc;
-    private int app_vs_tbp;
+    private int appVsPpmc;
+    private int appVsTbp;
 
     public StatisticsDTO() {
+        //default constructor
     }
 
     public String getCollaborator() {
@@ -17,19 +18,19 @@ public class StatisticsDTO {
         this.collaborator = collaborator;
     }
 
-    public int getApp_vs_ppmc() {
-        return app_vs_ppmc;
+    public int getAppVsPpmc() {
+        return appVsPpmc;
     }
 
-    public void setApp_vs_ppmc(int app_vs_ppmc) {
-        this.app_vs_ppmc = app_vs_ppmc;
+    public void setAppVsPpmc(int appVsPpmc) {
+        this.appVsPpmc = appVsPpmc;
     }
 
-    public int getApp_vs_tbp() {
-        return app_vs_tbp;
+    public int getAppVsTbp() {
+        return appVsTbp;
     }
 
-    public void setApp_vs_tbp(int app_vs_tbp) {
-        this.app_vs_tbp = app_vs_tbp;
+    public void setAppVsTbp(int appVsTbp) {
+        this.appVsTbp = appVsTbp;
     }
 }

@@ -299,7 +299,7 @@ public class UserService {
     }
 
     public Page<UserDTO> findByKey(String key, Pageable pageable) {
-        log.debug("Request to get all Correspondences with key: " + key);
+        log.debug("Request to get all Correspondences with key: {}", key);
         return userRepository.findByKeyAndLoginNot(key, Constants.ANONYMOUS_USER, pageable).map(UserDTO::new);
     }
 }

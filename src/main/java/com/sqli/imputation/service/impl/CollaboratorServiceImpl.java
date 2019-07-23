@@ -76,7 +76,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     @Override
     @Transactional(readOnly = true)
     public Page<Collaborator> findByKey(String key, Pageable pageable) {
-        log.debug("Request to get all Collaborators with the key: " + key);
+        log.debug("Request to get all Collaborators with the key: {} ", key);
         return collaboratorRepository.findByKey(key, pageable);
     }
 
@@ -99,7 +99,9 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     @Override
     public Collaborator findByFirstnameAndLastname(String name) {
         List<Collaborator> collaborators = collaboratorRepository.findAll();
-        Optional<Collaborator> optionalCollaborator = collaborators.stream().filter(collaborator -> compareFullName(name, collaborator.getFirstname(), collaborator.getLastname()) || compareFullName(name, collaborator.getLastname(), collaborator.getFirstname())).findFirst();
+        Optional<Collaborator> optionalCollaborator = collaborators.stream().filter(
+            collaborator -> compareFullName(name, collaborator.getFirstname(), collaborator.getLastname()) || compareFullName(name, collaborator.getLastname(), collaborator.getFirstname())
+        ).findFirst();
         if (optionalCollaborator.isPresent()) {
             return optionalCollaborator.get();
         }

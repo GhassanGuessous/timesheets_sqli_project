@@ -8,6 +8,7 @@ public class CollabExcelImputationDTO {
     private double charge;
 
     public CollabExcelImputationDTO() {
+        //default constructer
     }
 
     public String getProjectRequestMisc() {

@@ -3,11 +3,11 @@ package com.sqli.imputation.service.impl;
 import com.sqli.imputation.config.Constants;
 import com.sqli.imputation.service.TbpResourceService;
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
-import com.sqli.imputation.service.dto.db_populator.Team.ChargeTeamRestResponse;
-import com.sqli.imputation.service.dto.db_populator.Team.TeamRestResponse;
-import com.sqli.imputation.service.dto.db_populator.activity.ActivityRestResponse;
-import com.sqli.imputation.service.dto.db_populator.collaborator.CollaboratorRestResponse;
-import com.sqli.imputation.service.dto.db_populator.projectType.ProjectTypeRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.team.ChargeTeamRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.team.TeamRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.activity.ActivityRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.collaborator.CollaboratorRestResponse;
+import com.sqli.imputation.service.dto.dbpopulator.projecttype.ProjectTypeRestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +17,9 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class DefaultTbpResourceService implements TbpResourceService {
+
+    public static final String DELCO_USERNAME = "Kraouine";
+    public static final String DELCO_PASS = "Ironm@n102019";
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
@@ -46,25 +49,25 @@ public class DefaultTbpResourceService implements TbpResourceService {
     @Override
     public ResponseEntity<ActivityRestResponse> getAllActivities() {
         return restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + ACTIVITES_URL + Constants.JSON_RESULT_FORMAT,
-            HttpMethod.GET, getTbpHttpHeaders("Kraouine", "Ironm@n102019"), ActivityRestResponse.class);
+            HttpMethod.GET, getTbpHttpHeaders(DELCO_USERNAME, DELCO_PASS), ActivityRestResponse.class);
     }
 
     @Override
     public ResponseEntity<ProjectTypeRestResponse> getAllProjectTypes() {
         return restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + PROJETS_TYPES_URL + Constants.JSON_RESULT_FORMAT,
-            HttpMethod.GET, getTbpHttpHeaders("Kraouine", "Ironm@n102019"), ProjectTypeRestResponse.class);
+            HttpMethod.GET, getTbpHttpHeaders(DELCO_USERNAME, DELCO_PASS), ProjectTypeRestResponse.class);
     }
 
     @Override
     public ResponseEntity<TeamRestResponse> getAllTeams() {
         return restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + PROJETS_URL + Constants.JSON_RESULT_FORMAT,
-            HttpMethod.GET, getTbpHttpHeaders("Kraouine", "Ironm@n102019"), TeamRestResponse.class);
+            HttpMethod.GET, getTbpHttpHeaders(DELCO_USERNAME, DELCO_PASS), TeamRestResponse.class);
     }
 
     @Override
     public ResponseEntity<CollaboratorRestResponse> getAllCollaborators() {
         return  restTemplate.exchange(Constants.TBP_URL_WEB_SERVICE + COLLABORATEURS_URL + Constants.JSON_RESULT_FORMAT,
-            HttpMethod.GET, getTbpHttpHeaders("Kraouine", "Ironm@n102019"), CollaboratorRestResponse.class);
+            HttpMethod.GET, getTbpHttpHeaders(DELCO_USERNAME, DELCO_PASS), CollaboratorRestResponse.class);
     }
 
     @Override

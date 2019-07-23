@@ -87,7 +87,7 @@ public class CorrespondenceServiceImpl implements CorrespondenceService {
      */
     @Override
     public Page<Correspondence> findByKey(String key, Pageable pageable) {
-        log.debug("Request to get all Correspondences with key: " + key);
+        log.debug("Request to get all Correspondences with key: {}", key);
         return correspondenceRepository.findBykey(key, pageable);
     }
 }

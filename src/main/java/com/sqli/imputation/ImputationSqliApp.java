@@ -39,6 +39,8 @@ import java.util.List;
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
 public class ImputationSqliApp {
 
+    private static final Logger log = LoggerFactory.getLogger(ImputationSqliApp.class);
+
     @Autowired
     DefaultDbPopulatorService defaultDbPopulator;
     @Autowired
@@ -47,8 +49,6 @@ public class ImputationSqliApp {
     CorrespondenceRepository correspondenceRepository;
     @Autowired
     TeamRepository teamRepository;
-    private static final Logger log = LoggerFactory.getLogger(ImputationSqliApp.class);
-
 
     private final Environment env;
 

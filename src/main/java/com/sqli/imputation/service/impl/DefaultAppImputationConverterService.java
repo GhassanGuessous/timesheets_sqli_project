@@ -47,7 +47,7 @@ public class DefaultAppImputationConverterService implements AppImputationConver
                     fillCollaboratorMonthlyImputation(monthlyImputation, appChargeDTO);
                     imputationConverterUtilService.addMonthlyImputationToImputation(imputation, monthlyImputation);
                 } catch (Exception e) {
-                    log.error("No APP login for "+appChargeDTO.getAppLogin());
+                    log.error("No APP login for {}", appChargeDTO.getAppLogin());
                     strings.add(appChargeDTO.getAppLogin());
                 }
             }

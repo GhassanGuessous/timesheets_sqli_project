@@ -80,8 +80,8 @@ public class DefaultNotificationService implements NotificationService {
 
     private void editStatistic(List<StatisticsDTO> statisticsDTOS, Notification notification) {
         StatisticsDTO statisticsDTO = findStatisticByCollab(statisticsDTOS, notification.getCollaborator());
-        if (isAppPpmcType(notification.getType())) statisticsDTO.setApp_vs_ppmc(statisticsDTO.getApp_vs_ppmc() + 1);
-        if (isAppTbpType(notification.getType())) statisticsDTO.setApp_vs_tbp(statisticsDTO.getApp_vs_tbp() + 1);
+        if (isAppPpmcType(notification.getType())) statisticsDTO.setAppVsPpmc(statisticsDTO.getAppVsPpmc() + 1);
+        if (isAppTbpType(notification.getType())) statisticsDTO.setAppVsTbp(statisticsDTO.getAppVsTbp() + 1);
         replaceStatistic(statisticsDTOS, statisticsDTO);
     }
 
@@ -93,8 +93,8 @@ public class DefaultNotificationService implements NotificationService {
     private void addStatistic(List<StatisticsDTO> statisticsDTOS, Notification notification) {
         StatisticsDTO statisticsDTO = new StatisticsDTO();
         statisticsDTO.setCollaborator(notification.getCollaborator().getFirstname() + " " + notification.getCollaborator().getLastname());
-        if (isAppPpmcType(notification.getType())) statisticsDTO.setApp_vs_ppmc(1);
-        if (isAppTbpType(notification.getType())) statisticsDTO.setApp_vs_tbp(1);
+        if (isAppPpmcType(notification.getType())) statisticsDTO.setAppVsPpmc(1);
+        if (isAppTbpType(notification.getType())) statisticsDTO.setAppVsTbp(1);
         statisticsDTOS.add(statisticsDTO);
     }
 

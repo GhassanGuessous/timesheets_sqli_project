@@ -1,12 +1,12 @@
-package com.sqli.imputation.service.dto.db_populator.projectType;
+package com.sqli.imputation.service.dto.dbpopulator.team;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProjectTypeRestResponse {
+public class ChargeTeamRestResponse {
 
     private int code;
-    private ProjectTypeResponseData data;
+    private ChargeTeamResponseData data;
 
     public int getCode() {
         return code;
@@ -16,17 +16,17 @@ public class ProjectTypeRestResponse {
         this.code = code;
     }
 
-    public ProjectTypeResponseData getData() {
+    public ChargeTeamResponseData getData() {
         return data;
     }
 
-    public void setData(ProjectTypeResponseData data) {
+    public void setData(ChargeTeamResponseData data) {
         this.data = data;
     }
 
     @Override
     public String toString() {
-        return "ProjectTypeRestResponse{" +
+        return "ChargeTeamRestResponse{" +
             "code=" + code +
             ", data=" + data +
             '}';

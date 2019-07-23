@@ -9,6 +9,7 @@ public class GapDTO {
     private List<CollaboratorDailyImputation> dailyImputations;
 
     public GapDTO() {
+        //default constructor
     }
 
     public String getImputationType() {

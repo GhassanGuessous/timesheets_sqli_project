@@ -40,6 +40,12 @@ public class ImputationResource {
 
     private final Logger log = LoggerFactory.getLogger(ImputationResource.class);
 
+    private static final String END_DATE_SHOULD_BE_GREATER_THAN_STARTED_DATE = "End date should be greater than started date";
+    private static final String ORDER_DATES = "orderdates";
+    private static final String TBP_INVALID_INPUTS = "Tbp invalid inputs";
+    private static final String TBP_INVALID_INPUTS1 = "tbp_invalid_inputs";
+    private static final String DATE_NULL = "datenull";
+    private static final String START_DATE_END_DATE_ARE_REQUIRED = "Both start date & end date are required";
     private static final String AN_EMPTY_STRING = "";
     private static final String UPLOAD_A_PPMC_FILE_MESSAGE = "upload a ppmc file";
     private static final String NEW_UPLOAD = "newUpload";
@@ -168,13 +174,13 @@ public class ImputationResource {
         if (tbpRequestBodyDTO.getIdTbp() == null) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else if (DateUtil.isNotValidDates(startDate, endDate)) {
-            throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
+            throw new BadRequestAlertException(START_DATE_END_DATE_ARE_REQUIRED, ENTITY_NAME, DATE_NULL);
         } else if (DateUtil.isDatesOrderNotValid(startDate, endDate)) {
-            throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
+            throw new BadRequestAlertException(END_DATE_SHOULD_BE_GREATER_THAN_STARTED_DATE, ENTITY_NAME, ORDER_DATES);
         } else if (DateUtil.isDifferentYears(startDate, endDate)) {
             throw new BadRequestAlertException("Different years", ENTITY_NAME, "different_years");
         } else if (isNotValidTBPCredentials(tbpRequestBodyDTO.getUsername(), tbpRequestBodyDTO.getPassword())) {
-            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
+            throw new BadRequestAlertException(TBP_INVALID_INPUTS, ENTITY_NAME, TBP_INVALID_INPUTS1);
         } else {
             List<Imputation> imputations = imputationService.getTbpImputation(tbpRequestBodyDTO);
             return ResponseEntity.ok().body(imputations);
@@ -235,11 +241,11 @@ public class ImputationResource {
         if (requestBodyDTO.getIdTbp() == null) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else if (DateUtil.isNotValidDates(startDate, endDate)) {
-            throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
+            throw new BadRequestAlertException(START_DATE_END_DATE_ARE_REQUIRED, ENTITY_NAME, DATE_NULL);
         } else if (DateUtil.isDatesOrderNotValid(startDate, endDate)) {
-            throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
+            throw new BadRequestAlertException(END_DATE_SHOULD_BE_GREATER_THAN_STARTED_DATE, ENTITY_NAME, ORDER_DATES);
         } else if (isNotValidTBPCredentials(requestBodyDTO.getUsername(), requestBodyDTO.getPassword())) {
-            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
+            throw new BadRequestAlertException(TBP_INVALID_INPUTS, ENTITY_NAME, TBP_INVALID_INPUTS1);
         } else {
             List<JiraImputationDTO> jiraImputations = imputationService.getJiraImputation(requestBodyDTO);
             return ResponseEntity.ok().body(jiraImputations);
@@ -258,7 +264,7 @@ public class ImputationResource {
         if (appTbpRequest.getTeam() == null) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else if (isNotValidTBPCredentials(appTbpRequest.getUsername(), appTbpRequest.getPassword())) {
-            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
+            throw new BadRequestAlertException(TBP_INVALID_INPUTS, ENTITY_NAME, TBP_INVALID_INPUTS1);
         } else {
             List<ImputationComparatorDTO> comparatorDTOS = imputationService.compareAppAndTbp(appTbpRequest);
             return ResponseEntity.ok().body(comparatorDTOS);
@@ -277,7 +283,7 @@ public class ImputationResource {
         if (appTbpRequest.getTeam() == null) {
             throw new BadRequestAlertException(PROJECT_IS_REQUIRED, ENTITY_NAME, PROJECT_IS_NULL);
         } else if (isNotValidTBPCredentials(appTbpRequest.getUsername(), appTbpRequest.getPassword())) {
-            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
+            throw new BadRequestAlertException(TBP_INVALID_INPUTS, ENTITY_NAME, TBP_INVALID_INPUTS1);
         } else {
             List<ImputationComparatorAdvancedDTO> comparatorDTOS = imputationService.compareAppAndTbpAdvanced(appTbpRequest);
             return ResponseEntity.ok().body(comparatorDTOS);
@@ -403,11 +409,11 @@ public class ImputationResource {
         String endDate = requestBodyDTO.getEndDate();
 
         if (DateUtil.isNotValidDates(startDate, endDate)) {
-            throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
+            throw new BadRequestAlertException(START_DATE_END_DATE_ARE_REQUIRED, ENTITY_NAME, DATE_NULL);
         } else if (DateUtil.isDatesOrderNotValid(startDate, endDate)) {
-            throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
+            throw new BadRequestAlertException(END_DATE_SHOULD_BE_GREATER_THAN_STARTED_DATE, ENTITY_NAME, ORDER_DATES);
         } else if (isNotValidTBPCredentials(requestBodyDTO.getUsername(), requestBodyDTO.getPassword())) {
-            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
+            throw new BadRequestAlertException(TBP_INVALID_INPUTS, ENTITY_NAME, TBP_INVALID_INPUTS1);
         } else {
             log.debug("request to Get Ppmc Project Workloged");
             return ResponseEntity.ok().body(imputationService.getPpmcProjectWorkloged(requestBodyDTO));
@@ -421,11 +427,11 @@ public class ImputationResource {
         String endDate = requestBodyDTO.getEndDate();
 
         if (DateUtil.isNotValidDates(startDate, endDate)) {
-            throw new BadRequestAlertException("Both start date & end date are required", ENTITY_NAME, "datenull");
+            throw new BadRequestAlertException(START_DATE_END_DATE_ARE_REQUIRED, ENTITY_NAME, DATE_NULL);
         } else if (DateUtil.isDatesOrderNotValid(startDate, endDate)) {
-            throw new BadRequestAlertException("End date should be greater than started date", ENTITY_NAME, "orderdates");
+            throw new BadRequestAlertException(END_DATE_SHOULD_BE_GREATER_THAN_STARTED_DATE, ENTITY_NAME, ORDER_DATES);
         } else if (isNotValidTBPCredentials(requestBodyDTO.getUsername(), requestBodyDTO.getPassword())) {
-            throw new BadRequestAlertException("Tbp invalid inputs", ENTITY_NAME, "tbp_invalid_inputs");
+            throw new BadRequestAlertException(TBP_INVALID_INPUTS, ENTITY_NAME, TBP_INVALID_INPUTS1);
         } else {
             log.debug("request to Get Ppmc Project Workloged");
             return ResponseEntity.ok().body(imputationService.getIssueTypeStatistics(requestBodyDTO));

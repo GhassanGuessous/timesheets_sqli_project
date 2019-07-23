@@ -45,7 +45,7 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
                 imputationConverterUtilService.setTotalOfMonthlyImputation(monthlyImputation, Double.parseDouble(collaborateurDTO.getCharge()));
                 imputationConverterUtilService.addMonthlyImputationToImputation(imputation, monthlyImputation);
             }catch (Exception e){
-                log.error("NO TBP id for "+ collaborateurDTO.toString());
+                log.error("NO TBP id for {}", collaborateurDTO);
                 collabs.add(collaborateurDTO.toString());
             }
         });

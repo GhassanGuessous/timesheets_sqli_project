@@ -1,4 +1,4 @@
-package com.sqli.imputation.service.dto.db_populator.Team;
+package com.sqli.imputation.service.dto.dbpopulator.team;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sqli.imputation.service.dto.TeamDTO;

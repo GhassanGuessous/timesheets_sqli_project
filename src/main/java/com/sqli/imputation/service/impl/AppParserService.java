@@ -13,9 +13,10 @@ import java.util.List;
 
 @Service
 public class AppParserService {
-    public static final int LOGIN_POSITION = 3;
-    public static final int DAY_POSITION = 5;
-    public static final int CHARGE_POSITION = 6;
+    private static final int LOGIN_POSITION = 3;
+    private static final int DAY_POSITION = 5;
+    private static final int CHARGE_POSITION = 6;
+    private static final String VALUE = "value";
 
     public List<AppChargeDTO> parse(String xml) {
 
@@ -23,20 +24,20 @@ public class AppParserService {
         Document document = parsing.xml().document(xml);
 
         Parser<ArrayNode> parser = parsing.arr("//return/item",
-            parsing.arr("item", parsing.obj().attribute("key").attribute("value"))
+            parsing.arr("item", parsing.obj().attribute("key").attribute(VALUE))
         ).build();
 
         ArrayNode jsonNodes = parser.apply(document);
-        return GetDtosFromArrayNode(jsonNodes);
+        return getDtosFromArrayNode(jsonNodes);
     }
 
-    private List<AppChargeDTO> GetDtosFromArrayNode(ArrayNode jsonNodes) {
+    private List<AppChargeDTO> getDtosFromArrayNode(ArrayNode jsonNodes) {
         List<AppChargeDTO> appChargeDTOS = new ArrayList<>();
         jsonNodes.forEach(item -> {
             AppChargeDTO appChargeDTO = new AppChargeDTO();
-            appChargeDTO.setAppLogin(item.get(LOGIN_POSITION).get("value").textValue());
-            appChargeDTO.setDay(Integer.parseInt(item.get(DAY_POSITION).get("value").textValue()));
-            appChargeDTO.setCharge(Double.parseDouble(item.get(CHARGE_POSITION).get("value").textValue()));
+            appChargeDTO.setAppLogin(item.get(LOGIN_POSITION).get(VALUE).textValue());
+            appChargeDTO.setDay(Integer.parseInt(item.get(DAY_POSITION).get(VALUE).textValue()));
+            appChargeDTO.setCharge(Double.parseDouble(item.get(CHARGE_POSITION).get(VALUE).textValue()));
             appChargeDTOS.add(appChargeDTO);
         });
         return appChargeDTOS;

@@ -211,9 +211,7 @@ public class ImputationServiceImpl implements ImputationService {
     public List<Imputation> getAppImputation(AppRequestDTO appRequestDTO) {
         List<Imputation> imputations = new ArrayList<>();
         List<AppRequestDTO> appRequestDTOS = appComposerService.divideAppPeriod(appRequestDTO);
-        appRequestDTOS.forEach(dto -> {
-            getAppImputationByPeriod(imputations, dto);
-        });
+        appRequestDTOS.forEach(dto -> getAppImputationByPeriod(imputations, dto));
         return imputations;
     }
 
@@ -242,11 +240,8 @@ public class ImputationServiceImpl implements ImputationService {
     @Override
     public List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
         List<Imputation> imputations = new ArrayList<>();
-//        Team team = appTbpIdentifierService.findByIdTbp(tbpRequestBodyDTO.getIdTbp()).getTeam();
         List<TbpRequestBodyDTO> requestBodies = tbpComposerService.divideTbpPeriod(tbpRequestBodyDTO);
-        requestBodies.forEach(requestBody -> {
-            getTbpImputationByPeriod(imputations, tbpRequestBodyDTO.getIdTbp(), requestBody);
-        });
+        requestBodies.forEach(requestBody -> getTbpImputationByPeriod(imputations, tbpRequestBodyDTO.getIdTbp(), requestBody));
         return imputations;
     }
 
@@ -502,14 +497,15 @@ public class ImputationServiceImpl implements ImputationService {
     public List<PpmcProjectWorklogDTO> getPpmcProjectWorkloged(TbpRequestBodyDTO requestBodyDTO) {
         List<PpmcProjectWorklogDTO> ppmcProjectWorklogDTOS = new ArrayList<>();
         try {
-            ppmcProjectWorklogDTOS = getPpmcProjectWorklogDTOS(requestBodyDTO, ppmcProjectWorklogDTOS);
+            ppmcProjectWorklogDTOS = getPpmcProjectWorklogDTOS(requestBodyDTO);
         } catch (HttpClientErrorException e) {
             throwJiraErrors(e.getStatusCode().value());
         }
         return ppmcProjectWorklogDTOS;
     }
 
-    private List<PpmcProjectWorklogDTO> getPpmcProjectWorklogDTOS(TbpRequestBodyDTO requestBodyDTO, List<PpmcProjectWorklogDTO> ppmcProjectWorklogDTOS) {
+    private List<PpmcProjectWorklogDTO> getPpmcProjectWorklogDTOS(TbpRequestBodyDTO requestBodyDTO) {
+        List<PpmcProjectWorklogDTO> ppmcProjectWorklogDTOS;
         if (requestBodyDTO.getIdTbp() == null || requestBodyDTO.getIdTbp().isEmpty()) {
             ppmcProjectWorklogDTOS = jiraStatisticsService.getPpmcProjectWorkloged(collaboratorService.findAll(), requestBodyDTO);
         }else{
@@ -522,14 +518,15 @@ public class ImputationServiceImpl implements ImputationService {
     public List<IssueTypeStatisticsDTO> getIssueTypeStatistics(TbpRequestBodyDTO requestBodyDTO) {
         List<IssueTypeStatisticsDTO> issueTypeStatisticsDTOS = new ArrayList<>();
         try {
-            issueTypeStatisticsDTOS = getIssueTypeStatisticsDTOS(requestBodyDTO, issueTypeStatisticsDTOS);
+            issueTypeStatisticsDTOS = getIssueTypeStatisticsDTOS(requestBodyDTO);
         } catch (HttpClientErrorException e) {
             throwJiraErrors(e.getStatusCode().value());
         }
         return issueTypeStatisticsDTOS;
     }
 
-    private List<IssueTypeStatisticsDTO> getIssueTypeStatisticsDTOS(TbpRequestBodyDTO requestBodyDTO, List<IssueTypeStatisticsDTO> issueTypeStatisticsDTOS) {
+    private List<IssueTypeStatisticsDTO> getIssueTypeStatisticsDTOS(TbpRequestBodyDTO requestBodyDTO) {
+        List<IssueTypeStatisticsDTO> issueTypeStatisticsDTOS;
         if (requestBodyDTO.getIdTbp() == null || requestBodyDTO.getIdTbp().isEmpty()) {
             issueTypeStatisticsDTOS = jiraStatisticsService.getIssueTypeWorkloged(collaboratorService.findAll(), requestBodyDTO);
         }else{

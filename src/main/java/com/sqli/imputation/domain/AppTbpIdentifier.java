@@ -29,9 +29,6 @@ public class AppTbpIdentifier implements Serializable {
     @JsonIgnore
     private Team team;
 
-    public AppTbpIdentifier() {
-    }
-
     public Long getId() {
         return id;
     }

@@ -9,6 +9,7 @@ public class TeamYearDTO {
     private int month;
 
     public TeamYearDTO() {
+        //default constructor
     }
 
     public Team getTeam() {
