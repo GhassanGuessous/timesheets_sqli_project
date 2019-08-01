@@ -26,7 +26,7 @@ public class ImputationType implements Serializable {
 
     @OneToMany(mappedBy = "imputationType")
     private Set<Imputation> imputations = new HashSet<>();
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
     public Long getId() {
         return id;
     }
@@ -72,7 +72,6 @@ public class ImputationType implements Serializable {
     public void setImputations(Set<Imputation> imputations) {
         this.imputations = imputations;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

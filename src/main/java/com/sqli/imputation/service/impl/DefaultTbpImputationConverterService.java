@@ -24,10 +24,11 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
     private ImputationConverterUtilService imputationConverterUtilService;
     @Autowired
     private CorrespondenceRepository correspondenceRepository;
-    List<String> strings;
+    private List<String> collabs;
+
     @Override
     public void convertChargesToImputation(List<ChargeTeamDTO> chargeTeamDTOS, Imputation imputation) {
-        strings = new ArrayList<>();
+        collabs = new ArrayList<>();
         chargeTeamDTOS.forEach(chargeTeamDTO -> fillMonthlyImputationForFachCollab(imputation, chargeTeamDTO));
         imputationConverterUtilService.sortImputations(imputation);
     }
@@ -45,7 +46,7 @@ public class DefaultTbpImputationConverterService implements TbpImputationConver
                 imputationConverterUtilService.addMonthlyImputationToImputation(imputation, monthlyImputation);
             }catch (Exception e){
                 log.error("NO TBP id for "+ collaborateurDTO.toString());
-                strings.add(collaborateurDTO.toString());
+                collabs.add(collaborateurDTO.toString());
             }
         });
     }

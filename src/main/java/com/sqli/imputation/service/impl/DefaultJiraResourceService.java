@@ -22,7 +22,7 @@ import java.util.List;
 public class DefaultJiraResourceService implements JiraResourceService {
     private final Logger log = LoggerFactory.getLogger(DefaultJiraResourceService.class);
 
-    public static final String JIRA_NESPRESSO_URL = "https://jira.nespresso.com/rest/api/2/search?jql=";
+    private static final String JIRA_NESPRESSO_URL = "https://jira.nespresso.com/rest/api/2/search?jql=";
     private static final String SPACE = " ";
 
 

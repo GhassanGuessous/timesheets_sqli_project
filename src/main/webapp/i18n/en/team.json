@@ -18,10 +18,14 @@
             },
             "name": "Name",
             "displayName": "Display Name",
+            "mission": "Mission",
             "agresso": "Agresso",
+            "idTbp": "Id TBP",
+            "identifiers": "Projects",
             "projectType": "Project Type",
             "deliveryCoordinator": "Delivery Coordinator",
             "collaborator": "Collaborator",
+            "collaborators": "Team members",
             "project": "Project"
         }
     }

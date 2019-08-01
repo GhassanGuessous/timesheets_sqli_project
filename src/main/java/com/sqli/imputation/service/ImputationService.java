@@ -60,7 +60,7 @@ public interface ImputationService {
 
     List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO);
 
-    Optional<Imputation> getPpmcImputation(MultipartFile file, String agresso);
+    Optional<Imputation> getPpmcImputation(String agresso, MultipartFile file);
 
     List<ImputationComparatorDTO> compareAppAndTbp(AppTbpRequestBodyDTO appTbpRequest);
 
@@ -73,6 +73,8 @@ public interface ImputationService {
     void sendNotifications(List<NotificationDTO> notifications);
 
     Optional<Imputation> findByTeam(ImputationRequestDTO imputationRequestDTO);
+
+    Optional<Imputation> findByTeamTbp(ImputationRequestDTO imputationRequestDTO);
 
     List<ImputationComparatorDTO> getComparisonFromDB(AppRequestDTO appRequestDTO, String imputationType);
 

@@ -38,13 +38,13 @@ public class ImputationServiceImpl implements ImputationService {
 
     private final Logger log = LoggerFactory.getLogger(ImputationServiceImpl.class);
 
-    public static final String APP = "app";
-    public static final String TBP = "tbp";
+    private static final String APP = "app";
+    private static final String TBP = "tbp";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private static final String ENTITY_NAME = "imputation";
     private static final int UNAUTHORIZED_STATUS = 401;
     private static final int UNAUTHORIZED_AUTHORITY_STATUS = 405;
-    public static final int NOT_FOUND_STATUS = 400;
+    private static final int NOT_FOUND_STATUS = 400;
     private static final int FIRST_ELEMENT_INDEX = 0;
 
     private final ImputationRepository imputationRepository;
@@ -82,6 +82,8 @@ public class ImputationServiceImpl implements ImputationService {
     private JiraStatisticsService jiraStatisticsService;
     @Autowired
     private CollaboratorService collaboratorService;
+    @Autowired
+    private AppTbpIdentifierService appTbpIdentifierService;
 
     public ImputationServiceImpl(ImputationRepository imputationRepository) {
         this.imputationRepository = imputationRepository;
@@ -240,23 +242,26 @@ public class ImputationServiceImpl implements ImputationService {
     @Override
     public List<Imputation> getTbpImputation(TbpRequestBodyDTO tbpRequestBodyDTO) {
         List<Imputation> imputations = new ArrayList<>();
-        Team team = teamRepository.findByIdTbpLike(tbpRequestBodyDTO.getIdTbp());
+//        Team team = appTbpIdentifierService.findByIdTbp(tbpRequestBodyDTO.getIdTbp()).getTeam();
         List<TbpRequestBodyDTO> requestBodies = tbpComposerService.divideTbpPeriod(tbpRequestBodyDTO);
         requestBodies.forEach(requestBody -> {
-            getTbpImputationByPeriod(imputations, team, requestBody);
+            getTbpImputationByPeriod(imputations, tbpRequestBodyDTO.getIdTbp(), requestBody);
         });
         return imputations;
     }
 
-    private void getTbpImputationByPeriod(List<Imputation> imputations, Team team, TbpRequestBodyDTO requestBody) {
+    private void getTbpImputationByPeriod(List<Imputation> imputations, String idTbp, TbpRequestBodyDTO requestBody) {
         try {
             getTbpImputationFromWS(imputations, requestBody);
         } catch (HttpClientErrorException e) {
             throwTbpErrors(e.getStatusCode().value());
+            //I set idTbp instead of agresso (the dto has agresso and not id tbp)
+            //because we should find the team by idd tbp
+            //and because both idTbp and agresso are strings
             ImputationRequestDTO imputationRequestDTO = new ImputationRequestDTO(
-                team.getAgresso(), DateUtil.getMonth(requestBody.getStartDate()), DateUtil.getYear(requestBody.getStartDate()), Constants.TBP_IMPUTATION_TYPE
+                idTbp, DateUtil.getMonth(requestBody.getStartDate()), DateUtil.getYear(requestBody.getStartDate()), Constants.TBP_IMPUTATION_TYPE
             );
-            getImputationFromDB(imputations, imputationRequestDTO);
+            getTbpImputationFromDB(imputations, imputationRequestDTO);
         }
     }
 
@@ -282,6 +287,11 @@ public class ImputationServiceImpl implements ImputationService {
         imputationOptional.ifPresent(imputations::add);
     }
 
+    private void getTbpImputationFromDB(List<Imputation> imputations, ImputationRequestDTO imputationRequestDTO) {
+        Optional<Imputation> imputationOptional = findByTeamTbp(imputationRequestDTO);
+        imputationOptional.ifPresent(imputations::add);
+    }
+
     /**
      * Get PPMC imputations from Excel file.
      *
@@ -289,8 +299,8 @@ public class ImputationServiceImpl implements ImputationService {
      * @return
      */
     @Override
-    public Optional<Imputation> getPpmcImputation(MultipartFile file, String agresso) {
-        Team team = teamRepository.findByAgressoLike(agresso);
+    public Optional<Imputation> getPpmcImputation(String agresso, MultipartFile file) {
+        Team team = appTbpIdentifierService.findByAgresso(agresso).getTeam();
         Optional<Imputation> ppmcImputation = ppmcImputationConverterService.getPpmcImputationFromExcelFile(file, team);
         if (ppmcImputation.isPresent()) {
             update(ppmcImputation.get());
@@ -364,8 +374,8 @@ public class ImputationServiceImpl implements ImputationService {
     }
 
     private Map<String, Imputation> getImputationToCompare(AppTbpRequestBodyDTO appTbpRequest) {
-        AppRequestDTO appRequestDTO = requestBodyFactory.createAppRequestDTO(appTbpRequest.getTeam().getAgresso(), appTbpRequest.getYear(), appTbpRequest.getMonth());
-        TbpRequestBodyDTO tbpRequestBodyDTO = requestBodyFactory.createTbpRequestBodyDTO(appTbpRequest.getTeam().getIdTbp(), appTbpRequest.getYear(), appTbpRequest.getMonth());
+        AppRequestDTO appRequestDTO = requestBodyFactory.createAppRequestDTO(appTbpRequest.getAppTbpIdentifier().getAgresso(), appTbpRequest.getYear(), appTbpRequest.getMonth());
+        TbpRequestBodyDTO tbpRequestBodyDTO = requestBodyFactory.createTbpRequestBodyDTO(appTbpRequest.getAppTbpIdentifier().getIdTbp(), appTbpRequest.getYear(), appTbpRequest.getMonth());
         setRequestBodyCredentials(appTbpRequest, tbpRequestBodyDTO);
 
         Imputation appImputation = getAppImputation(appRequestDTO).get(FIRST_ELEMENT_INDEX);
@@ -389,7 +399,7 @@ public class ImputationServiceImpl implements ImputationService {
      */
     @Override
     public List<ImputationComparatorDTO> compareAppPpmc(MultipartFile file, AppRequestDTO appRequestDTO) {
-        Optional<Imputation> ppmcImputation = getPpmcImputation(file, appRequestDTO.getAgresso());
+        Optional<Imputation> ppmcImputation = getPpmcImputation(appRequestDTO.getAgresso(), file);
         if (!ppmcImputation.isPresent()) {
             throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
         } else {
@@ -409,7 +419,7 @@ public class ImputationServiceImpl implements ImputationService {
      */
     @Override
     public List<ImputationComparatorAdvancedDTO> compareAppPpmcAdvanced(MultipartFile file, AppRequestDTO appRequestDTO) {
-        Optional<Imputation> ppmcImputation = getPpmcImputation(file, appRequestDTO.getAgresso());
+        Optional<Imputation> ppmcImputation = getPpmcImputation(appRequestDTO.getAgresso(), file);
         if (!ppmcImputation.isPresent()) {
             throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
         } else {
@@ -463,6 +473,15 @@ public class ImputationServiceImpl implements ImputationService {
     @Override
     public Optional<Imputation> findByTeam(ImputationRequestDTO imputationRequestDTO) {
         Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByImputationAndTeam(imputationRequestDTO);
+        if (!monthlyImputations.isEmpty()) {
+            return createImputation(imputationRequestDTO, monthlyImputations);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Imputation> findByTeamTbp(ImputationRequestDTO imputationRequestDTO) {
+        Set<CollaboratorMonthlyImputation> monthlyImputations = monthlyImputationService.findByImputationAndTeamTbp(imputationRequestDTO);
         if (!monthlyImputations.isEmpty()) {
             return createImputation(imputationRequestDTO, monthlyImputations);
         }

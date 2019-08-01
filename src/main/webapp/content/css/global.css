@@ -274,6 +274,10 @@ ui bootstrap tweaks
     margin: 10%;
 }
 
+.card {
+    margin-bottom: 20px;
+}
+
 /*body {*/
 /*background-image: url("../images/meeting.jpg");*/
 /*background-size: 100% 100%;*/

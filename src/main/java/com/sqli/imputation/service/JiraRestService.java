@@ -19,8 +19,8 @@ import java.security.cert.X509Certificate;
 public class JiraRestService {
 
     private static final String JIRA_AUTH_URL = "https://jira.nespresso.com/rest/gadget/1.0/login";
-    public static final String JIRA_LOGIN_URL_FORMAT = "?os_username=%s&os_password=%s";
-    public static final String WORKLOG_URL = "/worklog";
+    private static final String JIRA_LOGIN_URL_FORMAT = "?os_username=%s&os_password=%s";
+    private static final String WORKLOG_URL = "/worklog";
 
     @Autowired
     private RestTemplate restTemplate;

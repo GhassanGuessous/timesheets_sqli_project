@@ -19,12 +19,12 @@ import java.util.List;
 public class JiraImputationService {
 
     private final Logger log = LoggerFactory.getLogger(JiraImputationService.class);
-    public static final String JIRA_NESPRESSO_URL = "https://jira.nespresso.com/rest/api/2/search?jql=";
-    public static final String SINGLE_QUOTE = "'";
-    public static final String OPEN_PARENTHESIS = "(";
-    public static final String CLOSED_PARENTHESIS = ")";
-    public static final String COMMA = ",";
-    public static final int EMPTY_STRING_LENGTH = 0;
+    private static final String JIRA_NESPRESSO_URL = "https://jira.nespresso.com/rest/api/2/search?jql=";
+    private static final String SINGLE_QUOTE = "'";
+    private static final String OPEN_PARENTHESIS = "(";
+    private static final String CLOSED_PARENTHESIS = ")";
+    private static final String COMMA = ",";
+    private static final int EMPTY_STRING_LENGTH = 0;
     private static final String EPMTY_STRING = "";
     private static final String TIME_DELIMITER = "T";
     private static final int DATE_POSITION = 0;

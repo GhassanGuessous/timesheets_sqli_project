@@ -197,7 +197,7 @@ public class ImputationResource {
         } else if (FileExtensionUtil.isNotValidExcelExtension(extension)) {
             throw new BadRequestAlertException("File type not supported", ENTITY_NAME, "extension_support");
         } else {
-            Optional<Imputation> ppmcImputation = imputationService.getPpmcImputation(file, appRequestDTO.getAgresso());
+            Optional<Imputation> ppmcImputation = imputationService.getPpmcImputation(appRequestDTO.getAgresso(), file);
             if (!ppmcImputation.isPresent()) {
                 throw new BadRequestAlertException("Invalid PPMC file", ENTITY_NAME, "invalidPPMC");
             }

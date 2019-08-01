@@ -13,7 +13,9 @@
                            for="field_code_project_admin" jhiTranslate="imputationSqliApp.imputation.project_code">Project</label>
                     <select class="form-control" id="field_code_project_admin" name="code_project"
                             [(ngModel)]="tbpRequestBody.idTbp">
-                        <option *ngFor="let team of allTeams" [ngValue]="team.idTbp">{{team.name}}</option>
+                        <optgroup *ngFor="let team of allTeams" label="{{team.name}}">
+                            <option *ngFor="let identifier of team.appTbpIdentifiers" [ngValue]="identifier.idTbp">{{identifier.mission}}</option>
+                        </optgroup>
                     </select>
                 </div>
                 <div class="form-group tbp-import-form" *ngSwitchCase="false">
@@ -21,11 +23,13 @@
                 </div>
                 <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.start_date"
                        for="field_start_date">Start Date</label>
-                <input type="date" id="field_start_date" class="form-control" name="start" [(ngModel)]="tbpRequestBody.startDate" required/>
+                <input type="date" id="field_start_date" class="form-control" name="start"
+                       [(ngModel)]="tbpRequestBody.startDate" required/>
 
                 <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.end_date"
                        for="field_end_date">Start Date</label>
-                <input type="date" id="field_end_date" class="form-control" name="end" [(ngModel)]="tbpRequestBody.endDate" required/>
+                <input type="date" id="field_end_date" class="form-control" name="end"
+                       [(ngModel)]="tbpRequestBody.endDate" required/>
                 <div class="form-group tbp-import-form">
                     <button type="submit" id="tbp-timesheet-import-button" class="btn btn-primary float-right">
                         <span jhiTranslate="global.menu.entities.importJira">
@@ -40,44 +44,44 @@
 
     <div [ngSwitch]="isFilledImputation()">
         <div *ngSwitchCase="true">
-            <div *ngFor="let jiraWorklog of jiraWorklogs" >
-            <div class="table-responsive" *ngIf="jiraWorklog.collaboratorWorklogs.length>0" >
-                <h3>
+            <div *ngFor="let jiraWorklog of jiraWorklogs">
+                <div class="table-responsive" *ngIf="jiraWorklog.collaboratorWorklogs.length>0">
+                    <h3>
                 <span jhiTranslate="imputationSqliApp.imputation.yearMonth"
                       [translateValues]="{year:jiraWorklog.year, month: jiraWorklog.month}">Month : </span>
-                </h3>
-                <table class="table table-bordered table-hover table-sm">
-                    <thead>
-                    <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
-                        <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
-                        </th>
-                        <th jhiTranslate="imputationSqliApp.imputation.collaborator"><span>Collaborator</span>
-                        </th>
-                        <th class="text-center" jhiTranslate="imputationSqliApp.imputation.total"><span>Total</span>
-                        </th>
-                        <th class="text-center" *ngFor="let day of worklogDays.get(jiraWorklog)"
-                            [id]="day">{{day + '/' + jiraWorklog.month}}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr *ngFor="let worklog of jiraWorklog.collaboratorWorklogs">
-                        <td>{{worklog.collaborator.id == undefined ? 'External' : worklog.collaborator.id}}</td>
-                        <td [ngSwitch]="worklog.collaborator.id==undefined">
-                            <a *ngSwitchCase="false"
-                               [routerLink]="['/collaborator', worklog.collaborator.id, 'view' ]">{{worklog.collaborator.lastname + ' ' + worklog.collaborator.firstname}}</a>
-                            <a *ngSwitchCase="true">{{worklog.collaborator.firstname}}</a>
-                        </td>
-                        <td class="text-center"><b>{{getWorklogTimeSpent(worklog.totalTimeSpent)}}</b></td>
-                        <td class="text-center" *ngFor="let day of worklogDays.get(jiraWorklog)" [id]="day">
+                    </h3>
+                    <table class="table table-bordered table-hover table-sm">
+                        <thead>
+                        <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
+                            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
+                            </th>
+                            <th jhiTranslate="imputationSqliApp.imputation.collaborator"><span>Collaborator</span>
+                            </th>
+                            <th class="text-center" jhiTranslate="imputationSqliApp.imputation.total"><span>Total</span>
+                            </th>
+                            <th class="text-center" *ngFor="let day of worklogDays.get(jiraWorklog)"
+                                [id]="day">{{day + '/' + jiraWorklog.month}}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let worklog of jiraWorklog.collaboratorWorklogs">
+                            <td>{{worklog.collaborator.id == undefined ? 'External' : worklog.collaborator.id}}</td>
+                            <td [ngSwitch]="worklog.collaborator.id==undefined">
+                                <a *ngSwitchCase="false"
+                                   [routerLink]="['/collaborator', worklog.collaborator.id, 'view' ]">{{worklog.collaborator.lastname + ' ' + worklog.collaborator.firstname}}</a>
+                                <a *ngSwitchCase="true">{{worklog.collaborator.firstname}}</a>
+                            </td>
+                            <td class="text-center"><b>{{getWorklogTimeSpent(worklog.totalTimeSpent)}}</b></td>
+                            <td class="text-center" *ngFor="let day of worklogDays.get(jiraWorklog)" [id]="day">
                         <span
                             *ngFor="let dailyWorklog of worklog.jiraDailyWorklogs"
                             [ngStyle]="{color: getColor(dailyWorklog.timeSpent.totalMinutes)}"
                         >{{day == dailyWorklog.day ? getWorklogTimeSpent(dailyWorklog.timeSpent) : ''}}</span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="nothingToShow" *ngSwitchCase="false">

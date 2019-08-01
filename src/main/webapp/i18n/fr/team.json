@@ -18,10 +18,14 @@
             },
             "name": "Nom",
             "displayName": "Nom court",
+            "mission": "Mission",
             "agresso": "Agresso",
+            "idTbp": "Id TBP",
+            "identifiers": "Projets",
             "projectType": "Type du projet",
             "deliveryCoordinator": "Delivery Coordinator",
-            "collaborator": "Collaborateurr",
+            "collaborator": "Collaborateur",
+            "collaborators": "Membres d'équipe",
             "project": "Projet"
         }
     }

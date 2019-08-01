@@ -1,6 +1,5 @@
 package com.sqli.imputation.domain;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -35,7 +34,6 @@ public class Imputation implements Serializable {
     @JsonIgnoreProperties("imputations")
     private ImputationType imputationType;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -107,7 +105,6 @@ public class Imputation implements Serializable {
     public void setImputationType(ImputationType imputationType) {
         this.imputationType = imputationType;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

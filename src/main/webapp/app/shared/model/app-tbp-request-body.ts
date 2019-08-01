@@ -1,4 +1,5 @@
 import { ITeam } from 'app/shared/model/team.model';
+import { IAppTbpIdentifier } from 'app/shared/model/app-tbp-identifiers.model';
 
 export interface IAppTbpRequestBody {
     team?: ITeam;
@@ -7,6 +8,7 @@ export interface IAppTbpRequestBody {
     username?: string;
     password?: string;
     requestType?: string;
+    appTbpIdentifier?: IAppTbpIdentifier;
 }
 
 export class AppTbpRequestBody implements IAppTbpRequestBody {
@@ -16,6 +18,7 @@ export class AppTbpRequestBody implements IAppTbpRequestBody {
         public month?: number,
         public username?: string,
         public password?: string,
-        requestType?: string
+        public requestType?: string,
+        public appTbpIdentifier?: IAppTbpIdentifier
     ) {}
 }

@@ -1,5 +1,6 @@
 package com.sqli.imputation.service.dto;
 
+import com.sqli.imputation.domain.AppTbpIdentifier;
 import com.sqli.imputation.domain.Team;
 
 public class AppTbpRequestBodyDTO {
@@ -9,6 +10,7 @@ public class AppTbpRequestBodyDTO {
     private int month;
     private String username;
     private String password;
+    private AppTbpIdentifier appTbpIdentifier;
 
     public Team getTeam() {
         return team;
@@ -50,12 +52,23 @@ public class AppTbpRequestBodyDTO {
         this.password = password;
     }
 
+    public AppTbpIdentifier getAppTbpIdentifier() {
+        return appTbpIdentifier;
+    }
+
+    public void setAppTbpIdentifier(AppTbpIdentifier appTbpIdentifier) {
+        this.appTbpIdentifier = appTbpIdentifier;
+    }
+
     @Override
     public String toString() {
-        return "AppTbpRequestBody{" +
+        return "AppTbpRequestBodyDTO{" +
             "team=" + team +
             ", year=" + year +
             ", month=" + month +
+            ", username='" + username + '\'' +
+            ", password='" + password + '\'' +
+            ", appTbpIdentifier=" + appTbpIdentifier +
             '}';
     }
 }

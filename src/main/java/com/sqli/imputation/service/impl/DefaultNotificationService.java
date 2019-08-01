@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 public class DefaultNotificationService implements NotificationService {
 
     private static final String VS = " vs ";
-    public static final String APP_VS_TBP = "APP vs TBP";
-    public static final String APP_VS_PPMC = "APP vs PPMC";
-    public static final int INITIAL_FREQUENCE = 1;
+    private static final String APP_VS_TBP = "APP vs TBP";
+    private static final String APP_VS_PPMC = "APP vs PPMC";
+    private static final int INITIAL_FREQUENCE = 1;
 
     @Autowired
     private NotificationRepository notificationRepository;

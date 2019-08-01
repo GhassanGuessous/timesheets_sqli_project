@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class DefaultAppResourceService implements AppResourceService {
 
-    public static final String REQUEST_ACTION = "getAllImputProjetMonth";
+    private final String REQUEST_ACTION = "getAllImputProjetMonth";
     private final String APP_SOAP_ENDPOINT_URL = "https://sqli.steering-project.com/sdp/administration/imputation_cra.php";
     private final String APP_SOAP_ACTION = "https://sqli.steering-project.com/sdp/administration/imputation_cra.php/getAllImputProjetMonth";
     private final String NAME_SPACE = "ns1";

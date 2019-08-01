@@ -48,23 +48,27 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
     public Optional<Imputation> getPpmcImputationFromExcelFile(MultipartFile file, Team team) {
         try {
             InputStream excelFile = file.getInputStream();
-            Optional<Sheet> sheet = getWeeklyActualEffortSheet(file.getOriginalFilename(), excelFile);
-            Map<String, Integer> headerColumns = getHeaderColumns(sheet.get());
-
-            Set<String> collaboratorsPpmcIds = getCollaborators(sheet.get(), headerColumns);
-            List<CollabExcelImputationDTO> excelImputationDTOS = getExcelCollabDTOS(sheet.get(), headerColumns);
-
-            Imputation imputation = createPpmcImputation(sheet.get(), headerColumns);
-            createDailyImputationsForEachCollab(collaboratorsPpmcIds, excelImputationDTOS, imputation);
-
-            getImputationsGivenConnectedUser(imputation, team);
-            imputationConverterUtilService.sortImputations(imputation);
-
+            Imputation imputation = getImputation(file.getOriginalFilename(), excelFile, team);
             excelFile.close();
             return Optional.of(imputation);
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    private Imputation getImputation(String originalFileName, InputStream excelFile, Team team) throws IOException {
+        Optional<Sheet> sheet = getWeeklyActualEffortSheet(originalFileName, excelFile);
+        Map<String, Integer> headerColumns = getHeaderColumns(sheet.get());
+
+        Set<String> collaboratorsPpmcIds = getCollaborators(sheet.get(), headerColumns);
+        List<CollabExcelImputationDTO> excelImputationDTOS = getExcelCollabDTOS(sheet.get(), headerColumns);
+
+        Imputation imputation = createPpmcImputation(sheet.get(), headerColumns);
+        createDailyImputationsForEachCollab(collaboratorsPpmcIds, excelImputationDTOS, imputation);
+
+        getImputationsGivenConnectedUser(imputation, team);
+        imputationConverterUtilService.sortImputations(imputation);
+        return imputation;
     }
 
     private Optional<Sheet> getWeeklyActualEffortSheet(String originalFileName, InputStream excelFile) throws IOException {
@@ -228,7 +232,7 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
 
     private void getImputationsGivenConnectedUser(Imputation imputation, Team team) {
         if(SecurityUtils.isCurrentUserInRole(ROLE_ADMIN)){
-            imputation.setMonthlyImputations(getAssinedCollabsOnly(imputation.getMonthlyImputations()));
+            imputation.setMonthlyImputations(getLocalAssinedCollabsOnly(imputation.getMonthlyImputations()));
         } else {
             imputation.setMonthlyImputations(getTeamMembersOnly(imputation.getMonthlyImputations(), team));
         }
@@ -241,7 +245,7 @@ public class DefaultPpmcImputationConverterService implements PpmcImputationConv
         ).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    private Set<CollaboratorMonthlyImputation> getAssinedCollabsOnly(Set<CollaboratorMonthlyImputation> monthlyImputations) {
+    private Set<CollaboratorMonthlyImputation> getLocalAssinedCollabsOnly(Set<CollaboratorMonthlyImputation> monthlyImputations) {
         return monthlyImputations.stream().filter(monthlyImputation ->
             monthlyImputation.getCollaborator().getTeam() != null
         ).collect(Collectors.toCollection(LinkedHashSet::new));

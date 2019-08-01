@@ -50,6 +50,9 @@ public interface CollaboratorMonthlyImputationService {
 
     Set<CollaboratorMonthlyImputation> findByImputationAndTeam(ImputationRequestDTO imputationRequestDTO);
 
+    Set<CollaboratorMonthlyImputation> findByImputationAndTeamTbp(ImputationRequestDTO imputationRequestDTO);
+
+
     /**
      * save all the imputations.
      *

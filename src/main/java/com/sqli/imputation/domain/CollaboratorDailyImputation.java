@@ -1,6 +1,5 @@
 package com.sqli.imputation.domain;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -12,7 +11,7 @@ import java.util.Objects;
  * A CollaboratorDailyImputation.
  */
 @Entity
-@Table(name = "collaborator_daily_imputation")
+@Table(name = "daily_imputation")
 public class CollaboratorDailyImputation implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -31,7 +30,6 @@ public class CollaboratorDailyImputation implements Serializable {
     @JsonIgnoreProperties("dailyImputations")
     private CollaboratorMonthlyImputation collaboratorMonthlyImputation;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -78,7 +76,6 @@ public class CollaboratorDailyImputation implements Serializable {
     public void setCollaboratorMonthlyImputation(CollaboratorMonthlyImputation collaboratorMonthlyImputation) {
         this.collaboratorMonthlyImputation = collaboratorMonthlyImputation;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

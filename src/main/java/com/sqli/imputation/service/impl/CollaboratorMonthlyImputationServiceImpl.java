@@ -5,7 +5,6 @@ import com.sqli.imputation.service.CollaboratorDailyImputationService;
 import com.sqli.imputation.service.CollaboratorMonthlyImputationService;
 import com.sqli.imputation.domain.CollaboratorMonthlyImputation;
 import com.sqli.imputation.repository.CollaboratorMonthlyImputationRepository;
-import com.sqli.imputation.service.dto.AppRequestDTO;
 import com.sqli.imputation.service.dto.ImputationRequestDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,12 +89,17 @@ public class CollaboratorMonthlyImputationServiceImpl implements CollaboratorMon
 
     @Override
     public Set<CollaboratorMonthlyImputation> findByImputationAndTeam(ImputationRequestDTO imputationRequestDTO) {
-        return collaboratorMonthlyImputationRepository.findByImputationAndTeam(imputationRequestDTO.getAgresso(), imputationRequestDTO.getMonth(), imputationRequestDTO.getYear(), imputationRequestDTO.getType());
+        return collaboratorMonthlyImputationRepository.findByImputationAndTeam(imputationRequestDTO);
+    }
+
+    @Override
+    public Set<CollaboratorMonthlyImputation> findByImputationAndTeamTbp(ImputationRequestDTO imputationRequestDTO) {
+        return collaboratorMonthlyImputationRepository.findByImputationAndTeamTbp(imputationRequestDTO);
     }
 
     @Override
     public Set<CollaboratorMonthlyImputation> findByImputationParams(Imputation imputation) {
-        return collaboratorMonthlyImputationRepository.findByImputationParams(imputation.getMonth(),imputation.getYear(),imputation.getImputationType().getName());
+        return collaboratorMonthlyImputationRepository.findByImputationParams(imputation);
     }
 
     /**

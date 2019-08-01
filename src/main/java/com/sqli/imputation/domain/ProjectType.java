@@ -25,10 +25,6 @@ public class ProjectType implements Serializable {
     private String name;
 
     @OneToMany(mappedBy = "projectType")
-    private Set<Project> projects = new HashSet<>();
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-
-    @OneToMany(mappedBy = "projectType")
     private Set<Team> teams = new HashSet<>();
 
     public Long getId() {
@@ -52,10 +48,6 @@ public class ProjectType implements Serializable {
         this.name = name;
     }
 
-    public Set<Project> getProjects() {
-        return projects;
-    }
-
     public Set<Team> getTeams() {
         return teams;
     }
@@ -63,28 +55,6 @@ public class ProjectType implements Serializable {
     public void setTeams(Set<Team> teams) {
         this.teams = teams;
     }
-
-    public ProjectType projects(Set<Project> projects) {
-        this.projects = projects;
-        return this;
-    }
-
-    public ProjectType addProject(Project project) {
-        this.projects.add(project);
-        project.setProjectType(this);
-        return this;
-    }
-
-    public ProjectType removeProject(Project project) {
-        this.projects.remove(project);
-        project.setProjectType(null);
-        return this;
-    }
-
-    public void setProjects(Set<Project> projects) {
-        this.projects = projects;
-    }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {
