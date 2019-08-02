@@ -3,6 +3,7 @@ package com.sqli.imputation.service.impl;
 import com.sqli.imputation.domain.Collaborator;
 import com.sqli.imputation.service.JiraRestService;
 import com.sqli.imputation.service.JiraResourceService;
+import com.sqli.imputation.service.TbpRequestComposerService;
 import com.sqli.imputation.service.dto.TbpRequestBodyDTO;
 import com.sqli.imputation.service.dto.jira.*;
 import com.sqli.imputation.service.factory.JiraImputationFactory;
@@ -31,29 +32,28 @@ public class DefaultJiraResourceService implements JiraResourceService {
     private JiraImputationFactory jiraImputationFactory;
     @Autowired
     private JiraImputationService jiraImputationService;
+    @Autowired
+    private TbpRequestComposerService tbpComposerService;
+
     private String worklogAuthors;
     private List<Collaborator> collaborators;
 
     @Override
-    public JiraImputationDTO getJiraImputation(List<Collaborator> collaborators, TbpRequestBodyDTO requestBodyDTO) {
+    public List<JiraImputationDTO> getJiraImputations(List<Collaborator> collaborators, TbpRequestBodyDTO requestBodyDTO) {
         this.collaborators = collaborators;
         worklogAuthors = jiraImputationService.initializeWorklogAuthors(collaborators);
-        int year = DateUtil.getYear(requestBodyDTO.getStartDate());
-        int month = DateUtil.getMonth(requestBodyDTO.getStartDate());
-        JiraImputationDTO jiraImputationDTO = jiraImputationFactory.createJiraImputationDTO(year, month);
         jiraRestService.logIn(requestBodyDTO.getUsername(), requestBodyDTO.getPassword());
-        getIssuesForTeamCollabs(requestBodyDTO, jiraImputationDTO);
-        return jiraImputationDTO;
+        return getIssuesForTeamCollabs(requestBodyDTO);
     }
 
-    private void getIssuesForTeamCollabs(TbpRequestBodyDTO requestBodyDTO, JiraImputationDTO jiraImputationDTO) {
+    private List<JiraImputationDTO> getIssuesForTeamCollabs(TbpRequestBodyDTO requestBodyDTO) {
         ResponseEntity<JiraIssuesResponseDTO> responseEntity = getCollaboratorsIssues(requestBodyDTO);
         List<IssueDTO> issueDTOS = responseEntity.getBody().getIssues();
         if (jiraImputationService.hasMoreIssues(responseEntity)) {
             responseEntity = getCollaboratorsIssuesWithPagination(requestBodyDTO, responseEntity.getBody().getMaxResults(), responseEntity.getBody().getTotal());
             jiraImputationService.addAllIssues(issueDTOS, responseEntity);
         }
-        jiraImputationDTO.setCollaboratorWorklogs(getIssuesWorklogs(requestBodyDTO, issueDTOS));
+        return getImputationsFromIssues(requestBodyDTO, issueDTOS);
     }
 
     private ResponseEntity<JiraIssuesResponseDTO> getCollaboratorsIssues(TbpRequestBodyDTO requestBodyDTO) {
@@ -66,14 +66,40 @@ public class DefaultJiraResourceService implements JiraResourceService {
         return jiraRestService.getStories(JIRA_NESPRESSO_URL + "worklogAuthor in " + worklogAuthors + "+AND+issueFunction in workLogged('after " + requestBodyDTO.getStartDate() + " before " + requestBodyDTO.getEndDate() + "')&startAt=" + startAt + "&maxResults=" + maxResult + "&fields=worklog");
     }
 
-    private List<JiraCollaboratorWorklog> getIssuesWorklogs(TbpRequestBodyDTO requestBodyDTO, List<IssueDTO> issueDTOS) {
+    private List<JiraImputationDTO> getImputationsFromIssues(TbpRequestBodyDTO requestBodyDTO, List<IssueDTO> issueDTOS) {
         log.debug("DefaultJiraResourceService.getIssuesWorklogs: fetching issues for Collaborator");
-        List<JiraCollaboratorWorklog> collaboratorWorklogs = new ArrayList<>();
+        List<JiraImputationDTO> jiraImputationDTOS = new ArrayList<>();
+        List<WorklogItemDTO> worklogItemDTOS = getIssuesWorklogItems(requestBodyDTO, issueDTOS);
+        List<TbpRequestBodyDTO> requestBodies = tbpComposerService.divideTbpPeriod(requestBodyDTO);
+        for (TbpRequestBodyDTO requestBody : requestBodies) {
+            jiraImputationDTOS.add(getJiraImputation(requestBody, worklogItemDTOS));
+        }
+        return jiraImputationDTOS;
+    }
+
+    private List<WorklogItemDTO> getIssuesWorklogItems(TbpRequestBodyDTO requestBodyDTO, List<IssueDTO> issueDTOS) {
+        List<WorklogItemDTO> worklogItemDTOS = new ArrayList<>();
         issueDTOS.stream().filter(this::isValidIssue).forEach(
-            issueDTO -> getWorklogOfIssue(requestBodyDTO, issueDTO, collaboratorWorklogs)
+            issueDTO -> getWorklogItemsOfIssue(requestBodyDTO, issueDTO, worklogItemDTOS)
         );
-        collaboratorWorklogs.forEach(this::updateTotalTimeSpent);
-        return collaboratorWorklogs;
+        return worklogItemDTOS;
+    }
+
+    private JiraImputationDTO getJiraImputation(TbpRequestBodyDTO requestBody, List<WorklogItemDTO> worklogItemDTOS) {
+        int year = DateUtil.getYear(requestBody.getStartDate());
+        int month = DateUtil.getMonth(requestBody.getStartDate());
+        JiraImputationDTO jiraImputationDTO = jiraImputationFactory.createJiraImputationDTO(year, month);
+        jiraImputationDTO.setCollaboratorWorklogs(getCollaboratorsWorklogs(worklogItemDTOS, requestBody));
+        return jiraImputationDTO;
+    }
+
+    private List<JiraCollaboratorWorklog> getCollaboratorsWorklogs(List<WorklogItemDTO> worklogItemDTOS, TbpRequestBodyDTO requestBody) {
+        List<JiraCollaboratorWorklog> jiraCollaboratorWorklogs = new ArrayList<>();
+        worklogItemDTOS.stream()
+            .filter(worklogItemDTO -> isRequestedWorklogItem(worklogItemDTO, requestBody))
+            .forEach(worklogItemDTO -> getCollaboratorWorklog(worklogItemDTO, jiraCollaboratorWorklogs));
+        jiraCollaboratorWorklogs.forEach(this::updateTotalTimeSpent);
+        return jiraCollaboratorWorklogs;
     }
 
     private boolean isValidIssue(IssueDTO issueDTO) {
@@ -86,13 +112,13 @@ public class DefaultJiraResourceService implements JiraResourceService {
         worklog.setTotalTimeSpent(TimeSpentCalculatorUtil.calculate(builder.toString()));
     }
 
-    private void getWorklogOfIssue(TbpRequestBodyDTO requestBodyDTO, IssueDTO issueDTO, List<JiraCollaboratorWorklog> collaboratorWorklogs) {
+    private void getWorklogItemsOfIssue(TbpRequestBodyDTO requestBodyDTO, IssueDTO issueDTO, List<WorklogItemDTO> worklogItemDTOS) {
         if (jiraImputationService.hasMoreWorklogs(issueDTO.getFields().getWorklog())) {
             issueDTO.getFields().setWorklog(getAllWorklogsOfIssue(issueDTO));
         }
         issueDTO.getFields().getWorklog().getWorklogs().stream()
-            .filter(worklogItemDTO -> isValidWorklogItem(worklogItemDTO, requestBodyDTO))
-            .forEach(worklogItemDTO -> getCollaboratorWorklog(worklogItemDTO, collaboratorWorklogs));
+            .filter(worklogItemDTO -> jiraImputationService.isValidWorklogItem(worklogItemDTO, requestBodyDTO, worklogAuthors))
+            .forEach(worklogItemDTOS::add);
     }
 
     private WorklogDTO getAllWorklogsOfIssue(IssueDTO issueDTO) {
@@ -100,7 +126,7 @@ public class DefaultJiraResourceService implements JiraResourceService {
         return jiraRestService.getIssueWorklogs(issueDTO.getSelf()).getBody();
     }
 
-    private boolean isValidWorklogItem(WorklogItemDTO worklogItemDTO, TbpRequestBodyDTO requestBodyDTO) {
+    private boolean isRequestedWorklogItem(WorklogItemDTO worklogItemDTO, TbpRequestBodyDTO requestBodyDTO) {
         return worklogItemDateIsValid(worklogItemDTO, requestBodyDTO) && worklogItemAuthorIsValid(worklogItemDTO);
     }
 

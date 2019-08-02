@@ -26,5 +26,10 @@ public interface CollaboratorRepository extends JpaRepository<Collaborator, Long
 
     Collaborator findByFirstnameAndLastname(String firstname, String lastname);
 
-    List<Collaborator> findByTeamIdTbp(String idTbp);
+    @Query(value =
+        "SELECT DISTINCT c from Collaborator c, AppTbpIdentifier i " +
+            "WHERE i.idTbp LIKE :idTbp " +
+            "AND c.team.id = i.team.id "
+    )
+    List<Collaborator> findByTeamIdTbp(@Param("idTbp") String idTbp);
 }

@@ -19,9 +19,16 @@
                         <a routerLink="/admin/user-management/{{team.deliveryCoordinator?.login}}/view">{{team.deliveryCoordinator?.firstName}} {{team.deliveryCoordinator?.lastName}}</a>
                     </div>
                 </dd>
+                <dt><span jhiTranslate="imputationSqliApp.team.identifiers">Projects</span></dt>
+                <dd *ngFor="let identifier of team.appTbpIdentifiers">
+                    <div *ngIf="identifier">
+                        <span> {{identifier.mission}} </span>
+                    </div>
+                </dd>
             </dl>
 
             <div class="table-responsive">
+                <h4><b><span jhiTranslate="imputationSqliApp.team.collaborators">Team members</span></b></h4>
                 <table class="table table-striped">
                     <thead>
                     <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">

@@ -12,7 +12,10 @@
                            for="field_code_project_admin" jhiTranslate="imputationSqliApp.imputation.project_code">Project</label>
                     <select class="form-control" id="field_code_project_admin" name="code_project"
                             [(ngModel)]="requestBody.idTbp">
-                        <option *ngFor="let team of allTeams" [ngValue]="team.idTbp">{{team.name}}</option>
+                        <optgroup *ngFor="let team of allTeams" label="{{team.name}}">
+                            <option *ngFor="let identifier of team.appTbpIdentifiers"
+                                    [ngValue]="identifier.idTbp">{{identifier.mission}}</option>
+                        </optgroup>
                     </select>
                 </div>
                 <div class="form-group tbp-import-form" *ngSwitchCase="false">
@@ -20,11 +23,13 @@
                 </div>
                 <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.start_date"
                        for="field_start_date">Start Date</label>
-                <input type="date" id="field_start_date" class="form-control" name="start" [(ngModel)]="requestBody.startDate" required/>
+                <input type="date" id="field_start_date" class="form-control" name="start"
+                       [(ngModel)]="requestBody.startDate" required/>
 
                 <label class="form-control-label" jhiTranslate="imputationSqliApp.imputation.end_date"
                        for="field_end_date">Start Date</label>
-                <input type="date" id="field_end_date" class="form-control" name="end" [(ngModel)]="requestBody.endDate" required/>
+                <input type="date" id="field_end_date" class="form-control" name="end" [(ngModel)]="requestBody.endDate"
+                       required/>
                 <div class="form-group tbp-import-form">
                     <button type="submit" id="tbp-timesheet-import-button" class="btn btn-primary float-right">
                         <span jhiTranslate="global.menu.statistics">
@@ -38,15 +43,19 @@
         <br>
         <br>
     </div>
+    <!-- statistics -->
     <div class="row">
-        <!-- statistics -->
-        <div class="col-6 card">
-            <p>PPPM Projects Work log</p>
-            <div #worklogsChart style="width: 100%;min-height: 700px; max-height: 1000px"></div>
+        <div class="col-6">
+            <div class="card" style="padding: 8px 0px 0px 8px">
+                <p>PPPM Projects Work log</p>
+                <div #worklogsChart style="width: 100%;min-height: 700px; max-height: 1000px"></div>
+            </div>
         </div>
-        <div class="col-6 card">
-            <p>PPPM Projects Frequency</p>
-            <div #frequancyChart style="width: 100%;min-height: 700px; max-height: 1000px"></div>
+        <div class="col-6">
+            <div class="card" style="padding: 8px 0px 0px 8px">
+                <p>PPPM Projects Frequency</p>
+                <div #frequancyChart style="width: 100%;min-height: 700px; max-height: 1000px"></div>
+            </div>
         </div>
     </div>
 </div>
